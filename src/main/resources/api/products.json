@@ -1,0 +1,49 @@
+{
+  "id": 0,
+  "sku": "...",
+  "name": "...",
+  "brand": {
+    "id": 0,
+    "name": "..."
+  },
+  "category": {
+    "id": 0,
+    "name": "..."
+  },
+  "colors": [
+    {
+      "id": 0,
+      "name": "...",
+      "imageUrl": "...",
+      "price": 109379983,
+      "quantity": 0
+    }
+  ],
+  "specifications": {
+    "frame": "...",
+    "handlebar": "...",
+    "handlebarStem": "...",
+    "bell": "...",
+    "brakes": "...",
+    "brakeLevers": "...",
+    "fork": "...",
+    "shock": "...",
+    "saddle": "...",
+    "seatPost": "...",
+    "pedal": "...",
+    "crankset": "...",
+    "bottomBracket": "...",
+    "cassette": "...",
+    "frontDerailleur": "...",
+    "rearDerailleur": "...",
+    "chain": "...",
+    "chainGuard": "...",
+    "rims": "...",
+    "hubs": "...",
+    "spokes": "...",
+    "tires": "...",
+    "valve": "..."
+  }
+}
+
+

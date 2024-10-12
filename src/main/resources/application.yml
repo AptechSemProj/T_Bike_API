@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: 'T Bike API'
+
+  #******************** connection config ********************#
+  datasource:
+    driver-class-name: 'com.mysql.cj.jdbc.Driver'
+    url: 'jdbc:mysql://localhost:3306/t_bike?createDatabaseIfNotExist=true&charset=utf8'
+    username: 'root'
+    password: '12345678'
+
+  #******************** jpa config ********************#
+  jpa:
+    database-platform: 'org.hibernate.dialect.MySQLDialect'
+
+    #******************** naming config ********************#
+    hibernate:
+      naming:
+        implicit-strategy: 'org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy'
+        physical-strategy: 'org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl'
+
+    #******************** debug config ********************#
+    show-sql: true
+    open-in-view: false
+
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        SQL: DEBUG
+#        type: TRACE
