@@ -3,11 +3,13 @@ package com.sem.proj.tbike.api.core.product;
 import com.sem.proj.tbike.api.core.brand.dto.BrandDTO;
 import com.sem.proj.tbike.api.core.product.dto.CategoryDTO;
 import com.sem.proj.tbike.api.core.product.dto.ProductBasicInfo;
+import com.sem.proj.tbike.api.core.product.dto.ProductFullInfo;
 import com.sem.proj.tbike.api.util.Response.Pagination;
 import com.sem.proj.tbike.api.util.Response;
 import com.sem.proj.tbike.api.util.Response.Message;
 import com.sem.proj.tbike.api.util.Response.Pagination.Metadata;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@CrossOrigin("/**")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping( "/api/products" )
@@ -187,10 +190,10 @@ public class ProductController {
 	}
 
 	@GetMapping( path = "/{id}" )
-	public Response<Product> getDetail( @PathVariable( name = "id" ) String id ) {
+	public Response<ProductFullInfo> getDetail( @PathVariable( name = "id" ) String id ) {
 		long key = Long.parseLong( id );
 
-		Optional<Product> product = repository.findById( key );
+		Optional<ProductFullInfo> product = Optional.of( new ProductFullInfo() );
 
 		return product.map( Response::ok )
 				.orElseGet( Response::notFound );
