@@ -1,8 +1,4 @@
 
-CREATE DATABASE IF NOT EXISTS `t_bike`;
-
-USE `t_bike`;
-
 -- Create tables --
 
 CREATE TABLE `brands` (
