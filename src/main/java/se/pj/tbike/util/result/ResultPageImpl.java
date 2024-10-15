@@ -1,4 +1,4 @@
-package se.pj.tbike.util.result.impl;
+package se.pj.tbike.util.result;
 
 import static java.util.Collections.unmodifiableList;
 
@@ -9,7 +9,6 @@ import java.util.function.Function;
 import org.springframework.data.domain.Page;
 
 import se.pj.tbike.service.QueryService;
-import se.pj.tbike.util.result.ResultPage;
 
 public class ResultPageImpl<T>
 		extends ResultListImpl<T>

@@ -1,11 +1,9 @@
-package se.pj.tbike.util.result.impl;
+package se.pj.tbike.util.result;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Function;
-
-import se.pj.tbike.util.result.Result;
 
 public class ResultImpl<T>
 		extends ResultListImpl<T>

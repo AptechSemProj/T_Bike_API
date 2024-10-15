@@ -13,4 +13,6 @@ public class BrandCreation implements RequestType {
 
 	private String introduction;
 
+	private String imageUrl;
+
 }

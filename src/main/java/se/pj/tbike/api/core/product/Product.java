@@ -1,13 +1,14 @@
 package se.pj.tbike.api.core.product;
 
-import static jakarta.persistence.FetchType.EAGER;
-import static jakarta.persistence.FetchType.LAZY;
 import static java.util.Objects.hash;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static jakarta.persistence.FetchType.EAGER;
+import static jakarta.persistence.FetchType.LAZY;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -134,7 +135,7 @@ public class Product
 
 	//*************** RELATIONSHIPS ******************//
 
-	@ManyToOne
+	@ManyToOne( fetch = EAGER )
 	@JoinColumn( name = "brand_id", nullable = false, updatable = false,
 			foreignKey = @ForeignKey( name =
 					"FK__products_brandId__brands_id" ) )

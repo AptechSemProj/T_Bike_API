@@ -15,4 +15,6 @@ public class BrandResponse implements ResponseType {
 
 	private String introduction;
 
+	private String imageUrl;
+
 }

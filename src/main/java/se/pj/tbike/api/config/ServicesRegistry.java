@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import lombok.RequiredArgsConstructor;
 
 import se.pj.tbike.api.common.entity.IdentifiedEntity;
-import se.pj.tbike.api.core.brand.Brand;
 import se.pj.tbike.api.core.brand.data.BrandRepository;
 import se.pj.tbike.api.core.brand.data.BrandService;
 import se.pj.tbike.api.core.brand.data.BrandServiceImpl;
@@ -30,28 +29,26 @@ import se.pj.tbike.util.cache.StorageManager;
 public class ServicesRegistry {
 
 	public static final String PRODUCTS_STORAGE_KEY = "products";
-	public static final String BRANDS_STORAGE_KEY = "brands";
 	public static final String CATEGORIES_STORAGE_KEY = "categories";
 
 	private final StorageManager manager;
 
 	@PostConstruct
 	public void setup() {
-		manager.register( PRODUCTS_STORAGE_KEY,
-				new Storage<Long, Product>( IdentifiedEntity::getId,
-						Duration.ofMinutes( 2 ) ) );
-		manager.register( BRANDS_STORAGE_KEY,
-				new Storage<Long, Brand>( IdentifiedEntity::getId,
-						Duration.ofSeconds( 30 ) ) );
-		manager.register( CATEGORIES_STORAGE_KEY,
-				new Storage<Long, Category>( IdentifiedEntity::getId,
-						Duration.ofSeconds( 30 ) ) );
+		// categories
+		manager.register( CATEGORIES_STORAGE_KEY, new Storage<Long, Category>(
+				IdentifiedEntity::getId, Duration.ofMinutes( 1 )
+		) );
+		// products
+		manager.register( PRODUCTS_STORAGE_KEY, new Storage<Long, Product>(
+				IdentifiedEntity::getId, Duration.ofMinutes( 5 )
+		) );
+
 	}
 
 	@Bean
 	public BrandService brandService( BrandRepository repository ) {
-		Storage<Long, Brand> s = manager.use( BRANDS_STORAGE_KEY );
-		return new BrandServiceImpl( repository, s );
+		return new BrandServiceImpl( repository, manager );
 	}
 
 	@Bean

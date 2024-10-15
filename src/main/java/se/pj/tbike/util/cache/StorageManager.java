@@ -16,7 +16,7 @@ public final class StorageManager {
 			"unregistered storage %s";
 
 	private final TaskScheduler taskScheduler;
-	private final Map<String, CleanStorageController> storages;
+	private final Map<String, Cleaner> storages;
 
 	public StorageManager( TaskScheduler scheduler ) {
 		storages = new LinkedHashMap<>();
@@ -27,31 +27,40 @@ public final class StorageManager {
 	                      Trigger trigger ) {
 		Supplier<ScheduledFuture<?>> task =
 				() -> taskScheduler.schedule( storage::clean, trigger );
-		storages.putIfAbsent( key,
-				new CleanStorageController( storage, task ) );
+		storages.putIfAbsent( key, new Cleaner( storage, task ) );
+	}
+
+	public void register( String key, Storage<?, ?> storage,
+	                      boolean cleanable ) {
+		if ( !cleanable ) storages.putIfAbsent( key, new Cleaner( storage ) );
+		else {
+			PeriodicTrigger trigger =
+					new PeriodicTrigger( storage.getMaxStorageTime() );
+			trigger.setFixedRate( true );
+			register( key, storage, trigger );
+		}
 	}
 
 	public void register( String key, Storage<?, ?> storage ) {
-		PeriodicTrigger trigger =
-				new PeriodicTrigger( storage.getMaxStorageTime() );
-		trigger.setFixedRate( true );
-		register( key, storage, trigger );
+		register( key, storage, true );
 	}
 
 	@SuppressWarnings( "unchecked" )
 	public <K extends Comparable<K>, V> Storage<K, V> use( String key ) {
-		CleanStorageController controller = storages.get( key );
-		if ( controller == null )
-			throw new RuntimeException( UNREGISTERED_STORAGE.formatted( key ) );
-		if ( !controller.started ) controller.start();
-		return (Storage<K, V>) controller.storage;
+		Cleaner c = storages.get( key );
+		if ( c == null )
+			throw new RuntimeException(
+					UNREGISTERED_STORAGE.formatted( key ) );
+		if ( !c.started ) c.start();
+		return (Storage<K, V>) c.storage;
 	}
 
 	public void remove( String key ) {
-		CleanStorageController controller = storages.remove( key );
-		if ( controller == null )
-			throw new RuntimeException( UNREGISTERED_STORAGE.formatted( key ) );
-		controller.end();
+		Cleaner c = storages.remove( key );
+		if ( c == null )
+			throw new RuntimeException(
+					UNREGISTERED_STORAGE.formatted( key ) );
+		c.end();
 	}
 
 	@Override
@@ -72,30 +81,41 @@ public final class StorageManager {
 		return "StorageManager" + storages;
 	}
 
-	private static class CleanStorageController {
+	private static class Cleaner {
 		private final Storage<?, ?> storage;
 		private final Supplier<ScheduledFuture<?>> task;
 
 		private ScheduledFuture<?> future;
 		private boolean started;
 
-		public CleanStorageController( Storage<?, ?> storage,
-		                               Supplier<ScheduledFuture<?>> task ) {
+		public Cleaner( Storage<?, ?> storage ) {
+			this.storage = storage;
+			this.task = null;
+		}
+
+		public Cleaner( Storage<?, ?> storage,
+		                Supplier<ScheduledFuture<?>> task ) {
 			this.storage = storage;
 			this.task = task;
 		}
 
 		private void start() {
-			future = task.get();
+			if ( cleanable() ) future = task.get();
 			started = true;
 		}
 
 		private boolean isRunning() {
+			if ( !cleanable() ) return started;
 			return started && !future.isCancelled() && !future.isDone();
 		}
 
 		private void end() {
-			if ( isRunning() ) future.cancel( true );
+			if ( isRunning() && cleanable() )
+				future.cancel( true );
+		}
+
+		private boolean cleanable() {
+			return task != null;
 		}
 	}
 }

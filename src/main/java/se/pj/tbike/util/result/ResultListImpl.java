@@ -1,4 +1,4 @@
-package se.pj.tbike.util.result.impl;
+package se.pj.tbike.util.result;
 
 import static java.util.Collections.unmodifiableList;
 
@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import se.pj.tbike.util.result.ResultList;
 
 public class ResultListImpl<T>
 		implements ResultList<T> {

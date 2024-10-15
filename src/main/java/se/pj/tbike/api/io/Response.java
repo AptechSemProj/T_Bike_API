@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import se.pj.tbike.util.json.DynamicJson;
+import se.pj.tbike.util.result.ResultPage;
 
 public class Response<T extends ResponseType> implements DynamicJson {
 
@@ -28,9 +29,34 @@ public class Response<T extends ResponseType> implements DynamicJson {
 		this.errorsMap = errorsMap;
 	}
 
-	protected Response( int status, T data, String message,
+	protected Response( Status status, T data ) {
+		this( status.getCode(), data, status.getMessage(), null, null );
+	}
+
+	protected Response( Status status, T data, List<String> errors ) {
+		this( status.getCode(), data, status.getMessage(), errors, null );
+	}
+
+	protected Response( Status status, T data, Map<String, String> errors ) {
+		this( status.getCode(), data, status.getMessage(), null, errors );
+	}
+
+	protected Response( Status status, T data, String message ) {
+		this( status.getCode(), data, message, null, null );
+	}
+
+	protected Response( Status status, T data, String message,
+	                    List<String> errors ) {
+		this( status.getCode(), data, message, errors, null );
+	}
+
+	protected Response( Status status, T data, String message,
 	                    Map<String, String> errors ) {
-		this( status, data, message, null, errors );
+		this( status.getCode(), data, message, null, errors );
+	}
+
+	protected Response( int status, T data, String message ) {
+		this( status, data, message, null, null );
 	}
 
 	protected Response( int status, T data, String message,
@@ -38,45 +64,84 @@ public class Response<T extends ResponseType> implements DynamicJson {
 		this( status, data, message, errors, null );
 	}
 
-	protected Response( int status, T data, String message ) {
-		this( status, data, message, null, null );
+	protected Response( int status, T data, String message,
+	                    Map<String, String> errors ) {
+		this( status, data, message, null, errors );
 	}
 
-	public static <T extends ResponseType> Response<T> created(
-			T data, String message ) {
-		return new Response<>( 201, data, message );
+
+	//********************* Fast Way Create Pagination *********************//
+
+	public static <T extends ResponseType>
+	Response<Arr<T>> pagination( ResultPage<T> page, String message ) {
+		return new Pagination<>( page, message );
 	}
 
-	public static <T extends ResponseType> Response<T> created( T data ) {
-		return created( data, Message.CREATED.getValue() );
+	public static <T extends ResponseType>
+	Response<Arr<T>> pagination( ResultPage<T> page ) {
+		return new Pagination<>( page );
 	}
 
-	public static <T extends ResponseType> Response<T> ok(
-			T data, String message ) {
-		return new Response<>( 200, data, message );
+	// 200
+
+	public static <T extends ResponseType>
+	Response<T> ok( T data, String message ) {
+		return new Response<>( Status.OK, data, message );
 	}
 
-	public static <T extends ResponseType> Response<T> ok( T data ) {
-		return ok( data, Message.OK.getValue() );
+	public static <T extends ResponseType>
+	Response<T> ok( T data ) {
+		return new Response<>( Status.OK, data );
 	}
 
-	public static <T extends ResponseType> Response<T> noContent(
-			String message ) {
-		return new Response<>( 204, null, message );
+	// 201
+
+	public static <T extends ResponseType>
+	Response<T> created( T data, String message ) {
+		return new Response<>( Status.CREATED, data, message );
 	}
 
-	public static <T extends ResponseType> Response<T> noContent() {
-		return noContent( Message.NOT_FOUND.getValue() );
+	public static <T extends ResponseType>
+	Response<T> created( T data ) {
+		return new Response<>( Status.CREATED, data );
 	}
 
-	public static <T extends ResponseType> Response<T> notFound(
-			String message ) {
-		return new Response<>( 404, null, message );
+	// 204
+
+	public static <T extends ResponseType>
+	Response<T> noContent( String message ) {
+		return new Response<>( Status.NO_CONTENT, null, message );
+	}
+
+	public static <T extends ResponseType>
+	Response<T> noContent() {
+		return new Response<>( Status.NO_CONTENT, null );
+	}
+
+	// 400
+
+	public static <T extends ResponseType>
+	Response<T> badRequest( String message ) {
+		return new Response<>( Status.BAD_REQUEST, null, message );
+	}
+
+	public static <T extends ResponseType>
+	Response<T> badRequest() {
+		return new Response<>( Status.BAD_REQUEST, null );
+	}
+
+	// 404
+
+	public static <T extends ResponseType>
+	Response<T> notFound( String message ) {
+		return new Response<>( Status.NOT_FOUND, null, message );
 	}
 
 	public static <T extends ResponseType> Response<T> notFound() {
-		return notFound( Message.NOT_FOUND.getValue() );
+		return new Response<>( Status.NOT_FOUND, null );
 	}
+
+	//********************* Implements DynamicJson *********************//
 
 	@Override
 	public Map<String, Object> toJson() {

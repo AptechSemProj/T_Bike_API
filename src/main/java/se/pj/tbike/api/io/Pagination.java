@@ -9,21 +9,23 @@ import se.pj.tbike.util.result.ResultPage;
 public class Pagination<E extends ResponseType>
 		extends Response<Arr<E>> {
 
-	private static final int STATUS_CODE = 200;
+	private static final Status STATUS = Status.OK;
 
 	private final Metadata metadata;
 
 	private final Arr<E> data;
 
 	public Pagination( ResultPage<E> page ) {
-		this( page, Message.OK.getValue() );
+		this( page, STATUS.getMessage() );
 	}
 
 	public Pagination( ResultPage<E> page, String message ) {
-		super( STATUS_CODE, Arr.of( page.toList() ), message );
+		super( STATUS, Arr.of( page.toList() ), message );
 		this.metadata = new Metadata( page );
 		this.data = Arr.of( page.toList() );
 	}
+
+	//********************* Implements DynamicJson *********************//
 
 	@Override
 	public Map<String, Object> toJson() {
@@ -47,6 +49,8 @@ public class Pagination<E extends ResponseType>
 			this.next = r.next();
 			this.previous = r.previous();
 		}
+
+		//********************* Implements DynamicJson *********************//
 
 		@Override
 		public Map<String, Object> toJson() {

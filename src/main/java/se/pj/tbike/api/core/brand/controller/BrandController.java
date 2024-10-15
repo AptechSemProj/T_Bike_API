@@ -2,6 +2,7 @@ package se.pj.tbike.api.core.brand.controller;
 
 import java.util.Optional;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,18 +20,25 @@ import static se.pj.tbike.api.common.Urls.URL_INFO;
 import static se.pj.tbike.api.common.Urls.URL_LIST_1;
 import static se.pj.tbike.api.common.Urls.URL_LIST_2;
 
+import static se.pj.tbike.api.io.Response.badRequest;
+import static se.pj.tbike.api.io.Response.created;
+import static se.pj.tbike.api.io.Response.noContent;
+import static se.pj.tbike.api.io.Response.ok;
+import static se.pj.tbike.api.io.Response.pagination;
+
 import se.pj.tbike.api.core.brand.Brand;
 import se.pj.tbike.api.core.brand.data.BrandService;
 import se.pj.tbike.api.core.brand.dto.BrandCreation;
 import se.pj.tbike.api.core.brand.dto.BrandModification;
 import se.pj.tbike.api.core.brand.dto.BrandResponse;
+import se.pj.tbike.api.core.brand.mapper.BrandReqMapper;
+
+import se.pj.tbike.api.core.brand.mapper.BrandResMapper;
 import se.pj.tbike.api.io.Arr;
 import se.pj.tbike.api.io.Response;
-import se.pj.tbike.api.io.Pagination;
-import se.pj.tbike.api.io.RequestMapper;
-import se.pj.tbike.api.io.ResponseMapper;
-
+import se.pj.tbike.api.io.ResponseType;
 import se.pj.tbike.api.io.Val;
+
 import se.pj.tbike.util.result.Result;
 import se.pj.tbike.util.result.ResultList;
 import se.pj.tbike.util.result.ResultPage;
@@ -40,52 +48,56 @@ import se.pj.tbike.util.result.ResultPage;
 @RequestMapping( path = { API_PREFIX + BRAND_API } )
 public class BrandController {
 
-	private final BrandService brandService;
-	private final ResponseMapper<Brand, BrandResponse> brandResponseMapper;
-	private final RequestMapper<Brand, BrandCreation> brandCreationMapper;
+	private final BrandService service;
+	private final BrandReqMapper<BrandCreation> creationMapper;
+	private final BrandReqMapper<BrandModification> modificationMapper;
+	private final BrandResMapper<BrandResponse> responseMapper;
 
 	@GetMapping( path = { URL_LIST_1, URL_LIST_2 } )
-	public Response<Arr<BrandResponse>> getAll(
-			@RequestParam( name = "page", defaultValue = "0" )
-			String page,
-			@RequestParam( name = "size", defaultValue = "-1" )
-			String size ) {
+	public Response<Arr<BrandResponse>> getList(
+			@RequestParam( name = "page", defaultValue = "0" ) String page,
+			@RequestParam( name = "size", defaultValue = "-1" ) String size ) {
 		int p = Integer.parseInt( page ), s = Integer.parseInt( size );
 		if ( p < 0 ) throw new RuntimeException();
 		if ( s > 0 ) {
-			ResultPage<Brand> r = brandService.findPage( p, s );
-			return new Pagination<>( r.map( brandResponseMapper::map ) );
+			ResultPage<Brand> r = service.findPage( p, s );
+			return pagination( r.map( responseMapper::map ) );
 		}
-		ResultList<Brand> r = brandService.findAll();
-		ResultList<BrandResponse> l = r.map( brandResponseMapper::map );
-		return Response.ok( Arr.of( l.toList() ) );
+		ResultList<Brand> r = service.findAll();
+		ResultList<BrandResponse> l = r.map( responseMapper::map );
+		return ok( Arr.of( l.toList() ) );
 	}
 
 	@GetMapping( path = { URL_INFO } )
-	public Response<BrandResponse> getById(
-			@PathVariable( name = "id" )
-			String id ) {
+	public Response<BrandResponse> getById( @PathVariable( "id" ) String id ) {
 		long key = Long.parseLong( id );
-		Result<Brand> r = brandService.findByKey( key );
-		Optional<BrandResponse> o = r.map( brandResponseMapper::map )
+		Result<Brand> r = service.findByKey( key );
+		Optional<BrandResponse> o = r.map( responseMapper::map )
 				.toOptional();
-		return o.map( Response::ok )
-				.orElseGet( Response::notFound );
+		return o.map( Response::ok ).orElseGet( Response::notFound );
 	}
 
 	@PostMapping( path = { URL_LIST_1, URL_LIST_2 } )
 	public Response<Val<Long>> create( @RequestBody BrandCreation req ) {
-		Brand b = brandCreationMapper.map( req );
-		Brand created = brandService.create( b );
-		return Response.created( Val.of( created.getId() ) );
+		Brand b = creationMapper.map( req );
+		Brand created = service.create( b );
+		return created( Val.of( created.getId() ) );
 	}
 
-	// TODO: update
 	@PutMapping( path = { URL_INFO } )
-	public void update( @RequestBody BrandModification req ) {
-
+	public Response<ResponseType> update( @PathVariable( "id" ) String id,
+	                                      @RequestBody BrandModification req ) {
+		if ( Long.parseLong( id ) != req.getId() )
+			return badRequest();
+		Brand b = modificationMapper.map( req );
+		service.update( b );
+		return noContent();
 	}
 
-
-	// TODO: delete
+	@DeleteMapping( path = { URL_INFO } )
+	public Response<ResponseType> delete( @PathVariable( "id" ) String id ) {
+		long key = Long.parseLong( id );
+		service.remove( key );
+		return noContent();
+	}
 }
