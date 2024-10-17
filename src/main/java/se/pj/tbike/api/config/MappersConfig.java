@@ -16,7 +16,14 @@ import se.pj.tbike.api.core.brand.mapper.BrandResponseMapper;
 
 import se.pj.tbike.api.core.product.Product;
 import se.pj.tbike.api.core.product.Product.Category;
+import se.pj.tbike.api.core.product.category.data.CategoryRepository;
+import se.pj.tbike.api.core.product.category.dto.CategoryCreation;
+import se.pj.tbike.api.core.product.category.dto.CategoryModification;
 import se.pj.tbike.api.core.product.category.dto.CategoryResponse;
+import se.pj.tbike.api.core.product.category.mapper.CategoryCreationMapper;
+import se.pj.tbike.api.core.product.category.mapper.CategoryModificationMapper;
+import se.pj.tbike.api.core.product.category.mapper.CategoryReqMapper;
+import se.pj.tbike.api.core.product.category.mapper.CategoryResMapper;
 import se.pj.tbike.api.core.product.category.mapper.CategoryResponseMapper;
 import se.pj.tbike.api.core.product.dto.ProductResponse;
 import se.pj.tbike.api.core.product.mapper.ProductResponseMapper;
@@ -52,10 +59,21 @@ public class MappersConfig {
 
 	//***************** Request *******************//
 
+	@Bean
+	public CategoryReqMapper<CategoryCreation> categoryCreationMapper() {
+		return new CategoryCreationMapper();
+	}
+
+	@Bean
+	public CategoryReqMapper<CategoryModification> categoryModificationMapper(
+			CategoryRepository repository ) {
+		return new CategoryModificationMapper( repository );
+	}
+
 	//***************** Response *******************//
 
 	@Bean
-	public ResponseMapper<Category, CategoryResponse> categoryResponseMapper() {
+	public CategoryResMapper<CategoryResponse> categoryResponseMapper() {
 		return new CategoryResponseMapper();
 	}
 

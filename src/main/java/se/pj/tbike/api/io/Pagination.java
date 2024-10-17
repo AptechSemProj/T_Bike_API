@@ -9,20 +9,24 @@ import se.pj.tbike.util.result.ResultPage;
 public class Pagination<E extends ResponseType>
 		extends Response<Arr<E>> {
 
+	/**
+	 * pagination always have one status code is 200.
+	 */
 	private static final Status STATUS = Status.OK;
 
 	private final Metadata metadata;
 
-	private final Arr<E> data;
+	public Pagination( ResultPage<E> page, String message ) {
+		super(
+				STATUS,
+				Arr.of( page.toList() ),
+				message != null ? message : STATUS.getMessage()
+		);
+		this.metadata = new Metadata( page );
+	}
 
 	public Pagination( ResultPage<E> page ) {
 		this( page, STATUS.getMessage() );
-	}
-
-	public Pagination( ResultPage<E> page, String message ) {
-		super( STATUS, Arr.of( page.toList() ), message );
-		this.metadata = new Metadata( page );
-		this.data = Arr.of( page.toList() );
 	}
 
 	//********************* Implements DynamicJson *********************//
@@ -30,7 +34,6 @@ public class Pagination<E extends ResponseType>
 	@Override
 	public Map<String, Object> toJson() {
 		Map<String, Object> json = super.toJson();
-		json.put( "data", data.get() );
 		json.put( "metadata", metadata.toJson() );
 		return json;
 	}

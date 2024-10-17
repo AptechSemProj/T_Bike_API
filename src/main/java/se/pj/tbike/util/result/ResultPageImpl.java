@@ -8,8 +8,6 @@ import java.util.function.Function;
 
 import org.springframework.data.domain.Page;
 
-import se.pj.tbike.service.QueryService;
-
 public class ResultPageImpl<T>
 		extends ResultListImpl<T>
 		implements ResultPage<T> {
@@ -43,22 +41,6 @@ public class ResultPageImpl<T>
 		if ( size > elements ) return 1;
 		int pages = (int) ( elements / size );
 		return elements % size > 0 ? pages + 1 : pages;
-	}
-
-	@Override
-	public ResultPage<T> nextPage( QueryService<T, ?> queryService ) {
-		Integer next = next();
-		return next != null
-				? queryService.findPage( next, pageSize )
-				: null;
-	}
-
-	@Override
-	public ResultPage<T> previousPage( QueryService<T, ?> queryService ) {
-		Integer prev = previous();
-		return prev != null
-				? queryService.findPage( prev, pageSize )
-				: null;
 	}
 
 	@Override

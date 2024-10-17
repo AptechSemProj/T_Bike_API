@@ -1,14 +1,14 @@
 package se.pj.tbike.api.core.brand.mapper;
 
-import lombok.AllArgsConstructor;
+import java.util.Optional;
+
+import lombok.RequiredArgsConstructor;
 
 import se.pj.tbike.api.core.brand.Brand;
 import se.pj.tbike.api.core.brand.data.BrandRepository;
 import se.pj.tbike.api.core.brand.dto.BrandModification;
 
-import java.util.Optional;
-
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BrandModificationMapper
 		implements BrandReqMapper<BrandModification> {
 
@@ -16,12 +16,14 @@ public class BrandModificationMapper
 
 	@Override
 	public Brand map( BrandModification req ) {
-		Optional<Brand> b = repository.findById( req.getId() );
-		if ( b.isPresent() ) {
-			b.get().setName( req.getName() );
-			b.get().setIntroduction( req.getIntroduction() );
-			b.get().setImageUrl( req.getImageUrl() );
+		Optional<Brand> o = repository.findById( req.getId() );
+		if ( o.isPresent() ) {
+			Brand b = o.get();
+			b.setName( req.getName() );
+			b.setIntroduction( req.getIntroduction() );
+			b.setImageUrl( req.getImageUrl() );
+			return b;
 		}
-		return b.orElse( null );
+		return null;
 	}
 }

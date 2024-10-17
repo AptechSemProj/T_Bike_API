@@ -18,6 +18,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import org.hibernate.annotations.BatchSize;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -323,8 +325,6 @@ public class Product
 
 	@Getter
 	@Setter
-	@AllArgsConstructor
-	@NoArgsConstructor
 	@Entity
 	@Table( name = "categories" )
 	public static class Category
@@ -340,17 +340,24 @@ public class Product
 
 		//*************** RELATIONSHIPS ******************//
 
-		@OneToMany( mappedBy = "category", fetch = LAZY )
+		@OneToMany( mappedBy = "category", fetch = EAGER )
+		@BatchSize( size = 20 )
 		private List<Product> products = new ArrayList<>();
 
 		//*************** CONSTRUCTOR ******************//
 
-		public Category( Long id, String name, String description,
-		                 List<Product> products ) {
+		public Category() {
+		}
+
+		public Category( String name, String description ) {
+			this.name = name;
+			this.description = description;
+		}
+
+		public Category( long id, String name, String description ) {
 			setId( id );
 			this.name = name;
 			this.description = description;
-			this.products = products != null ? products : new ArrayList<>();
 		}
 
 		//*************** IMPLEMENTS & OVERRIDE METHODS ******************//
@@ -367,8 +374,8 @@ public class Product
 				if ( that.products == null ) return false;
 				int s = products.size();
 				if ( s != that.products.size() ) return false;
-				Long id1, id2;
 				for ( int i = 0; i < s; i++ ) {
+					Long id1, id2;
 					id1 = products.get( i ).getId();
 					id2 = that.products.get( i ).getId();
 					if ( !Objects.equals( id1, id2 ) ) return false;

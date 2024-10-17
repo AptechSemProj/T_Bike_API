@@ -1,6 +1,5 @@
 package se.pj.tbike.api.core.brand;
 
-import static jakarta.persistence.FetchType.LAZY;
 import static java.util.Objects.hash;
 
 import java.util.ArrayList;
@@ -15,19 +14,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-import lombok.AllArgsConstructor;
+import org.hibernate.annotations.BatchSize;
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import org.hibernate.annotations.BatchSize;
 import se.pj.tbike.api.common.entity.IdentifiedEntity;
 import se.pj.tbike.api.core.product.Product;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table( name = "brands" )
 public class Brand
@@ -47,23 +43,18 @@ public class Brand
 	//*************** RELATIONSHIPS ******************//
 
 	@OneToMany( mappedBy = "brand", fetch = EAGER )
-	@BatchSize( size = 100 )
+	@BatchSize( size = 20 )
 	private List<Product> products = new ArrayList<>();
 
 	//*************** CONSTRUCTOR ******************//
 
-	public Brand( String name, String introduction, String imageUrl ) {
-		this.name = name;
-		this.introduction = introduction;
-		this.imageUrl = imageUrl;
+	public Brand() {
 	}
 
-	public Brand( Long id, String name,
-	              String introduction, List<Product> products ) {
-		setId( id );
+	public Brand( String name, String imageUrl, String introduction ) {
 		this.name = name;
+		this.imageUrl = imageUrl;
 		this.introduction = introduction;
-		this.products = products;
 	}
 
 	//*************** IMPLEMENTS & OVERRIDE METHODS ******************//
@@ -78,9 +69,6 @@ public class Brand
 			return false;
 		if ( products != null ) {
 			if ( that.products == null ) return false;
-//			if ( products.isEmpty() ) {
-//				return that.products.isEmpty();
-//			} else {
 			int s1 = products.size();
 			if ( s1 != that.products.size() ) return false;
 			long id1, id2;
@@ -90,7 +78,6 @@ public class Brand
 				if ( id1 != id2 ) return false;
 			}
 			return true;
-//			}
 		}
 		return that.products == null;
 	}

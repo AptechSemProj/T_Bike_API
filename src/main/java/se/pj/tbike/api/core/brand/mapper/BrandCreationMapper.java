@@ -8,7 +8,6 @@ public class BrandCreationMapper
 
 	@Override
 	public Brand map( BrandCreation req ) {
-		return new Brand(
-				req.getName(), req.getIntroduction(), req.getImageUrl() );
+		return new Brand( req.getName(), req.getImageUrl(), req.getIntroduction() );
 	}
 }

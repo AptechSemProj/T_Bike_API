@@ -12,6 +12,7 @@ public enum Status {
 	NO_CONTENT( 204, "No content" ),
 	BAD_REQUEST( 400, "Bad Request" ),
 	NOT_FOUND( 404, "Not found" ),
+	INTERNAL_SERVER_ERROR( 500, "Internal Server Error" ),
 	;
 
 	private final int code;

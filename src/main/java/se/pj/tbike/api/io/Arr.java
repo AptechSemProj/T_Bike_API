@@ -1,5 +1,7 @@
 package se.pj.tbike.api.io;
 
+import se.pj.tbike.util.result.ResultList;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -8,7 +10,7 @@ import java.util.List;
  *
  * @param <E> type of element.
  */
-public class Arr<E> extends Val<Collection<E>> {
+public final class Arr<E> extends Val<Collection<E>> {
 
 	private Arr( Collection<E> data ) {
 		super( data );
@@ -20,8 +22,12 @@ public class Arr<E> extends Val<Collection<E>> {
 		return new Arr<>( c != null ? c : List.of() );
 	}
 
+	public static <E> Arr<E> of( ResultList<E> rl ) {
+		return of( rl.toList() );
+	}
+
 	@SafeVarargs
 	public static <E> Arr<E> of( E... els ) {
-		return new Arr<>( List.of( els ) );
+		return of( List.of( els ) );
 	}
 }

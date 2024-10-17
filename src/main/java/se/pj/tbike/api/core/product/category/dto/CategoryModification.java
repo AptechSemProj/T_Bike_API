@@ -7,7 +7,9 @@ import se.pj.tbike.api.io.RequestType;
 
 @Getter
 @AllArgsConstructor
-public class CategoryCreation implements RequestType {
+public class CategoryModification implements RequestType {
+
+	private long id;
 
 	private String name;
 
