@@ -15,5 +15,7 @@ public class Urls {
 
 	public static final String URL_INFO = "/{id}";
 
+	public static final String URL_UPLOAD = "/upload";
 
+	public static final String URL_DOWNLOAD = "/download";
 }

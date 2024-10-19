@@ -40,7 +40,8 @@ spring:
 ########################## CUSTOMIZE ###########################
 
 file-storage:
-#  stored-in-resources: true
+  stored-in-resources: true
   root: "files"
-  locations:
+  directories:
     images: "images"
+    videos: videos
