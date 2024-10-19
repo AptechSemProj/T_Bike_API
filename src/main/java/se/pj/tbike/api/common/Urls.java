@@ -8,6 +8,8 @@ public class Urls {
 	public static final String CATEGORY_API = "/categories";
 	public static final String PRODUCT_API = "/products";
 
+	public static final String IMAGE_API = "/images";
+
 	public static final String URL_LIST_1 = "";
 	public static final String URL_LIST_2 = "/";
 
