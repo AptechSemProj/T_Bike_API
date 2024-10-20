@@ -1,6 +1,5 @@
 package se.pj.tbike.api.core.product.controller;
 
-import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,42 +21,51 @@ import se.pj.tbike.api.core.product.data.ProductService;
 import se.pj.tbike.api.core.product.dto.ProductResponse;
 import se.pj.tbike.api.core.product.dto.ProductDetail;
 import se.pj.tbike.api.io.Arr;
-import se.pj.tbike.api.io.Pagination;
 import se.pj.tbike.api.io.Response;
 import se.pj.tbike.api.io.ResponseMapper;
+import se.pj.tbike.api.util.Error;
+import se.pj.tbike.api.util.NumberValidator;
+import se.pj.tbike.api.util.Validated;
+import se.pj.tbike.api.util.controller.PageableController;
+import se.pj.tbike.api.util.controller.StdController;
 import se.pj.tbike.util.result.Result;
-import se.pj.tbike.util.result.ResultPage;
+import se.pj.tbike.util.result.ResultImpl;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping( path = { API_PREFIX + PRODUCT_API } )
-public class ProductController {
+public class ProductController
+		implements PageableController,
+		StdController<Long> {
 
-	private final ProductService productService;
+	private final ProductService service;
 	private final ResponseMapper<Product, ProductResponse> productRespMapper;
+	private final ResponseMapper<Product, ProductDetail> detailMapper;
+
 
 	@GetMapping( path = { URL_LIST_1, URL_LIST_2 } )
 	public Response<Arr<ProductResponse>> getList(
 			@RequestParam( name = "page", defaultValue = "0" ) String page,
 			@RequestParam( name = "size", defaultValue = "10" ) String size ) {
-		int p = Integer.parseInt( page ), s = Integer.parseInt( size );
-		if ( p < 0 || s < 0 )
-			throw new RuntimeException();
-		ResultPage<Product> r = productService.findPage( p, s );
-		return new Pagination<>( r.map( productRespMapper::map ) );
+		return paginated(
+				page, size,
+				( p, s ) -> service.findPage( p, s )
+						.map( productRespMapper::map )
+		);
 	}
 
 	@GetMapping( path = URL_INFO )
 	public Response<ProductDetail> getDetail(
-			@PathVariable( name = "id" )
-			String id ) {
-		long key = Long.parseLong( id );
-		Result<Product> r = productService.findByKey( key );
-		Optional<ProductDetail> p = Optional.empty();
-//				r.map( productResponseMapper::map )
-//				.toOptional();
+			@PathVariable( name = "id" ) String id ) {
+		return get( id, k -> {
+			Result<Product> r = service.findByKey( k );
+			return r.map( detailMapper::map );
+		} );
+	}
 
-		return p.map( Response::ok )
-				.orElseGet( Response::notFound );
+	@Override
+	public Validated<Long> validateKey( String keyInPath ) {
+		return NumberValidator.validateLong( keyInPath )
+				.thenTest( l -> l >= 0, Error.INVALID );
 	}
 }

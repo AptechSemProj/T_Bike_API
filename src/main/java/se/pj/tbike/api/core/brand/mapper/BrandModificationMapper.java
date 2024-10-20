@@ -20,7 +20,7 @@ public class BrandModificationMapper
 		if ( o.isPresent() ) {
 			Brand b = o.get();
 			b.setName( req.getName() );
-			b.setIntroduction( req.getIntroduction() );
+			b.setDescription( req.getIntroduction() );
 			b.setImageUrl( req.getImageUrl() );
 			return b;
 		}

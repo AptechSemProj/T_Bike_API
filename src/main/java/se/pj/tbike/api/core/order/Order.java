@@ -5,12 +5,14 @@ import static jakarta.persistence.FetchType.LAZY;
 import static java.util.Objects.hash;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Objects;
 
+import jakarta.persistence.Converter;
 import se.pj.tbike.api.core.order.Order.Detail.Id;
 import se.pj.tbike.api.core.product.Product;
 import se.pj.tbike.api.core.user.User;
@@ -48,10 +50,18 @@ import se.pj.tbike.api.common.entity.IdentifiedEntity;
 public class Order
 		extends IdentifiedEntity<Order> {
 
+	@Column( name = "total_amount",
+			columnDefinition = "BIGINT UNSIGNED NOT NULL" )
+	private long totalAmount;
+
+	@Column( name = "created_at",
+			columnDefinition = "DEFAULT CURRENT_TIMESTAMP")
+	private Timestamp createdAt;
+
 	@Column( nullable = false )
-	@Enumerated( EnumType.ORDINAL )
-	@Convert( converter = Status.Converter.class )
-	private Status status;
+	@Enumerated( EnumType.STRING )
+	@Convert( converter = Status.StatusConverter.class )
+	private Status status = Status.CART;
 
 	//*************** RELATIONSHIPS ******************//
 
@@ -70,11 +80,13 @@ public class Order
 	public boolean equals( Object o ) {
 		if ( this == o ) return true;
 		if ( !( o instanceof Order that ) ) return false;
-		if ( !( getId() == that.getId() && status.equals( that.status ) ) )
+		if ( !( Objects.equals( getId(), that.getId() ) &&
+				status.equals( that.status ) ) )
 			return false;
 		if ( user != null && (
 				that.user == null ||
-						user.getId() != that.user.getId() ) ) return false;
+						!Objects.equals( user.getId(), that.user.getId() ) ) )
+			return false;
 		if ( details != null ) {
 			if ( that.details == null ) return false;
 			int s = details.size();
@@ -152,8 +164,8 @@ public class Order
 			if ( this == o ) return true;
 			if ( !( o instanceof Detail that ) ) return false;
 			return id.equals( that.id ) &&
-					order.getId() == that.order.getId() &&
-					product.getId() == that.product.getId() &&
+					Objects.equals( order.getId(), that.order.getId() ) &&
+					Objects.equals( product.getId(), that.product.getId() ) &&
 					quantity == that.quantity &&
 					totalAmount == that.totalAmount;
 		}
@@ -194,47 +206,29 @@ public class Order
 	@AllArgsConstructor
 	public enum Status {
 
-		CART( 1, "Cart", "khi đồ chưa mua" ),
-		PURCHASED( 2, "Purchased", "những đồ đã thanh toán" ),
-		REFUNDED( 3, "Refunded", "những đồ chủ của hàng k thích giao cho " +
-				"khách thì có cái này" ),
-		WAITING( 4, "Waiting", "chờ lấy hàng / xử lý hoá đơn" ),
-		SHIPPING( 5, "Shipping", "đang giao hàng" ),
-		SHIPPED( 6, "Shipped", "đã giao" ),
-		DONE( 7, "Done", "khách đã nhận hàng" ),
+		CART,
+		PURCHASED,
+		REFUNDED,
+		WAITING,
+		SHIPPING,
+		SHIPPED,
+		DONE,
 		;
 
-		//*************** BASIC ******************//
-
-		private final int id;
-
-		private final String name;
-
-		private final String description;
-
-		//*************** IMPLEMENTS & OVERRIDE METHODS ******************//
-
-		public static Status valueOf( int id ) {
-			return Stream.of( Status.values() )
-					.filter( s -> s.id == id )
-					.findFirst()
-					.orElseThrow( IllegalArgumentException::new );
-		}
-
-		@jakarta.persistence.Converter
-		private static class Converter
-				implements AttributeConverter<Status, Integer> {
+		@Converter
+		private static class StatusConverter
+				implements AttributeConverter<Status, String> {
 
 			@Override
-			public Integer convertToDatabaseColumn( Status status ) {
-				return status.id;
+			public String convertToDatabaseColumn( Status status ) {
+				return status.name().toLowerCase();
 			}
 
 			@Override
-			public Status convertToEntityAttribute( Integer id ) {
-				if ( id == null )
+			public Status convertToEntityAttribute( String value ) {
+				if ( value == null )
 					throw new NullPointerException();
-				return Status.valueOf( id );
+				return Status.valueOf( value.toUpperCase() );
 			}
 		}
 	}

@@ -7,6 +7,8 @@ import se.pj.tbike.api.core.brand.dto.BrandResponse;
 import se.pj.tbike.api.core.product.category.dto.CategoryResponse;
 import se.pj.tbike.api.io.ResponseType;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Getter
 public class ProductDetail implements ResponseType {
@@ -21,7 +23,7 @@ public class ProductDetail implements ResponseType {
 
 	private CategoryResponse category;
 
-	private AttributeResponse colors;
+	private List<AttributeResponse> colors;
 
 	private ProductSpecifications specifications;
 

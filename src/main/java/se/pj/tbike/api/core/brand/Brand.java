@@ -38,7 +38,7 @@ public class Brand
 	private String imageUrl;
 
 	@Column( columnDefinition = "TEXT" )
-	private String introduction;
+	private String description;
 
 	//*************** RELATIONSHIPS ******************//
 
@@ -51,10 +51,10 @@ public class Brand
 	public Brand() {
 	}
 
-	public Brand( String name, String imageUrl, String introduction ) {
+	public Brand( String name, String imageUrl, String description ) {
 		this.name = name;
 		this.imageUrl = imageUrl;
-		this.introduction = introduction;
+		this.description = description;
 	}
 
 	//*************** IMPLEMENTS & OVERRIDE METHODS ******************//
@@ -65,7 +65,7 @@ public class Brand
 		if ( !( o instanceof Brand that ) ) return false;
 		if ( !( Objects.equals( getId(), that.getId() ) &&
 				Objects.equals( name, that.name ) &&
-				Objects.equals( introduction, that.introduction ) ) )
+				Objects.equals( description, that.description ) ) )
 			return false;
 		if ( products != null ) {
 			if ( that.products == null ) return false;
@@ -84,7 +84,7 @@ public class Brand
 
 	@Override
 	public int hashCode() {
-		int hashed = hash( getId(), name, introduction );
+		int hashed = hash( getId(), name, description );
 		if ( products == null ) return hashed;
 		int s = products.size();
 		long[] ids = new long[s];

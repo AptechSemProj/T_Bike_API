@@ -19,6 +19,9 @@ import se.pj.tbike.api.core.product.Product;
 import se.pj.tbike.api.core.product.category.data.CategoryRepository;
 import se.pj.tbike.api.core.product.category.data.CategoryService;
 import se.pj.tbike.api.core.product.category.data.CategoryServiceImpl;
+import se.pj.tbike.api.core.product.data.AttributeRepository;
+import se.pj.tbike.api.core.product.data.AttributeService;
+import se.pj.tbike.api.core.product.data.AttributeServiceImpl;
 import se.pj.tbike.api.core.product.data.ProductRepository;
 import se.pj.tbike.api.core.product.data.ProductService;
 import se.pj.tbike.api.core.product.data.ProductServiceImpl;
@@ -62,5 +65,9 @@ public class ServicesRegistry {
 		return new ProductServiceImpl( repository, s );
 	}
 
+	@Bean
+	public AttributeService attributeService( AttributeRepository repository ) {
+		return new AttributeServiceImpl( repository );
+	}
 
 }

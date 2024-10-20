@@ -42,12 +42,12 @@ public class Product
 
 	//** identifier **//
 
-	@Column( length = 20, nullable = false, unique = true )
+	@Column( length = 20 )
 	private String sku;
 
 	//** basic information **//
 
-	@Column( length = 300, nullable = false )
+	@Column( nullable = false )
 	private String name;
 
 	//** specifications **//
@@ -55,84 +55,84 @@ public class Product
 	@Column( length = 20, nullable = false )
 	private String size;
 
-	@Column( columnDefinition = "TEXT", nullable = false )
+	@Column( length = 200, nullable = false )
 	private String frame;
 
-	@Column( columnDefinition = "TEXT", nullable = false )
+	@Column( length = 200, nullable = false )
 	private String saddle;
 
-	@Column( name = "seat_post", columnDefinition = "TEXT", nullable = false )
+	@Column( name = "seat_post", length = 200, nullable = false )
 	private String seatPost;
 
-	@Column( columnDefinition = "TEXT" )
+	@Column( length = 200)
 	private String bell;
 
-	@Column( columnDefinition = "TEXT" )
+	@Column( length = 200)
 	private String fork;
 
-	@Column( columnDefinition = "TEXT" )
+	@Column( length = 200)
 	private String shock;
 
 	//** steering system **//
 
-	@Column( columnDefinition = "TEXT", nullable = false )
+	@Column( length = 200, nullable = false )
 	private String handlebar;
 
 	@Column( name = "handlebar_stem", nullable = false,
-			columnDefinition = "TEXT" )
+			length = 200)
 	private String handlebarStem;
 
 	//** power train system **//
 
-	@Column( columnDefinition = "TEXT", nullable = false )
+	@Column( length = 200, nullable = false )
 	private String pedal;
 
-	@Column( columnDefinition = "TEXT", nullable = false )
+	@Column( length = 200, nullable = false )
 	private String crankset;
 
 	@Column( name = "bottom_bracket", nullable = false,
-			columnDefinition = "TEXT" )
+			length = 200)
 	private String bottomBracket;
 
-	@Column( columnDefinition = "TEXT", nullable = false )
+	@Column( length = 200, nullable = false )
 	private String chain;
 
-	@Column( name = "chain_guard", columnDefinition = "TEXT" )
+	@Column( name = "chain_guard", length = 200)
 	private String chainGuard;
 
-	@Column( columnDefinition = "TEXT", nullable = false )
+	@Column( length = 200, nullable = false )
 	private String cassette;
 
-	@Column( name = "front_derailleur", columnDefinition = "TEXT" )
+	@Column( name = "front_derailleur", length = 200)
 	private String frontDerailleur;
 
-	@Column( name = "rear_derailleur", columnDefinition = "TEXT" )
+	@Column( name = "rear_derailleur", length = 200)
 	private String rearDerailleur;
 
 	//** motion system **//
 
-	@Column( columnDefinition = "TEXT", nullable = false )
+	@Column( length = 200, nullable = false )
 	private String rims;
 
-	@Column( columnDefinition = "TEXT", nullable = false )
+	@Column( length = 200, nullable = false )
 	private String hubs;
 
-	@Column( columnDefinition = "TEXT", nullable = false )
+	@Column( length = 200, nullable = false )
 	private String spokes;
 
-	@Column( columnDefinition = "TEXT", nullable = false )
+	@Column( length = 200, nullable = false )
 	private String tires;
 
-	@Column( columnDefinition = "TEXT", nullable = false )
+	@Column( length = 200, nullable = false )
 	private String valve;
 
 	//** brake system **//
 
-	@Column( columnDefinition = "TEXT", nullable = false )
+	@Column( length = 200, nullable = false )
 	private String brakes;
 
 	@Column( name = "brake_levers", nullable = false,
-			columnDefinition = "TEXT" )
+			length = 200)
 	private String brakeLevers;
 
 	//*************** RELATIONSHIPS ******************//
@@ -334,6 +334,9 @@ public class Product
 
 		@Column( length = 300, nullable = false )
 		private String name;
+
+		@Column( name = "image_url", columnDefinition = "TEXT", nullable = false )
+		private String imageUrl;
 
 		@Column( columnDefinition = "TEXT" )
 		private String description;

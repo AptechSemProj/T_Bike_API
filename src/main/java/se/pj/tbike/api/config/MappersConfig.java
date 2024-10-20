@@ -15,6 +15,7 @@ import se.pj.tbike.api.core.brand.mapper.BrandResMapper;
 import se.pj.tbike.api.core.brand.mapper.BrandResponseMapper;
 
 import se.pj.tbike.api.core.product.Product;
+import se.pj.tbike.api.core.product.Product.Attribute;
 import se.pj.tbike.api.core.product.Product.Category;
 import se.pj.tbike.api.core.product.category.data.CategoryRepository;
 import se.pj.tbike.api.core.product.category.dto.CategoryCreation;
@@ -25,7 +26,11 @@ import se.pj.tbike.api.core.product.category.mapper.CategoryModificationMapper;
 import se.pj.tbike.api.core.product.category.mapper.CategoryReqMapper;
 import se.pj.tbike.api.core.product.category.mapper.CategoryResMapper;
 import se.pj.tbike.api.core.product.category.mapper.CategoryResponseMapper;
+import se.pj.tbike.api.core.product.dto.AttributeResponse;
+import se.pj.tbike.api.core.product.dto.ProductDetail;
 import se.pj.tbike.api.core.product.dto.ProductResponse;
+import se.pj.tbike.api.core.product.mapper.AttributeResponseMapper;
+import se.pj.tbike.api.core.product.mapper.ProductDetailMapper;
 import se.pj.tbike.api.core.product.mapper.ProductResponseMapper;
 
 import se.pj.tbike.api.io.ResponseMapper;
@@ -88,6 +93,20 @@ public class MappersConfig {
 			ResponseMapper<Brand, BrandResponse> brandMapper,
 			ResponseMapper<Category, CategoryResponse> categoryMapper ) {
 		return new ProductResponseMapper( brandMapper, categoryMapper );
+	}
+
+	@Bean
+	public ResponseMapper<Product, ProductDetail> detailResponseMapper(
+			BrandResMapper<BrandResponse> brandMapper,
+			CategoryResMapper<CategoryResponse> categoryResMapper,
+			ResponseMapper<Attribute, AttributeResponse> attributeResMapper
+	) {
+		return new ProductDetailMapper( brandMapper, categoryResMapper, attributeResMapper );
+	}
+
+	@Bean
+	public ResponseMapper<Attribute, AttributeResponse> attributeMapper() {
+		return new AttributeResponseMapper();
 	}
 
 }

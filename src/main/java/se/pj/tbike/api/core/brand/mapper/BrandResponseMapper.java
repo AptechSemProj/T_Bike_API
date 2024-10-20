@@ -9,6 +9,6 @@ public class BrandResponseMapper
 	@Override
 	public BrandResponse map( Brand brand ) {
 		return new BrandResponse( brand.getId(), brand.getName(),
-				brand.getIntroduction(), brand.getImageUrl() );
+				brand.getDescription(), brand.getImageUrl() );
 	}
 }

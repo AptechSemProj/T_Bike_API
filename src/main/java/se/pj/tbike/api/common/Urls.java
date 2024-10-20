@@ -8,6 +8,8 @@ public class Urls {
 	public static final String CATEGORY_API = "/categories";
 	public static final String PRODUCT_API = "/products";
 
+	public static final String PRODUCT_ATTR_API = "/attributes";
+
 	public static final String IMAGE_API = "/images";
 
 	public static final String URL_LIST_1 = "";
@@ -15,7 +17,8 @@ public class Urls {
 
 	public static final String URL_INFO = "/{id}";
 
-	public static final String URL_UPLOAD = "/upload";
+//	public static final String URL_ADD = "/add";
 
+	public static final String URL_UPLOAD = "/upload";
 	public static final String URL_DOWNLOAD = "/download";
 }

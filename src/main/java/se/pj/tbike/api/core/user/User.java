@@ -61,6 +61,9 @@ public class User
 	@Column( name = "avatar_image", columnDefinition = "TEXT" )
 	private String avatarImage;
 
+	@Column( nullable = false )
+	private boolean status;
+
 	//*************** RELATIONSHIPS ******************//
 
 	@OneToMany( mappedBy = "user", fetch = FetchType.LAZY )
@@ -70,7 +73,7 @@ public class User
 	public boolean equals( Object o ) {
 		if ( this == o ) return true;
 		if ( !( o instanceof User that ) ) return false;
-		if ( !( getId() == that.getId() &&
+		if ( !( Objects.equals( getId(), that.getId() ) &&
 				Objects.equals( username, that.username ) &&
 				Objects.equals( password, that.password ) &&
 				Objects.equals( name, that.name ) &&
