@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+@Deprecated
 public interface ResultList<E> {
 
 	<R> ResultList<R> map( Function<E, R> mapper );

@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Function;
 
+@Deprecated
 public class ResultImpl<T>
 		extends ResultListImpl<T>
 		implements Result<T> {
@@ -13,7 +14,7 @@ public class ResultImpl<T>
 
 	private final T data;
 
-	public ResultImpl( T data ) {
+	public ResultImpl(T data) {
 		super( data != null ? List.of( data ) : List.of() );
 		this.data = data;
 	}
@@ -36,9 +37,9 @@ public class ResultImpl<T>
 		return o.get();
 	}
 
-	@SuppressWarnings( "unchecked" )
+	@SuppressWarnings("unchecked")
 	@Override
-	public <R> Result<R> map( Function<T, R> mapper ) {
+	public <R> Result<R> map(Function<T, R> mapper) {
 		if ( mapper == null )
 			throw new NullPointerException( "mapper is null" );
 		if ( data == null )

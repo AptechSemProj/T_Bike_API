@@ -9,6 +9,6 @@ public interface CreationService<T> {
 
 	JpaRepository<T, ?> getRepository();
 
-	T create( T t );
+	T create(T t);
 
 }

@@ -1,11 +1,24 @@
 
 -- Create tables --
 
+CREATE TABLE `attributes` (
+	`id` BIGINT AUTO_INCREMENT,
+    `product_id` BIGINT NOT NULL,
+    `represent` BIT ( 1 ) NOT NULL,
+    `color` VARCHAR ( 50 ) NOT NULL,
+    `image_url` TEXT NOT NULL,
+    `price` BIGINT UNSIGNED DEFAULT 0,
+    `quantity` INT DEFAULT 0,
+
+    PRIMARY KEY ( `id` )
+);
+
 CREATE TABLE `brands` (
 	`id` BIGINT AUTO_INCREMENT,
     `name` VARCHAR ( 400 ) NOT NULL,
-    `description` TEXT,
     `image_url` TEXT NOT NULL,
+    `description` TEXT,
+    `deleted` BIT(1) NOT NULL,
 
     PRIMARY KEY ( `id` )
 );
@@ -13,8 +26,9 @@ CREATE TABLE `brands` (
 CREATE TABLE `categories` (
 	`id` BIGINT AUTO_INCREMENT,
     `name` VARCHAR ( 300 ) NOT NULL,
-    `description` TEXT,
     `image_url` TEXT NOT NULL,
+    `description` TEXT,
+    `deleted` BIT(1) NOT NULL,
 
     PRIMARY KEY ( `id` )
 );
@@ -25,7 +39,13 @@ CREATE TABLE `orders` (
     `total_amount` BIGINT UNSIGNED NOT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `status` ENUM(
-    'cart', 'purchased', 'refunded', 'waiting', 'shipping', 'shipped', 'done'
+        'cart',
+        'purchased',
+        'refunded',
+        'waiting',
+        'shipping',
+        'shipped',
+        'done'
     ) DEFAULT 'cart',
 
     PRIMARY KEY ( `id` )
@@ -82,33 +102,25 @@ CREATE TABLE `products` (
     UNIQUE ( `sku` )
 );
 
-CREATE TABLE `product_attributes` (
-	`id` BIGINT AUTO_INCREMENT,
-    `product_id` BIGINT NOT NULL,
-    `represent` BIT ( 1 ) NOT NULL,
-    `color` VARCHAR ( 50 ) NOT NULL,
-    `image_url` TEXT NOT NULL,
-    `price` BIGINT UNSIGNED DEFAULT 0,
-    `quantity` INT DEFAULT 0,
-
-    PRIMARY KEY ( `id` )
-);
-
 CREATE TABLE `users` (
 	`id` BIGINT AUTO_INCREMENT,
-	`role` INT NOT NULL,
+	`role` ENUM('user', 'admin') DEFAULT 'user',
     `username` VARCHAR ( 100 ) NOT NULL,
     `password` CHAR ( 60 ) NOT NULL,
     `name` VARCHAR ( 100 ) NOT NULL,
     `phone_number` CHAR ( 10 ) NOT NULL,
     `avatar_image` TEXT,
-    `status` BIT( 1 ) NOT NULL,
+    `deleted` BIT(1) NOT NULL,
 
     PRIMARY KEY ( `id` ),
     UNIQUE ( `username` )
 );
 
 -- Add constraints for tables --
+
+ALTER TABLE `attributes`
+ADD CONSTRAINT `FK__attributes_productId__products_id`
+FOREIGN KEY ( `product_id` ) REFERENCES `products` ( `id` );
 
 ALTER TABLE `orders`
 ADD CONSTRAINT `FK__orders_userId__users_id`
@@ -130,14 +142,19 @@ ALTER TABLE `products`
 ADD CONSTRAINT `FK__products_brandId__brands_id`
 FOREIGN KEY ( `brand_id` ) REFERENCES `brands` ( `id` );
 
-ALTER TABLE `product_attributes`
-ADD CONSTRAINT `FK__productAttributes_productId__products_id`
-FOREIGN KEY ( `product_id` ) REFERENCES `products` ( `id` );
-
 -- Create index --
 
-CREATE INDEX `idx_account`
-ON `users` ( `username`, `password` );
+CREATE INDEX `entity_deleted_idx`
+ON `brands` (`deleted`);
+
+CREATE INDEX `entity_deleted_idx`
+ON `categories` (`deleted`);
 
 CREATE INDEX `FK__orderDetails_orderId__orders_id`
 ON `order_details` ( `order_id` );
+
+CREATE INDEX `entity_deleted_idx`
+ON `users` (`deleted`);
+
+CREATE INDEX `idx_account`
+ON `users` ( `username`, `password` );

@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import org.springframework.data.domain.Page;
 
+@Deprecated
 public class ResultPageImpl<T>
 		extends ResultListImpl<T>
 		implements ResultPage<T> {
@@ -17,8 +18,8 @@ public class ResultPageImpl<T>
 	private final int pageNumber, pageSize, totalPages;
 	private final long totalElements;
 
-	public ResultPageImpl( List<T> data, int pageNumber, long totalElements,
-	                       int pageSize, int totalPages ) {
+	public ResultPageImpl(List<T> data, int pageNumber, long totalElements,
+	                      int pageSize, int totalPages) {
 		super( data );
 		this.pageNumber = pageNumber;
 		this.pageSize = pageSize;
@@ -26,20 +27,20 @@ public class ResultPageImpl<T>
 		this.totalElements = totalElements;
 	}
 
-	public ResultPageImpl( List<T> data, int pageNumber, long totalElements,
-	                       int pageSize ) {
+	public ResultPageImpl(List<T> data, int pageNumber, long totalElements,
+	                      int pageSize) {
 		this( data, pageNumber, totalElements, pageSize,
 				calcPages( totalElements, pageSize ) );
 	}
 
-	public ResultPageImpl( Page<T> page ) {
+	public ResultPageImpl(Page<T> page) {
 		this( page.getContent(), page.getNumber(), page.getTotalElements(),
 				page.getSize(), page.getTotalPages() );
 	}
 
-	private static int calcPages( long elements, int size ) {
+	private static int calcPages(long elements, int size) {
 		if ( size > elements ) return 1;
-		int pages = (int) ( elements / size );
+		int pages = (int) (elements / size);
 		return elements % size > 0 ? pages + 1 : pages;
 	}
 
@@ -76,7 +77,7 @@ public class ResultPageImpl<T>
 	}
 
 	@Override
-	public <R> ResultPage<R> map( Function<T, R> mapper ) {
+	public <R> ResultPage<R> map(Function<T, R> mapper) {
 		List<R> list = new ArrayList<>();
 		if ( data != null )
 			for ( T t : data ) list.add( mapper.apply( t ) );

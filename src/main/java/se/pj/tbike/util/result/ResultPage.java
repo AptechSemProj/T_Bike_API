@@ -2,6 +2,7 @@ package se.pj.tbike.util.result;
 
 import java.util.function.Function;
 
+@Deprecated
 public interface ResultPage<T> extends ResultList<T> {
 
 	Integer next();

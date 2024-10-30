@@ -9,8 +9,8 @@ public interface ModificationService<T> {
 
 	JpaRepository<T, ?> getRepository();
 
-	boolean update( T t );
+	boolean update(T t);
 
-	boolean update( T newVal, T oldVal );
+	boolean update(T newVal, T oldVal);
 
 }

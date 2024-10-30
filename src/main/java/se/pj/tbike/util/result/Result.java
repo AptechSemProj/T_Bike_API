@@ -3,6 +3,7 @@ package se.pj.tbike.util.result;
 import java.util.Optional;
 import java.util.function.Function;
 
+@Deprecated
 public interface Result<T> extends ResultList<T> {
 
 	Optional<T> toOptional();

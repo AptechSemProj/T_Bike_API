@@ -10,6 +10,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.Trigger;
 import org.springframework.scheduling.support.PeriodicTrigger;
 
+@Deprecated
 public final class StorageManager {
 
 	private static final String UNREGISTERED_STORAGE =
@@ -18,20 +19,20 @@ public final class StorageManager {
 	private final TaskScheduler taskScheduler;
 	private final Map<String, Cleaner> storages;
 
-	public StorageManager( TaskScheduler scheduler ) {
+	public StorageManager(TaskScheduler scheduler) {
 		storages = new LinkedHashMap<>();
 		taskScheduler = scheduler;
 	}
 
-	public void register( String key, Storage<?, ?> storage,
-	                      Trigger trigger ) {
+	public void register(String key, Storage<?, ?> storage,
+	                     Trigger trigger) {
 		Supplier<ScheduledFuture<?>> task =
 				() -> taskScheduler.schedule( storage::clean, trigger );
 		storages.putIfAbsent( key, new Cleaner( storage, task ) );
 	}
 
-	public void register( String key, Storage<?, ?> storage,
-	                      boolean cleanable ) {
+	public void register(String key, Storage<?, ?> storage,
+	                     boolean cleanable) {
 		if ( !cleanable ) storages.putIfAbsent( key, new Cleaner( storage ) );
 		else {
 			PeriodicTrigger trigger =
@@ -41,12 +42,12 @@ public final class StorageManager {
 		}
 	}
 
-	public void register( String key, Storage<?, ?> storage ) {
+	public void register(String key, Storage<?, ?> storage) {
 		register( key, storage, true );
 	}
 
-	@SuppressWarnings( "unchecked" )
-	public <K extends Comparable<K>, V> Storage<K, V> use( String key ) {
+	@SuppressWarnings("unchecked")
+	public <K extends Comparable<K>, V> Storage<K, V> use(String key) {
 		Cleaner c = storages.get( key );
 		if ( c == null )
 			throw new RuntimeException(
@@ -55,7 +56,7 @@ public final class StorageManager {
 		return (Storage<K, V>) c.storage;
 	}
 
-	public void remove( String key ) {
+	public void remove(String key) {
 		Cleaner c = storages.remove( key );
 		if ( c == null )
 			throw new RuntimeException(
@@ -64,9 +65,9 @@ public final class StorageManager {
 	}
 
 	@Override
-	public boolean equals( Object o ) {
+	public boolean equals(Object o) {
 		if ( this == o ) return true;
-		if ( !( o instanceof StorageManager that ) ) return false;
+		if ( !(o instanceof StorageManager that) ) return false;
 		return Objects.equals( taskScheduler, that.taskScheduler ) &&
 				Objects.equals( storages, that.storages );
 	}
@@ -88,13 +89,13 @@ public final class StorageManager {
 		private ScheduledFuture<?> future;
 		private boolean started;
 
-		public Cleaner( Storage<?, ?> storage ) {
+		public Cleaner(Storage<?, ?> storage) {
 			this.storage = storage;
 			this.task = null;
 		}
 
-		public Cleaner( Storage<?, ?> storage,
-		                Supplier<ScheduledFuture<?>> task ) {
+		public Cleaner(Storage<?, ?> storage,
+		               Supplier<ScheduledFuture<?>> task) {
 			this.storage = storage;
 			this.task = task;
 		}

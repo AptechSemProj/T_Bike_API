@@ -6,17 +6,18 @@ package se.pj.tbike.util.cache;
  * @param <V> type of value
  */
 // package-private
+@Deprecated
 class Placeholder<V> extends ValueHolder<V> {
 	Placeholder() {
 		super( null );
 	}
 
-	boolean isNew( V v ) {
+	boolean isNew(V v) {
 		return v != null;
 	}
 
 	@Override
-	ValueHolder<V> replace( V v ) {
+	ValueHolder<V> replace(V v) {
 		if ( isNew( v ) )
 			return new ValueHolder<>( v );
 		return this;

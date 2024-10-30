@@ -14,6 +14,7 @@ import java.time.Duration;
 
 import lombok.Getter;
 
+@Deprecated
 public class Storage<K extends Comparable<K>, V> {
 
 	private final Map<K, ValueHolder<V>> cached;
@@ -23,7 +24,7 @@ public class Storage<K extends Comparable<K>, V> {
 	@Getter
 	private int realSize;
 
-	public Storage( Function<V, K> keyMapper, Duration maxStorageTime ) {
+	public Storage(Function<V, K> keyMapper, Duration maxStorageTime) {
 		this.cached = new TreeMap<>();
 		this.keyMapper = Objects.requireNonNull(
 				keyMapper, "keyMapper is null" );
@@ -35,7 +36,7 @@ public class Storage<K extends Comparable<K>, V> {
 		return cached.size();
 	}
 
-	public void cache( K key, V value ) {
+	public void cache(K key, V value) {
 		if ( key == null )
 			throw new NullPointerException( "key is null" );
 		ValueHolder<V> p = cached.get( key );
@@ -59,11 +60,11 @@ public class Storage<K extends Comparable<K>, V> {
 		}
 	}
 
-	public void cache( V value ) {
+	public void cache(V value) {
 		cache( keyMapper.apply( value ), value );
 	}
 
-	public Optional<V> get( K key ) {
+	public Optional<V> get(K key) {
 		ValueHolder<V> p = cached.get( key );
 		if ( p == null ) {
 			cached.put( key, new Placeholder<>() );
@@ -77,7 +78,7 @@ public class Storage<K extends Comparable<K>, V> {
 	 * @param end   exclude
 	 * @return list of value.
 	 */
-	public List<V> valuesBetween( int start, int end ) {
+	public List<V> valuesBetween(int start, int end) {
 		if ( start < 0 )
 			throw new IndexOutOfBoundsException( "start less than 0" );
 		if ( end < start )
@@ -91,7 +92,7 @@ public class Storage<K extends Comparable<K>, V> {
 			int idx = start;
 			for ( int i = 0; i < capacity; idx++ ) {
 				value = values.get( idx );
-				if ( !( value instanceof Placeholder<V> ) ) {
+				if ( !(value instanceof Placeholder<V>) ) {
 					list.add( value.get() );
 					i++;
 				}
@@ -101,7 +102,7 @@ public class Storage<K extends Comparable<K>, V> {
 		return List.of();
 	}
 
-	public List<V> valuesFrom( int start ) {
+	public List<V> valuesFrom(int start) {
 		return valuesBetween( start, size() );
 	}
 
@@ -109,17 +110,17 @@ public class Storage<K extends Comparable<K>, V> {
 		return valuesBetween( 0, size() );
 	}
 
-	public boolean isCaching( K key ) {
+	public boolean isCaching(K key) {
 		return cached.containsKey( key );
 	}
 
-	public void remove( K k ) {
+	public void remove(K k) {
 		if ( isCaching( k ) )
 			realSize--;
 		cached.remove( k );
 	}
 
-	public void remove( V v ) {
+	public void remove(V v) {
 		remove( keyMapper.apply( v ) );
 	}
 
@@ -127,16 +128,18 @@ public class Storage<K extends Comparable<K>, V> {
 		AtomicInteger count = new AtomicInteger( 0 );
 		cached.entrySet().removeIf( e -> {
 			boolean isExpired = e.getValue().isExpired( maxStorageTime );
-			if ( isExpired ) count.incrementAndGet();
+			if ( isExpired ) {
+				count.incrementAndGet();
+			}
 			return isExpired;
 		} );
 		realSize -= count.get();
 	}
 
 	@Override
-	public boolean equals( Object o ) {
+	public boolean equals(Object o) {
 		if ( this == o ) return true;
-		if ( !( o instanceof Storage<?, ?> storage ) ) return false;
+		if ( !(o instanceof Storage<?, ?> storage) ) return false;
 		return Objects.equals( cached, storage.cached ) &&
 				Objects.equals( keyMapper, storage.keyMapper );
 	}

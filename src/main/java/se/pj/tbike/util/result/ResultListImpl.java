@@ -9,17 +9,18 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Deprecated
 public class ResultListImpl<T>
 		implements ResultList<T> {
 
 	protected final List<T> data;
 
-	public ResultListImpl( List<T> data ) {
+	public ResultListImpl(List<T> data) {
 		this.data = data;
 	}
 
 	@Override
-	public <R> ResultList<R> map( Function<T, R> mapper ) {
+	public <R> ResultList<R> map(Function<T, R> mapper) {
 		List<R> list = new ArrayList<>();
 		if ( data != null )
 			for ( T e : data ) list.add( mapper.apply( e ) );
@@ -42,7 +43,7 @@ public class ResultListImpl<T>
 	}
 
 	@Override
-	public <K> Map<K, T> toMap( Function<T, K> keyProvider ) {
+	public <K> Map<K, T> toMap(Function<T, K> keyProvider) {
 		return stream().collect( Collectors
 				.toMap( keyProvider, Function.identity() ) );
 	}
