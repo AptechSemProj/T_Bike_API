@@ -1,7 +1,5 @@
 package se.pj.tbike.validation.error;
 
-import se.pj.tbike.validation.Error;
-
 public class UnexpectedError extends Error {
 
 	public static final int CODE = 1005;

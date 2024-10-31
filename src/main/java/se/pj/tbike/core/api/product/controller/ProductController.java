@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
-import se.pj.tbike.api.util.ResponseConfiguration;
-import se.pj.tbike.api.util.StdResponse;
+import se.pj.tbike.api.util.Response.Configuration;
+import se.pj.tbike.api.util.SimpleResponse;
 import se.pj.tbike.core.api.brand.data.BrandService;
 import se.pj.tbike.core.api.brand.entity.Brand;
 import se.pj.tbike.core.api.product.conf.ProductApiUrls;
@@ -119,7 +119,7 @@ public class ProductController
 
 	@GetMapping({ "/test" })
 	public se.pj.tbike.api.util.Response<Object> test() {
-		return new StdResponse<>( new ResponseConfiguration() )
+		return new SimpleResponse<>( new Configuration() )
 				.setData( "Hello World" );
 	}
 

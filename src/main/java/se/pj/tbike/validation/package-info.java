@@ -6,10 +6,10 @@ package se.pj.tbike.validation;
 	define
 	{
 		Requirement = se.pj.tbike.validation.Requirement
-		Requirement.nonNull = func(): Requirement
+		Requirement.notNull = func(): Requirement
 		Requirement.min = func(byte | short | int | long | float | double): Requirement
 		Requirement.notBlank = func(?int): Requirement
-		Requirement.in = func(
+		Requirement.size = func(
 			byte, byte |
 			short, short |
 			int, int |
@@ -22,12 +22,12 @@ package se.pj.tbike.validation;
 		Validators.requireNotNull = func(Validators.KeyValue...): Validators
 		Validators.validate = func(Object, Requirement...): Validators
 		RequestHandler.validateParam = func(Object, Requirement...): RequestHandler
-		RequestHandler.validateBody = func(BiConsumer<RequestObject, Validators>): RequestHandler
-		RequestHandler.handle = func(RequestObject): RequestHandler
+		RequestHandler.validateBody = func(BiConsumer<Request, Validators>): RequestHandler
+		RequestHandler.handle = func(Request): RequestHandler
 	}
 
 	params = { path: { id }, query: { name } }
-	var request = new RequestObject() {
+	var request = new Request() {
 		id: ,
 		name: ,
 		age: ,

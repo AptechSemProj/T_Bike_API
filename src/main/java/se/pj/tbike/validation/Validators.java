@@ -9,7 +9,8 @@ public class Validators {
 	private Map<String, KeyValue> bindings;
 
 	public KeyValue bind(String key, Object value) {
-		return bindings.computeIfAbsent( key, k -> new KeyValue( value ) );
+//		return bindings.computeIfAbsent( key, k -> new KeyValue( value ) );
+		return null;
 	}
 
 	public Validators requireNotNull(KeyValue... pairs) {

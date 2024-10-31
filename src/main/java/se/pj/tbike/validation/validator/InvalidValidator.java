@@ -2,7 +2,6 @@ package se.pj.tbike.validation.validator;
 
 import se.pj.tbike.reflect.GenericType;
 import se.pj.tbike.validation.ValidationResult;
-import se.pj.tbike.validation.Validator;
 import se.pj.tbike.validation.error.InvalidError;
 
 import java.util.Objects;

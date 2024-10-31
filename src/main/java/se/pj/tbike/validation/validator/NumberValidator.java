@@ -6,7 +6,6 @@ import org.springframework.util.NumberUtils;
 import se.pj.tbike.reflect.GenericType;
 import se.pj.tbike.validation.Errors;
 import se.pj.tbike.validation.ValidationResult;
-import se.pj.tbike.validation.Validator;
 import se.pj.tbike.validation.error.MaxError;
 import se.pj.tbike.validation.error.MinError;
 import se.pj.tbike.validation.error.NanError;

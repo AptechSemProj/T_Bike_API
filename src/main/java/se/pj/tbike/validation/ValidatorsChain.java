@@ -1,5 +1,7 @@
 package se.pj.tbike.validation;
 
+import se.pj.tbike.validation.validator.Validator;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 

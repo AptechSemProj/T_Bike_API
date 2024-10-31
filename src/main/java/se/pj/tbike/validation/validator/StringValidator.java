@@ -1,4 +1,11 @@
 package se.pj.tbike.validation.validator;
 
-public class StringValidator {
+import se.pj.tbike.validation.ValidationResult;
+
+public class StringValidator
+		implements Validator {
+	@Override
+	public ValidationResult validate(Object value) {
+		return null;
+	}
 }

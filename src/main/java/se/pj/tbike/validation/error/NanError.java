@@ -1,7 +1,5 @@
 package se.pj.tbike.validation.error;
 
-import se.pj.tbike.validation.Error;
-
 /**
  * The value is not a number.
  */

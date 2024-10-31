@@ -7,7 +7,8 @@ import se.pj.tbike.io.ResponseType;
 
 @AllArgsConstructor
 @Getter
-public class AttributeResponse implements ResponseType {
+public class AttributeResponse
+		implements ResponseType {
 
 	private long id;
 

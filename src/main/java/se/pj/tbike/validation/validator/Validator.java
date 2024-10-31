@@ -1,6 +1,7 @@
-package se.pj.tbike.validation;
+package se.pj.tbike.validation.validator;
 
 import lombok.Getter;
+import se.pj.tbike.validation.ValidationResult;
 
 public interface Validator {
 

@@ -1,6 +1,7 @@
 package se.pj.tbike.validation;
 
 import se.pj.tbike.validation.error.EmptyError;
+import se.pj.tbike.validation.error.Error;
 import se.pj.tbike.validation.error.ExistedError;
 import se.pj.tbike.validation.error.MaxError;
 import se.pj.tbike.validation.error.MinError;

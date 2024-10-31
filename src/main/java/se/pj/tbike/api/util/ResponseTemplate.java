@@ -13,8 +13,7 @@ public abstract class ResponseTemplate
 	private final Map<String, Replaceable> template;
 	private final String bodyKey;
 
-	private static final
-	Collector<Replaceable, ?, Map<String, Object>> MAP_COLLECTOR =
+	private final Collector<Replaceable, ?, Map<String, Object>> collector =
 			Collectors.toMap( Replaceable::name, Replaceable::value );
 
 	protected ResponseTemplate() {
@@ -53,7 +52,7 @@ public abstract class ResponseTemplate
 		return template.values()
 				.parallelStream()
 				.filter( Replaceable::isValid )
-				.collect( MAP_COLLECTOR );
+				.collect( collector );
 	}
 
 	public static final class Replaceable {

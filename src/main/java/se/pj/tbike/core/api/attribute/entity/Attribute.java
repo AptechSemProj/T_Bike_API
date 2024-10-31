@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import se.pj.tbike.api.util.Handleable;
 import se.pj.tbike.core.common.IdentifiedEntity;
 import se.pj.tbike.core.api.product.entity.Product;
 import se.pj.tbike.caching.Cacheable;
@@ -23,7 +24,7 @@ import java.util.Objects;
 )
 public class Attribute
 		extends IdentifiedEntity<Attribute>
-		implements Cacheable {
+		implements Cacheable, Handleable {
 
 	//*************** BASIC ******************//
 

@@ -32,7 +32,6 @@ public class AttributeMapper {
 
 		public static final AttributeResponseMapper RESPONSE_MAPPER =
 				new AttributeResponseMapper();
-		;
 
 	}
 }

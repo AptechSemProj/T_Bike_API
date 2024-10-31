@@ -2,7 +2,7 @@ package se.pj.tbike.core.util;
 
 import se.pj.tbike.io.Response;
 import se.pj.tbike.io.ResponseType;
-import se.pj.tbike.validation.Error;
+import se.pj.tbike.validation.error.Error;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

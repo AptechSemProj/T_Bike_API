@@ -1,7 +1,5 @@
 package se.pj.tbike.validation.error;
 
-import se.pj.tbike.validation.Error;
-
 @Deprecated
 public class InvalidError extends Error {
 

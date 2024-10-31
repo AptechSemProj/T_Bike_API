@@ -30,12 +30,9 @@ public class CategoryMapper {
 
 	private static final class Mappers {
 
-		private static final CategoryRequestMapper CREATION_MAPPER;
-		private static final CategoryResponseMapper RESPONSE_MAPPER;
-
-		static {
-			CREATION_MAPPER = new CategoryRequestMapper();
-			RESPONSE_MAPPER = new CategoryResponseMapper();
-		}
+		private static final CategoryRequestMapper CREATION_MAPPER =
+				new CategoryRequestMapper();
+		private static final CategoryResponseMapper RESPONSE_MAPPER =
+				new CategoryResponseMapper();
 	}
 }

@@ -2,7 +2,6 @@ package se.pj.tbike.validation.validator;
 
 import se.pj.tbike.validation.Errors;
 import se.pj.tbike.validation.ValidationResult;
-import se.pj.tbike.validation.Validator;
 import se.pj.tbike.validation.error.ExistedError;
 import se.pj.tbike.validation.error.NotExistError;
 import se.pj.tbike.validation.error.UnknownError;

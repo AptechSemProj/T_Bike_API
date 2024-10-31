@@ -1,7 +1,5 @@
 package se.pj.tbike.validation.error;
 
-import se.pj.tbike.validation.Error;
-
 /**
  * Check value is less than min.
  */

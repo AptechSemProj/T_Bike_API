@@ -11,10 +11,8 @@ import se.pj.tbike.util.Output;
 
 import se.pj.tbike.validation.ValidatorsChain;
 import se.pj.tbike.validation.validator.IntegerValidator;
-import se.pj.tbike.validation.validator.InvalidValidator;
 import se.pj.tbike.validation.validator.NumberValidator;
 import se.pj.tbike.validation.ValidationResult;
-import se.pj.tbike.validation.validator.MinValidator;
 
 public interface PageableController {
 

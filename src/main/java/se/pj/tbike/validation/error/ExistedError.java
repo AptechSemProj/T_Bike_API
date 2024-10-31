@@ -1,7 +1,5 @@
 package se.pj.tbike.validation.error;
 
-import se.pj.tbike.validation.Error;
-
 public class ExistedError extends Error {
 
 	public static final int CODE = 1006;

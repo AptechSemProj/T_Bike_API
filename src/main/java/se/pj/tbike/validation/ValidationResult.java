@@ -1,6 +1,7 @@
 package se.pj.tbike.validation;
 
 import lombok.Getter;
+import se.pj.tbike.validation.error.Error;
 
 import java.util.Objects;
 
@@ -62,10 +63,19 @@ public final class ValidationResult {
 
 	@Override
 	public String toString() {
+		Class<?> valueType = value != null
+				? value.getClass()
+				: Void.class;
+		String strValue = "value = %s(%s)"
+				.formatted( valueType.getSimpleName(), value );
 		if ( isOk() ) {
-			return "[ Successful ] ~ [ value = " + value + " ]";
+			String tmpl = "[ Successful ] ~ [ %s ]";
+			return tmpl.formatted( strValue );
 		} else {
-			return "[ Failed ] ~ [ error = " + error + " ]";
+			String tmpl = "[ Failed ] ~ [ error = %s(%s), %s ]";
+			Class<?> errorType = error.getClass();
+			return tmpl.formatted(
+					errorType.getSimpleName(), error, strValue );
 		}
 	}
 }

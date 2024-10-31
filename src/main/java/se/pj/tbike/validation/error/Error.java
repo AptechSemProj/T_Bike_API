@@ -1,4 +1,4 @@
-package se.pj.tbike.validation;
+package se.pj.tbike.validation.error;
 
 import java.util.Objects;
 
