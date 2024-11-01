@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import se.pj.tbike.core.api.brand.data.BrandService;
 import se.pj.tbike.core.api.brand.entity.Brand;
 import se.pj.tbike.core.api.product.conf.ProductApiUrls;
 import se.pj.tbike.core.api.product.conf.ProductMapper;
+import se.pj.tbike.core.api.product.dto.ProductListRequest;
 import se.pj.tbike.core.api.product.dto.ProductRequest;
 import se.pj.tbike.core.api.product.entity.Product;
 import se.pj.tbike.core.api.product.data.ProductService;
@@ -30,12 +30,12 @@ import se.pj.tbike.io.Arr;
 import se.pj.tbike.io.Response;
 import se.pj.tbike.io.Val;
 import se.pj.tbike.util.Output;
+import se.pj.tbike.util.Output.Pagination;
 import se.pj.tbike.util.Output.Value;
 import se.pj.tbike.validation.ValidatorsChain;
 import se.pj.tbike.core.util.PageableController;
 import se.pj.tbike.core.util.SimpleController;
 import se.pj.tbike.validation.validator.LongValidator;
-import se.pj.tbike.validation.error.NotExistError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,12 +55,17 @@ public class ProductController
 	private final AttributeMapper attributeMapper;
 	private final ResponseMapping responseMapping;
 
-	@GetMapping({ Urls.URL_LIST_1, Urls.URL_LIST_2 })
+	@PostMapping({ "/list", "/search" })
 	public Response<Arr<ProductResponse>>
-	getList(@RequestParam(defaultValue = "0") String page,
-	        @RequestParam(defaultValue = "10") String size) {
+	getList(@RequestBody ProductListRequest req) {
+		int page = req.getPage( 0 );
+		int size = req.getSize( 10 );
 		return paginated( page, size, (p, s) -> {
-			Output.Pagination<Product> o = service.findPage( p, s );
+			Pagination<Product> o = service.search(
+					p, s, req.getName(), new Long[] {
+							req.getMinPrice(), req.getMaxPrice()
+					}, req.getBrandId(), req.getCategoryId()
+			);
 			return o.map( productMapper::map );
 		} );
 	}
@@ -78,46 +83,24 @@ public class ProductController
 	public Response<Val<Object>>
 	create(@RequestBody @Valid ProductRequest req) {
 		return post( req, (r) -> {
-			brandService.existsByKey( r.getBrandId() );
-
-//			Output.Value<Brand> brand = brandService
-//					.findByKey( r.getBrandId() );
-//			if ( brand.isNull() ) {
-//				return responseMapping.getResponse(
-//						NotExistError.builder().build()
-//				);
-//			}
-//			Output.Value<Category> category = categoryService
-//					.findByKey( r.getCategoryId() );
-//			if ( category.isNull() ) {
-//				return responseMapping.getResponse(
-//						NotExistError.builder().build()
-//				);
-//			}
+//            brandService.existsByKey( r.getBrandId() );
 
 			Product p = productMapper.map( r );
-
 			Brand b = new Brand();
 			b.setId( r.getBrandId() );
-
+			p.setBrand( b );
 			Category c = new Category();
 			c.setId( r.getCategoryId() );
-
-			p.setBrand( b );
 			p.setCategory( c );
-
 			List<Attribute> attrs = new ArrayList<>();
 			p.setAttributes( attrs );
 			Product created = service.create( p );
-
 			r.getColors().forEach( attr -> {
 				Attribute attribute = attributeMapper.map( attr );
 				attribute.setProduct( created );
 				attrs.add( attribute );
 			} );
-
 			attrs.forEach( attributeService::create );
-
 			return created.getId();
 		} );
 	}

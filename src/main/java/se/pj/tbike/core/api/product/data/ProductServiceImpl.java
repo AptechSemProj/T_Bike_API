@@ -1,15 +1,17 @@
 package se.pj.tbike.core.api.product.data;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import se.pj.tbike.core.api.product.entity.Product;
 import se.pj.tbike.core.api.attribute.data.AttributeRepository;
 import se.pj.tbike.core.util.SimpleCacheableService;
 import se.pj.tbike.caching.CacheController;
 import se.pj.tbike.caching.CacheManager;
-
-import java.util.List;
+import se.pj.tbike.util.Output.Pagination;
 
 import java.time.Duration;
+import java.util.List;
 
 public class ProductServiceImpl
 		extends SimpleCacheableService<Product, Long>
@@ -44,8 +46,27 @@ public class ProductServiceImpl
 		List<Product> products = repository.findAllByBrandId( brandId );
 		products.forEach( p -> {
 			attributeRepository.deleteAllByProductId( p.getId() );
-
 		} );
-//		attributeRepository.deleteAllByProductId(  );
+	}
+
+	@Override
+	public Pagination<Product> search(int page, int size,
+	                                  String name, Long[] prices,
+	                                  Long brand, Long category) {
+		Long min = null, max = null;
+		if ( prices != null ) {
+			if ( prices.length > 0 ) {
+				min = prices[0];
+			}
+			if ( prices.length > 1 ) {
+				max = prices[1];
+			}
+		}
+		PageRequest request = PageRequest.of( page, size );
+		Page<Product> paged =
+				repository.search( name, brand, category, min, max, request );
+		return Pagination.of( paged.toSet(),
+				paged.getNumber(), paged.getSize(),
+				paged.getTotalElements(), paged.getTotalPages() );
 	}
 }

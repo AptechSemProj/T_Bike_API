@@ -1,18 +1,16 @@
 package se.pj.tbike.core.util;
 
-import java.util.function.BiFunction;
-
 import se.pj.tbike.io.Arr;
 import se.pj.tbike.io.Pagination;
 import se.pj.tbike.io.Response;
 import se.pj.tbike.io.ResponseType;
-
 import se.pj.tbike.util.Output;
-
 import se.pj.tbike.validation.ValidatorsChain;
 import se.pj.tbike.validation.validator.IntegerValidator;
-import se.pj.tbike.validation.validator.NumberValidator;
 import se.pj.tbike.validation.ValidationResult;
+import se.pj.tbike.validation.validator.NumberValidator;
+
+import java.util.function.BiFunction;
 
 public interface PageableController {
 
@@ -20,7 +18,7 @@ public interface PageableController {
 		return 0;
 	}
 
-	default ValidationResult validatePageNumber(String pageNumber) {
+	default ValidationResult validatePageNumber(Object pageNumber) {
 		NumberValidator<Integer> numberValidator =
 				new IntegerValidator().acceptMinValue( getBasedPageNumber() );
 
@@ -31,17 +29,17 @@ public interface PageableController {
 		return chain.handle( pageNumber );
 	}
 
-	default ValidationResult validatePageSize(String pageSize) {
+	default ValidationResult validatePageSize(Object pageSize) {
 		ValidatorsChain chain = ValidatorsChain
 				.createChain()
-				.addValidator( new IntegerValidator().acceptMinValue( 1 ) );
+				.addValidator( new IntegerValidator().acceptOnlyPositive() );
 
 		return chain.handle( pageSize );
 	}
 
 	default <T extends ResponseType>
 	Response<Arr<T>> paginated(
-			String pageNumber, String pageSize,
+			Object pageNumber, Object pageSize,
 			BiFunction<Integer, Integer, Output.Array<T>> handler) {
 		if ( handler == null ) {
 			throw new NullPointerException( "handler is null" );

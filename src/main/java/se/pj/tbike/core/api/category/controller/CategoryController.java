@@ -41,7 +41,7 @@ public class CategoryController
 	private final ResponseMapping responseMapping;
 
 	@Override
-	public ValidationResult validatePageSize(String pageSize) {
+	public ValidationResult validatePageSize(Object pageSize) {
 		ValidatorsChain chain = ValidatorsChain
 				.createChain()
 				.addValidator( new IntegerValidator().acceptMinValue( 0 ) );
