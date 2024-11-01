@@ -56,20 +56,16 @@ public final class Requirement {
 //	}
 
 	public static Requirement min(int minValue) {
-		var validator = new IntegerValidator().setMin( minValue );
+		var validator = new IntegerValidator()
+				.acceptMinValue( minValue );
 		return new Requirement( validator::validate );
 	}
 
 	public static Requirement min(long minValue) {
-		var minValidator = new MinValidator<>( new LongValidator() ) {
-			@Override
-			protected boolean isLessThanMin(Long current) {
-				return current < minValue;
-			}
-		};
-		return new Requirement( minValidator::validate );
+		var validator = new LongValidator()
+				.acceptMinValue( minValue );
+		return new Requirement( validator::validate );
 	}
-
 
 	//package-private
 	ValidationResult validate(Object v) {

@@ -4,14 +4,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import se.pj.tbike.core.util.ResponseMapping;
 import se.pj.tbike.io.Response;
-import se.pj.tbike.validation.error.ExistedError;
-import se.pj.tbike.validation.error.InvalidError;
-import se.pj.tbike.validation.error.MaxError;
-import se.pj.tbike.validation.error.MinError;
-import se.pj.tbike.validation.error.NanError;
+import se.pj.tbike.validation.error.AlreadyExistsError;
+import se.pj.tbike.validation.error.MaximumOverflowError;
+import se.pj.tbike.validation.error.MinimumOverflowError;
 import se.pj.tbike.validation.error.NotExistError;
-import se.pj.tbike.validation.error.NullError;
-import se.pj.tbike.validation.error.UnexpectedError;
+import se.pj.tbike.validation.error.NumberFormatError;
+import se.pj.tbike.validation.error.NullValueError;
+import se.pj.tbike.validation.error.UnexpectedValueError;
 
 @Configuration
 public class ResponseMappingConf {
@@ -19,14 +18,13 @@ public class ResponseMappingConf {
 	@Bean
 	public ResponseMapping responseErrorMapping() {
 		ResponseMapping map = new ResponseMapping();
-		map.addMapping( ExistedError.builder(), Response::badRequest );
-		map.addMapping( InvalidError.builder(), Response::badRequest );
-		map.addMapping( MaxError.builder(), Response::badRequest );
-		map.addMapping( MinError.builder(), Response::badRequest );
+		map.addMapping( AlreadyExistsError.builder(), Response::badRequest );
+		map.addMapping( MaximumOverflowError.builder(), Response::badRequest );
+		map.addMapping( MinimumOverflowError.builder(), Response::badRequest );
 		map.addMapping( NotExistError.builder(), Response::notFound );
-		map.addMapping( NullError.builder(), Response::badRequest );
-		map.addMapping( NanError.builder(), Response::badRequest );
-		map.addMapping( UnexpectedError.builder(), Response::badRequest );
+		map.addMapping( NullValueError.builder(), Response::badRequest );
+		map.addMapping( NumberFormatError.builder(), Response::badRequest );
+		map.addMapping( UnexpectedValueError.builder(), Response::badRequest );
 		return map;
 	}
 }

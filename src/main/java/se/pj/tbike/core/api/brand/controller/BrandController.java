@@ -44,7 +44,7 @@ public class BrandController
 	public ValidationResult validatePageSize(String pageSize) {
 		ValidatorsChain chain = ValidatorsChain
 				.createChain()
-				.addValidator( new IntegerValidator().setMin( 0 ) );
+				.addValidator( new IntegerValidator().acceptMinValue( 0 ) );
 		return chain.handle( pageSize );
 	}
 
@@ -106,7 +106,7 @@ public class BrandController
 	@Override
 	public ValidatorsChain validateKey() {
 		return ValidatorsChain.createChain()
-				.addValidator( new LongValidator().setMin( 1L ) );
+				.addValidator( new LongValidator().acceptMinValue( 1L ) );
 	}
 
 	@Override

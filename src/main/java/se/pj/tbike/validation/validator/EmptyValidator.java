@@ -66,9 +66,4 @@ public class EmptyValidator
 		}
 		return ValidationResult.failure( emptyError );
 	}
-
-	@Override
-	public void applyConf(Configuration conf) {
-
-	}
 }

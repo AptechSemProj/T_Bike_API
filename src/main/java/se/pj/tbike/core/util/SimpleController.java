@@ -13,7 +13,7 @@ import se.pj.tbike.util.Output;
 
 import se.pj.tbike.validation.ValidatorsChain;
 import se.pj.tbike.validation.ValidationResult;
-import se.pj.tbike.validation.validator.NotExistValidator;
+import se.pj.tbike.validation.validator.ExistenceValidator;
 
 public interface SimpleController<K> {
 
@@ -112,13 +112,9 @@ public interface SimpleController<K> {
 	private ValidatorsChain requiredValidator() {
 		return ValidatorsChain
 				.createChain()
-				.addValidator( new NotExistValidator() {
-					@SuppressWarnings("unchecked")
-					@Override
-					protected boolean isExisted(Object value) {
-						return isExists( (K) value );
-					}
-				} );
+				.addValidator( new ExistenceValidator<K>()
+						.setTester( this::isExists )
+						.acceptAlreadyExists() );
 	}
 
 	private void checkHandler(Object handler) {

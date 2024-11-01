@@ -1,9 +1,11 @@
 package se.pj.tbike.core.api.product.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +36,6 @@ import se.pj.tbike.util.Output;
 import se.pj.tbike.validation.ValidatorsChain;
 import se.pj.tbike.core.util.PageableController;
 import se.pj.tbike.core.util.SimpleController;
-import se.pj.tbike.validation.validator.InvalidValidator;
 import se.pj.tbike.validation.validator.LongValidator;
 import se.pj.tbike.validation.error.NotExistError;
 
@@ -78,7 +79,7 @@ public class ProductController
 
 	@PostMapping({ Urls.URL_LIST_1, Urls.URL_LIST_2 })
 	public Response<Val<Object>>
-	create(@ModelAttribute ProductCreation req) {
+	create(@RequestBody @Valid ProductCreation req) {
 		return post( req, (r) -> {
 			Output.Value<Brand> brand = brandService
 					.findByKey( r.getBrandId() );
@@ -117,12 +118,6 @@ public class ProductController
 		} );
 	}
 
-	@GetMapping({ "/test" })
-	public se.pj.tbike.api.util.Response<Object> test() {
-		return new SimpleResponse<>( new Configuration() )
-				.setData( "Hello World" );
-	}
-
 	@Override
 	public ResponseMapping getResponseMapping() {
 		return responseMapping;
@@ -131,13 +126,7 @@ public class ProductController
 	@Override
 	public ValidatorsChain validateKey() {
 		return ValidatorsChain.createChain()
-				.addValidator( new LongValidator() )
-				.addValidator( new InvalidValidator<Long>() {
-					@Override
-					protected boolean isValid(Long value) {
-						return value > 0;
-					}
-				} );
+				.addValidator( new LongValidator().acceptOnlyPositive() );
 	}
 
 	@Override

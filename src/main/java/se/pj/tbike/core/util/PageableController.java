@@ -22,7 +22,7 @@ public interface PageableController {
 
 	default ValidationResult validatePageNumber(String pageNumber) {
 		NumberValidator<Integer> numberValidator =
-				new IntegerValidator().setMin( getBasedPageNumber() );
+				new IntegerValidator().acceptMinValue( getBasedPageNumber() );
 
 		ValidatorsChain chain = ValidatorsChain
 				.createChain()
@@ -34,7 +34,7 @@ public interface PageableController {
 	default ValidationResult validatePageSize(String pageSize) {
 		ValidatorsChain chain = ValidatorsChain
 				.createChain()
-				.addValidator( new IntegerValidator().setMin( 1 ) );
+				.addValidator( new IntegerValidator().acceptMinValue( 1 ) );
 
 		return chain.handle( pageSize );
 	}

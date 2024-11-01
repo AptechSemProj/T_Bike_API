@@ -2,19 +2,19 @@ package se.pj.tbike.validation.validator;
 
 import se.pj.tbike.validation.Errors;
 import se.pj.tbike.validation.ValidationResult;
-import se.pj.tbike.validation.error.NullError;
+import se.pj.tbike.validation.error.NullValueError;
 
 import java.util.Objects;
 
 public class NotNullValidator
 		implements Validator {
 
-	private final NullError nullError = Errors.get( NullError.class );
+	private final NullValueError nullValueError = Errors.get( NullValueError.class );
 
 	@Override
 	public final ValidationResult validate(Object value) {
 		if ( value == null ) {
-			return ValidationResult.failure( nullError );
+			return ValidationResult.failure( nullValueError );
 		}
 		return ValidationResult.success( value );
 	}
@@ -27,11 +27,11 @@ public class NotNullValidator
 		if ( !(o instanceof NotNullValidator that) ) {
 			return false;
 		}
-		return Objects.equals( nullError, that.nullError );
+		return Objects.equals( nullValueError, that.nullValueError );
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode( nullError );
+		return Objects.hashCode( nullValueError );
 	}
 }

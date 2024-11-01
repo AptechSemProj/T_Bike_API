@@ -1,14 +1,16 @@
 package se.pj.tbike.validation;
 
+import se.pj.tbike.validation.error.AlreadyExistsError;
 import se.pj.tbike.validation.error.EmptyError;
 import se.pj.tbike.validation.error.Error;
-import se.pj.tbike.validation.error.ExistedError;
-import se.pj.tbike.validation.error.MaxError;
-import se.pj.tbike.validation.error.MinError;
-import se.pj.tbike.validation.error.NanError;
+import se.pj.tbike.validation.error.Error.Builder;
+import se.pj.tbike.validation.error.MaximumOverflowError;
+import se.pj.tbike.validation.error.MinimumOverflowError;
+import se.pj.tbike.validation.error.NoContentError;
 import se.pj.tbike.validation.error.NotExistError;
-import se.pj.tbike.validation.error.NullError;
-import se.pj.tbike.validation.error.UnexpectedError;
+import se.pj.tbike.validation.error.NumberFormatError;
+import se.pj.tbike.validation.error.NullValueError;
+import se.pj.tbike.validation.error.UnexpectedValueError;
 import se.pj.tbike.validation.error.UnexpectedTypeError;
 import se.pj.tbike.validation.error.UnknownError;
 
@@ -22,38 +24,43 @@ public final class Errors {
 		public static final Errors INSTANCE = new Errors();
 
 		static {
-			// configure default errors instance.
-			Errors.configure( EmptyError.builder().build() );
-			Errors.configure( ExistedError.builder().build() );
-			Errors.configure( MaxError.builder().build() );
-			Errors.configure( MinError.builder().build() );
-			Errors.configure( NotExistError.builder().build() );
-			Errors.configure( NullError.builder().build() );
-			Errors.configure( NanError.builder().build() );
-			Errors.configure( UnexpectedError.builder().build() );
-			Errors.configure( UnexpectedTypeError.builder().build() );
-			Errors.configure( UnknownError.builder().build() );
+			Errors.register( AlreadyExistsError.builder() );
+			Errors.register( NotExistError.builder() );
+			Errors.register( NoContentError.builder() );
+			Errors.register( MaximumOverflowError.builder() );
+			Errors.register( MinimumOverflowError.builder() );
+			Errors.register( NullValueError.builder() );
+			Errors.register( NumberFormatError.builder() );
+			Errors.register( UnexpectedValueError.builder() );
+			Errors.register( UnexpectedTypeError.builder() );
+			Errors.register( UnknownError.builder() );
 		}
 	}
 
-	private final Map<Class<? extends Error>, Error> errors;
+	private final Map<Class<?>, Builder<?>> builders;
 
 	private Errors() {
-		this.errors = new LinkedHashMap<>();
+		this.builders = new LinkedHashMap<>();
 	}
 
-	public static <E extends Error> void configure(E error) {
-		if ( error == null ) {
+	public static <E extends Error> void register(Builder<E> builder) {
+		if ( builder == null ) {
 			throw new IllegalArgumentException();
 		}
-		Errors manager = Instance.INSTANCE;
-		manager.errors.put( error.getClass(), error );
+		E error = builder.build();
+		Instance.INSTANCE.builders.put( error.getClass(), builder );
+	}
+
+	public static <E extends Error> Builder<E> getBuilder(Class<E> type) {
+		Map<Class<?>, Builder<?>> builders = Instance.INSTANCE.builders;
+		@SuppressWarnings("unchecked")
+		Builder<E> builder = (Builder<E>) builders.get( type );
+		return builder;
 	}
 
 	public static <E extends Error> E get(Class<E> type) {
-		Errors manager = Instance.INSTANCE;
-		Error error = manager.errors.get( type );
-		return type.cast( error );
+		Builder<E> builder = getBuilder( type );
+		return builder.build();
 	}
 
 	@Override
@@ -61,21 +68,22 @@ public final class Errors {
 		if ( this == o ) {
 			return true;
 		}
-		if ( !(o instanceof Errors manager) ) {
+		if ( !(o instanceof Errors that) ) {
 			return false;
 		}
-		return Objects.equals( errors, manager.errors );
+		return Objects.equals( builders, that.builders );
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode( errors );
+		return Objects.hashCode( builders );
 	}
 
 	@Override
 	public String toString() {
-		return "Errors{" +
-				"errors=" + errors +
-				'}';
+		return "[ Errors ] -- " +
+				builders.values()
+						.stream()
+						.map( Builder::build );
 	}
 }

@@ -64,14 +64,28 @@ public abstract class Error {
 
 	public abstract static class Builder<E extends Error> {
 
-		private Integer code;
+		private int code;
 		private String reason;
 		private String guide;
 
-		public Builder() {
+		public Builder(int defaultCode,
+		               String defaultReason) {
+			this( defaultCode, defaultReason, Error.DEFAULT_GUIDE );
 		}
 
-		public abstract E build();
+		public Builder(int defaultCode,
+		               String defaultReason,
+		               String defaultGuide) {
+			this.code = defaultCode;
+			this.reason = Objects.requireNonNull( defaultReason );
+			this.guide = Objects.requireNonNull( defaultGuide );
+		}
+
+		protected abstract E newInstance(int code, String reason, String guide);
+
+		public final E build() {
+			return newInstance( code, reason, guide );
+		}
 
 		public final Builder<E> code(int code) {
 			this.code = code;
@@ -86,18 +100,6 @@ public abstract class Error {
 		public final Builder<E> guide(String guide) {
 			this.guide = guide;
 			return this;
-		}
-
-		protected final int getCode(int defaultCode) {
-			return code != null ? code : defaultCode;
-		}
-
-		protected final String getReason(String defaultReason) {
-			return reason != null ? reason : defaultReason;
-		}
-
-		protected final String getGuide() {
-			return guide != null ? guide : Error.DEFAULT_GUIDE;
 		}
 	}
 }

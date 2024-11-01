@@ -257,6 +257,9 @@ public class Product
 
 	@Override
 	public boolean equals(Object o) {
+		if ( this == o ) {
+			return true;
+		}
 		if ( !super.equals( o ) ) {
 			return false;
 		}

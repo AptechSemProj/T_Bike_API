@@ -85,11 +85,6 @@ public class User
 	)
 	private String avatarImage;
 
-	@Column(
-			nullable = false
-	)
-	private boolean status;
-
 	//*************** RELATIONSHIPS ******************//
 
 	@OneToMany(

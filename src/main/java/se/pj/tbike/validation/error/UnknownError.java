@@ -2,7 +2,7 @@ package se.pj.tbike.validation.error;
 
 public class UnknownError extends Error {
 
-	public static final int CODE = 1999;
+	public static final int CODE = 10000;
 	public static final String REASON = "Unknown error.";
 
 	private UnknownError(int code, String reason, String guide) {
@@ -10,14 +10,11 @@ public class UnknownError extends Error {
 	}
 
 	public static Builder<UnknownError> builder() {
-		return new Builder<>() {
+		return new Builder<>( CODE, REASON ) {
 			@Override
-			public UnknownError build() {
-				return new UnknownError(
-						getCode( CODE ),
-						getReason( REASON ),
-						getGuide()
-				);
+			protected UnknownError newInstance(int code, String reason,
+			                                   String guide) {
+				return new UnknownError( code, reason, guide );
 			}
 		};
 	}

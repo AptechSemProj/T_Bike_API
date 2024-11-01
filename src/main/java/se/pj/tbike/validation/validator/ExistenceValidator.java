@@ -2,80 +2,90 @@ package se.pj.tbike.validation.validator;
 
 import se.pj.tbike.validation.Errors;
 import se.pj.tbike.validation.ValidationResult;
-import se.pj.tbike.validation.error.ExistedError;
+import se.pj.tbike.validation.error.AlreadyExistsError;
+import se.pj.tbike.validation.error.Error;
 import se.pj.tbike.validation.error.NotExistError;
+import se.pj.tbike.validation.error.UnexpectedTypeError;
 import se.pj.tbike.validation.error.UnknownError;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Predicate;
 
-public class ExistenceValidator
+public final class ExistenceValidator<T>
 		implements Validator {
 
-	public static final int EXISTED = 0;
+	public static final int ALREADY_EXISTS = 0;
 	public static final int NOT_EXIST = 1;
 
-	private final ExistedError existedError =
-			Errors.get( ExistedError.class );
-	private final NotExistError notExistError =
-			Errors.get( NotExistError.class );
-	private final UnknownError unknownError =
-			Errors.get( UnknownError.class );
+	private static final Error[] ERRORS = new Error[] {
+			Errors.get( UnexpectedTypeError.class ),
+			Errors.get( UnknownError.class ),
+			Errors.get( AlreadyExistsError.class ),
+			Errors.get( NotExistError.class )
+	};
 
-	private final Collection<Object> collection;
-	private int requirement = EXISTED;
+	private Predicate<T> tester;
+	private int check = ALREADY_EXISTS;
 
-	public ExistenceValidator(Collection<Object> collection) {
+	public ExistenceValidator(Collection<T> collection) {
 		if ( collection == null ) {
 			throw new IllegalArgumentException();
 		}
-		this.collection = collection;
+		this.tester = collection::contains;
 	}
 
 	public ExistenceValidator() {
 		this( Collections.emptySet() );
 	}
 
-	public ExistenceValidator requireExisted() {
-		requirement = EXISTED;
+	public ExistenceValidator<T> acceptAlreadyExists() {
+		check = ALREADY_EXISTS;
 		return this;
 	}
 
-	public ExistenceValidator requireNotExist() {
-		requirement = NOT_EXIST;
+	public ExistenceValidator<T> acceptNotExist() {
+		check = NOT_EXIST;
 		return this;
 	}
 
-	protected boolean isExisted(Object value) {
-		return collection.contains( value );
+	public ExistenceValidator<T> setTester(Predicate<T> func) {
+		this.tester = func;
+		return this;
 	}
 
 	@Override
-	public final ValidationResult validate(Object value) {
-		boolean isExisted = isExisted( value );
-		switch ( requirement ) {
-			case EXISTED -> {
-				if ( isExisted ) {
-					return ValidationResult.success( value );
-				} else {
-					return ValidationResult.failure( notExistError, value );
+	public Error[] getReturnableErrors() {
+		return ERRORS;
+	}
+
+	@Override
+	public ValidationResult validate(Object value) {
+		Error[] errors = getReturnableErrors();
+		try {
+			@SuppressWarnings("unchecked")
+			T val = (T) value;
+			switch ( check ) {
+				case ALREADY_EXISTS -> {
+					if ( tester.test( val ) ) {
+						return ValidationResult.success( val );
+					} else {
+						return ValidationResult.failure( errors[3], val );
+					}
+				}
+				case NOT_EXIST -> {
+					if ( tester.test( val ) ) {
+						return ValidationResult.failure( errors[2], val );
+					} else {
+						return ValidationResult.success( val );
+					}
+				}
+				default -> {
+					return ValidationResult.failure( errors[1] );
 				}
 			}
-			case NOT_EXIST -> {
-				if ( isExisted ) {
-					return ValidationResult.failure( existedError, value );
-				} else {
-					return ValidationResult.success( value );
-				}
-			}
-			default -> {
-				return ValidationResult.failure( unknownError );
-			}
+		} catch ( ClassCastException e ) {
+			return ValidationResult.failure( errors[0] );
 		}
-	}
-
-	@Override
-	public void applyConf(Configuration conf) {
-
 	}
 }
