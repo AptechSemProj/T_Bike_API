@@ -11,6 +11,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.Where;
 import se.pj.tbike.core.api.attribute.entity.Attribute;
 import se.pj.tbike.core.api.category.entity.Category;
 import se.pj.tbike.core.common.IdentifiedEntity;
@@ -241,7 +243,7 @@ public class Product
 
 	@OneToMany(
 			mappedBy = "product",
-			fetch = FetchType.EAGER
+			fetch = FetchType.LAZY
 	)
 	@BatchSize(
 			size = 30

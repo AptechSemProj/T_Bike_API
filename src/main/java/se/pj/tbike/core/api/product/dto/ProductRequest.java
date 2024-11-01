@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @Validated
-public class ProductCreation implements RequestType {
+public class ProductRequest implements RequestType {
 
 	private String sku;
 
@@ -23,10 +23,10 @@ public class ProductCreation implements RequestType {
 	@Size( max = 255 )
 	private String name;
 
-//	@Min( 1 )
+	@Min( 1 )
 	private long brandId;
 
-//	@Min( 1 )
+	@Min( 1 )
 	private long categoryId;
 
 	@NotNull

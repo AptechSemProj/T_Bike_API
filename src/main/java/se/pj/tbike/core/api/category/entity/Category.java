@@ -58,7 +58,7 @@ public class Category
 
 	@OneToMany(
 			mappedBy = "category",
-			fetch = FetchType.EAGER
+			fetch = FetchType.LAZY
 	)
 	@BatchSize(
 			size = 20

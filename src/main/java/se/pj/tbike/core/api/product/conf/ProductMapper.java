@@ -5,10 +5,10 @@ import org.springframework.stereotype.Service;
 import se.pj.tbike.core.api.brand.conf.BrandMapper;
 import se.pj.tbike.core.api.brand.data.BrandRepository;
 import se.pj.tbike.core.api.product.data.ProductRepository;
-import se.pj.tbike.core.api.product.dto.ProductCreation;
+import se.pj.tbike.core.api.product.dto.ProductRequest;
 import se.pj.tbike.core.api.product.dto.ProductDetail;
 import se.pj.tbike.core.api.product.dto.ProductResponse;
-import se.pj.tbike.core.api.product.dto.mapper.ProductCreationMapper;
+import se.pj.tbike.core.api.product.dto.mapper.ProductRequestMapper;
 import se.pj.tbike.core.api.product.dto.mapper.ProductDetailMapper;
 import se.pj.tbike.core.api.product.dto.mapper.ProductResponseMapper;
 import se.pj.tbike.core.api.product.entity.Product;
@@ -27,15 +27,15 @@ public class ProductMapper {
 	private final CategoryMapper categoryMapper;
 	private final AttributeMapper attributeMapper;
 
-	private static volatile ProductCreationMapper creationMapper;
+	private static volatile ProductRequestMapper creationMapper;
 	private static volatile ProductResponseMapper responseMapper;
 
-	public Product fromCreation(ProductCreation req) {
+	public Product map(ProductRequest req) {
 		var mapper = creationMapper();
 		return mapper.map( req );
 	}
 
-	public ProductResponse toResponse(Product product) {
+	public ProductResponse map(Product product) {
 		var mapper = responseMapper();
 		return mapper.map( product );
 	}
@@ -45,11 +45,11 @@ public class ProductMapper {
 		return mapper.map( product );
 	}
 
-	public ProductCreationMapper creationMapper() {
+	public ProductRequestMapper creationMapper() {
 		if ( creationMapper == null ) {
 			synchronized ( this ) {
 				if ( creationMapper == null ) {
-					creationMapper = new ProductCreationMapper(
+					creationMapper = new ProductRequestMapper(
 					);
 				}
 			}

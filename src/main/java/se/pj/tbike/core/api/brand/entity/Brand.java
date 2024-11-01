@@ -58,7 +58,7 @@ public class Brand
 
 	@OneToMany(
 			mappedBy = "brand",
-			fetch = FetchType.EAGER
+			fetch = FetchType.LAZY
 	)
 	@BatchSize(
 			size = 20

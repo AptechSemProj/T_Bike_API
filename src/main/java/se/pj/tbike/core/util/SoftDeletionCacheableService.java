@@ -132,18 +132,19 @@ SoftDeletionCacheableService<
 		if ( manager.isCaching( id ) ) {
 			return true;
 		}
-		Optional<E> o = repository.findById( id );
-		if ( o.isPresent() ) {
-			E e = o.get();
-			if ( e.isDeleted() ) {
-				manager.cache( id, null );
-				return false;
-			} else {
-				manager.cache( e );
-				return true;
-			}
-		}
-		return false;
+		return repository.existsByIdAndDeletedFalse( id );
+//		Optional<E> o = repository.findById( id );
+//		if ( o.isPresent() ) {
+//			E e = o.get();
+//			if ( e.isDeleted() ) {
+//				manager.cache( id, null );
+//				return false;
+//			} else {
+//				manager.cache( e );
+//				return true;
+//			}
+//		}
+//		return false;
 	}
 
 	@Override

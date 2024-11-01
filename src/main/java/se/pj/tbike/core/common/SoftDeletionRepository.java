@@ -17,4 +17,7 @@ public interface SoftDeletionRepository<E extends SoftDeletionEntity<E>, ID> {
 	@Query
 	long countByDeletedFalse();
 
+	@Query
+	boolean existsByIdAndDeletedFalse(ID id);
+
 }
