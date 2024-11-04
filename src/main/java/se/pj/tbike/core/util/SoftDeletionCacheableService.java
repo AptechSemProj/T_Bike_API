@@ -17,12 +17,9 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 
-public abstract class
-SoftDeletionCacheableService<
-		E extends SoftDeletionEntity<E> & Cacheable,
-		K extends Comparable<K>,
-		R extends JpaRepository<E, K> & SoftDeletionRepository<E, K>
-		>
+public abstract class SoftDeletionCacheableService<
+		E extends SoftDeletionEntity<E> & Cacheable, K extends Comparable<K>,
+		R extends JpaRepository<E, K> & SoftDeletionRepository<E, K>>
 		extends SimpleCrudService<E, K>
 		implements CrudService<E, K> {
 
@@ -67,7 +64,7 @@ SoftDeletionCacheableService<
 			throw new IllegalArgumentException();
 		}
 		long count = this.count.get();
-		int cacheSize = manager.size();
+		int cacheSize = this.manager.size();
 		int offset = num * size, to = offset + size;
 		get_from_cache:
 		{
@@ -129,22 +126,8 @@ SoftDeletionCacheableService<
 		if ( id == null ) {
 			throw new IllegalArgumentException();
 		}
-		if ( manager.isCaching( id ) ) {
-			return true;
-		}
-		return repository.existsByIdAndDeletedFalse( id );
-//		Optional<E> o = repository.findById( id );
-//		if ( o.isPresent() ) {
-//			E e = o.get();
-//			if ( e.isDeleted() ) {
-//				manager.cache( id, null );
-//				return false;
-//			} else {
-//				manager.cache( e );
-//				return true;
-//			}
-//		}
-//		return false;
+		return manager.isCaching( id ) ||
+				repository.existsByIdAndDeletedFalse( id );
 	}
 
 	@Override

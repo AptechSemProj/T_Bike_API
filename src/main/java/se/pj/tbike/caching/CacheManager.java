@@ -3,6 +3,7 @@ package se.pj.tbike.caching;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -11,7 +12,7 @@ public class CacheManager<K extends Comparable<K>, V extends Cacheable> {
 	private final Map<K, CachedData<V>> table;
 	private final Function<V, K> keyMapper;
 	private final CacheController defaultController;
-	private int size;
+	private final AtomicInteger size;
 
 	public CacheManager(CacheController defaultController,
 	                    Function<V, K> keyMapper) {
@@ -21,69 +22,76 @@ public class CacheManager<K extends Comparable<K>, V extends Cacheable> {
 		this.keyMapper = keyMapper;
 		this.table = new TreeMap<>();
 		this.defaultController = defaultController;
+		this.size = new AtomicInteger( 0 );
 	}
 
 	public CacheManager(Function<V, K> keyMapper) {
 		this( new CacheController(), keyMapper );
 	}
 
-	public void cache(K key, V value, CacheController controller) {
+	public CachedData<V> cache(final K key, final V value,
+	                           final CacheController controller) {
 		if ( key == null ) {
 			throw new IllegalArgumentException();
 		}
-		CachedData<V> cache = table.get( key );
-		if ( cache == null ) {
-			if ( controller != null ) {
-				cache = new CachedData<>( value, controller );
-			} else {
-				cache = new CachedData<>( value, defaultController );
+		final CachedData<V> o = table.get( key );
+		if ( o != null ) {
+			if ( o.isEmpty() ) {
+				size.getAndIncrement();
 			}
-			table.put( key, cache );
-			if ( value != null ) {
-				size++;
-			}
-		} else {
-			cache.replace( value );
+			return o.replace( value );
 		}
+		final CacheController cc = controller != null
+				? controller
+				: defaultController;
+		final CachedData<V> no = new CachedData<>( value, cc, () -> {
+			size.decrementAndGet();
+			String type = value != null
+					? value.getClass().getName()
+					: "Unknown type";
+			return "Release completed: " + type + " with key: " + key + "." +
+					" Current cache size: " + size + ".";
+		} );
+		table.put( key, no );
+		if ( value != null ) {
+			size.getAndIncrement();
+		}
+		return no;
 	}
 
-	public void cache(V value, CacheController controller) {
+	public CachedData<V> cache(K key, V value) {
+		return cache( key, value, defaultController );
+	}
+
+	public CachedData<V> cache(V value, CacheController controller) {
 		if ( value == null ) {
 			throw new IllegalArgumentException();
 		}
 		K key = keyMapper.apply( value );
-		cache( key, value, controller );
+		return cache( key, value, controller );
 	}
 
-	public void cache(K key, V value) {
-		cache( key, value, defaultController );
-	}
-
-	public void cache(V value) {
-		cache( value, defaultController );
+	public CachedData<V> cache(V value) {
+		return cache( value, defaultController );
 	}
 
 	public CachedData<V> get(K key) {
 		CachedData<V> o = table.get( key );
-		if ( o == null ) {
-			o = new CachedData<>( null, defaultController );
-			table.put( key, o );
-		}
-		return o;
+		return o == null ? cache( key, null ) : o;
 	}
 
 	public void update(K key, V value) {
 		if ( key == null ) {
 			throw new IllegalArgumentException();
 		}
-		CachedData<V> cache = table.get( key );
-		if ( cache == null ) {
-			table.put(
-					key,
-					new CachedData<>( value, defaultController )
-			);
+		CachedData<V> o = table.get( key );
+		if ( o == null ) {
+			cache( key, value );
 		} else {
-			cache.replace( value );
+			if ( o.isEmpty() ) {
+				size.getAndIncrement();
+			}
+			o.replace( value );
 		}
 	}
 
@@ -94,7 +102,7 @@ public class CacheManager<K extends Comparable<K>, V extends Cacheable> {
 
 	public void remove(K k) {
 		if ( isCaching( k ) ) {
-			size--;
+			size.getAndDecrement();
 		}
 		table.remove( k );
 	}
@@ -111,7 +119,7 @@ public class CacheManager<K extends Comparable<K>, V extends Cacheable> {
 	}
 
 	public int size() {
-		return size;
+		return size.get();
 	}
 
 	public boolean isCaching(K key) {
@@ -120,7 +128,7 @@ public class CacheManager<K extends Comparable<K>, V extends Cacheable> {
 	}
 
 	public boolean isEmpty() {
-		return table.isEmpty() || size == 0;
+		return table.isEmpty() || size.get() == 0;
 	}
 
 	@Override
@@ -131,7 +139,7 @@ public class CacheManager<K extends Comparable<K>, V extends Cacheable> {
 		if ( !(o instanceof CacheManager<?, ?> that) ) {
 			return false;
 		}
-		return size == that.size &&
+		return (size.get() == that.size.get()) &&
 				Objects.equals( table, that.table ) &&
 				Objects.equals( keyMapper, that.keyMapper ) &&
 				Objects.equals( defaultController, that.defaultController );
