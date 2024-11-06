@@ -11,7 +11,7 @@ spring:
 
   #******************** jpa config ********************#
   jpa:
-    database-platform: 'org.hibernate.dialect.MySQLDialect'
+    #database-platform: 'org.hibernate.dialect.MySQLDialect'
 
     #******************** naming config ********************#
     hibernate:
@@ -41,7 +41,7 @@ spring:
 
 file-storage:
   resources-base: true
-  root: "files"
+  root: 'files'
   directories:
-    images: "images"
-    videos: videos
+    images: 'images'
+    videos: 'videos'

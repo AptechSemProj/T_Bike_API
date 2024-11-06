@@ -3,6 +3,9 @@ package org.photoservice.www.file;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -32,6 +35,14 @@ public abstract class SimpleFileManager
 		root = rootItem;
 	}
 
+	private BufferedImage resize(BufferedImage originalImage, int targetWidth, int targetHeight) {
+		BufferedImage resizedImage = new BufferedImage( targetWidth, targetHeight, BufferedImage.TYPE_INT_RGB );
+		Graphics2D graphics2D = resizedImage.createGraphics();
+		graphics2D.drawImage( originalImage, 0, 0, targetWidth, targetHeight, null );
+		graphics2D.dispose();
+		return resizedImage;
+	}
+
 	@Override
 	public final String saveFile(String directory, MultipartFile file)
 			throws IOException {
@@ -48,7 +59,7 @@ public abstract class SimpleFileManager
 		String original = file.getOriginalFilename();
 		String extension;
 		if ( original == null ) {
-			extension = null;
+			extension = "jpg";
 		} else {
 			extension = FilenameUtils.getExtension( original );
 		}
@@ -64,11 +75,21 @@ public abstract class SimpleFileManager
 					return isExisted;
 				}
 		);
-		long bytes = Files.copy(
-				file.getInputStream(), target.get(),
-				StandardCopyOption.REPLACE_EXISTING
+		BufferedImage image = ImageIO.read( file.getInputStream() );
+		int width = image.getWidth();
+		int height = image.getHeight();
+		BufferedImage resized = resize(
+				image,
+				width - ((width / 100) * 10),
+				height - ((height / 100) * 10)
 		);
-		if ( bytes >= 0 ) {
+//		long bytes = Files.copy(
+//				resized.get,
+////				file.getInputStream(),
+//				target.get(),
+//				StandardCopyOption.REPLACE_EXISTING
+//		);
+		if ( ImageIO.write( resized, extension, target.get().toFile() ) ) {
 			root.addFile( filename, target.get() );
 		}
 		return filename;

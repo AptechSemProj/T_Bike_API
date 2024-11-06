@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +24,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -45,13 +48,24 @@ public class ImageController {
 	}
 
 	@PostMapping({ ImageApiUrls.URL_LIST_1, ImageApiUrls.URL_LIST_2 })
-	public ResponseEntity<String> upload(@RequestParam MultipartFile file,
-	                                     HttpServletRequest request) {
+	public ResponseEntity<Map<String, Object>> upload(@RequestParam MultipartFile file,
+	                                                  HttpServletRequest request) {
 		try {
 			String saved = service.saveFile( IMAGE_DIRECTORY, file );
-			return ResponseEntity.ok( createUrl( saved, request ) );
+			String url = createUrl( saved, request );
+			return ResponseEntity.ok(
+					new HashMap<>() {{
+						put( "status", HttpStatus.OK );
+						put( "message", HttpStatus.OK.getReasonPhrase() );
+						put( "data", url );
+					}}
+			);
 		} catch ( IOException e ) {
-			return ResponseEntity.internalServerError().build();
+			return ResponseEntity.internalServerError()
+					.body( new HashMap<>() {{
+						put( "status", HttpStatus.INTERNAL_SERVER_ERROR );
+						put( "message", e.getMessage() );
+					}} );
 		}
 	}
 

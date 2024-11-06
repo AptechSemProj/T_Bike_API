@@ -48,11 +48,6 @@ public class ImageService extends SimpleFileManager {
 		int nameLength = filename.length();
 		if ( nameLength > MAX_NAME_LENGTH ) {
 			filename.delete( MAX_NAME_LENGTH, nameLength );
-//			Random random = new Random();
-//			int start = random.nextInt( MAX_NAME_LENGTH );
-//			int end = Math.min( MAX_NAME_LENGTH + start, nameLength );
-//			filename.delete( end, nameLength );
-//			filename.delete( 0, start );
 		}
 		if ( extension != null && !extension.isBlank() ) {
 			filename.append( FilenameUtils.EXTENSION_SEPARATOR );
