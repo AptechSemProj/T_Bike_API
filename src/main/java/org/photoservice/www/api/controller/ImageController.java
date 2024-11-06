@@ -55,7 +55,7 @@ public class ImageController {
 			String url = createUrl( saved, request );
 			return ResponseEntity.ok(
 					new HashMap<>() {{
-						put( "status", HttpStatus.OK );
+						put( "status", HttpStatus.OK.value() );
 						put( "message", HttpStatus.OK.getReasonPhrase() );
 						put( "data", url );
 					}}
@@ -63,7 +63,7 @@ public class ImageController {
 		} catch ( IOException e ) {
 			return ResponseEntity.internalServerError()
 					.body( new HashMap<>() {{
-						put( "status", HttpStatus.INTERNAL_SERVER_ERROR );
+						put( "status", HttpStatus.INTERNAL_SERVER_ERROR.value() );
 						put( "message", e.getMessage() );
 					}} );
 		}
