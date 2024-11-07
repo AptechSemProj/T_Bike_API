@@ -4,16 +4,21 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import se.pj.tbike.api.util.Handleable;
-import se.pj.tbike.core.common.IdentifiedEntity;
+import se.pj.tbike.core.common.entity.IdentifiedEntity;
 import se.pj.tbike.core.api.product.entity.Product;
-import se.pj.tbike.caching.Cacheable;
+import se.pj.tbike.core.util.Cacheable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Getter
@@ -23,10 +28,14 @@ import java.util.Objects;
 		name = "attributes"
 )
 public class Attribute
-		extends IdentifiedEntity<Attribute>
-		implements Cacheable, Handleable {
+		implements IdentifiedEntity<Attribute, Long>,
+		Cacheable<Attribute>, Handleable {
 
 	//*************** BASIC ******************//
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@Column(
 			nullable = false
@@ -77,6 +86,41 @@ public class Attribute
 	}
 
 	//*************** IMPLEMENTS & OVERRIDE METHODS ******************//
+
+//	@Override
+//	public Long getId() {
+//		return id;
+//	}
+//
+//	@Override
+//	public void setId(Long id) {
+//		this.id = id;
+//	}
+
+	@Override
+	public Map<String, Object> toCacheObject() {
+		Map<String, Object> map = new HashMap<>();
+		map.put( "id", getId() );
+		map.put( "represent", represent );
+		map.put( "color", color );
+		map.put( "imageUrl", imageUrl );
+		map.put( "price", price );
+		map.put( "quantity", quantity );
+		map.put( "product", product );
+		return map;
+	}
+
+	@Override
+	public Attribute fromCacheObject(Map<String, Object> cacheObject) {
+		this.setId( (Long) cacheObject.get( "id" ) );
+		this.setRepresent( (Boolean) cacheObject.get( "represent" ) );
+		this.setColor( (String) cacheObject.get( "color" ) );
+		this.setImageUrl( (String) cacheObject.get( "imageUrl" ) );
+		this.setPrice( (Long) cacheObject.get( "price" ) );
+		this.setQuantity( (Integer) cacheObject.get( "quantity" ) );
+		this.setProduct( (Product) cacheObject.get( "product" ) );
+		return this;
+	}
 
 	@Override
 	public boolean equals(Object o) {

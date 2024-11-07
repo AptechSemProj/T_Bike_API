@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import se.pj.tbike.core.api.brand.entity.Brand;
+import se.pj.tbike.core.api.category.entity.Category;
 import se.pj.tbike.core.api.product.entity.Product;
 
 import java.util.List;
@@ -14,18 +16,19 @@ import java.util.List;
 public interface ProductRepository
 		extends JpaRepository<Product, Long> {
 
-	List<Product> findAllByBrandId(@Param("brandId") Long brandId);
+	List<Product> findAllByBrand(Brand brand);
 
-	List<Product> findAllByCategoryId(@Param("categoryId") Long categoryId);
+	List<Product> findAllByCategory(Category category);
 
 	@Query("""
 			SELECT p_1
 			FROM Product p_1
-			JOIN Attribute AS a_1
-			ON p_1.id = a_1.product.id
+			INNER JOIN p_1.attributes a_1 ON p_1.id = a_1.product.id
+			INNER JOIN p_1.brand b_1 ON b_1.deleted = false
+			INNER JOIN p_1.category c_1 ON c_1.deleted = false
 			WHERE (:name IS NULL OR LOWER(p_1.name) LIKE LOWER(CONCAT('%', :name, '%')))
-			AND (:brand IS NULL OR p_1.brand.id = :brand)
-			AND (:category IS NULL OR p_1.category.id = :category)
+			AND (:brand IS NULL OR b_1.id = :brand)
+			AND (:category IS NULL OR c_1.id = :category)
 			AND a_1.price
 			BETWEEN (
 			    CASE WHEN (:minPrice IS NULL)
@@ -45,5 +48,7 @@ public interface ProductRepository
 	                     @Param("minPrice") Long min,
 	                     @Param("maxPrice") Long max,
 	                     Pageable pageable);
+
+	boolean existsBySku(@Param("sku") String sku);
 
 }

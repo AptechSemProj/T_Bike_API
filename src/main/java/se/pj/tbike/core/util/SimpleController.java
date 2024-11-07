@@ -47,6 +47,7 @@ public interface SimpleController<K> {
 				.merge( requiredValidator() )
 				.handle( keyInPath );
 
+		@SuppressWarnings("unchecked")
 		K k = (K) result.getValue();
 		if ( result.isOk() ) {
 			Output.Value<T> r = handler.apply( k );
@@ -58,26 +59,15 @@ public interface SimpleController<K> {
 				.getResponse( result.getError() );
 	}
 
+	@SuppressWarnings("unchecked")
 	default <R extends ResponseType>
 	Response<R> put(String keyInPath,
 	                Supplier<K> keyInBody,
 	                Function<K, Boolean> handler) {
 		checkHandler( handler );
 
-//		if ( keyInBody == null ) {
-//			throw new NullPointerException( "Supplier of keyInBody is null" );
-//		}
-//
-//		K expectedKey = keyInBody.get();
-//		if ( expectedKey == null ) {
-//			return Response.badRequest();
-//		}
-//
-		ValidatorsChain chain = requiredValidator();
-//				.addValidator( new UnexpectedValidator<>( keyInBody.get() ) );
-
 		ValidationResult result = validateKey()
-				.merge( chain )
+				.merge( requiredValidator() )
 				.handle( keyInPath );
 
 		if ( result.isOk() ) {
@@ -89,6 +79,7 @@ public interface SimpleController<K> {
 				.getResponse( result.getError() );
 	}
 
+	@SuppressWarnings("unchecked")
 	default <R extends ResponseType>
 	Response<R> delete(String keyInPath,
 	                   Function<K, Boolean> handler) {
@@ -112,9 +103,11 @@ public interface SimpleController<K> {
 	private ValidatorsChain requiredValidator() {
 		return ValidatorsChain
 				.createChain()
-				.addValidator( new ExistenceValidator<K>()
-						.setTester( this::isExists )
-						.acceptAlreadyExists() );
+				.addValidator(
+						new ExistenceValidator<K>()
+								.setTester( this::isExists )
+								.acceptAlreadyExists()
+				);
 	}
 
 	private void checkHandler(Object handler) {

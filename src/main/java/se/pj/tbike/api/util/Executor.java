@@ -3,30 +3,26 @@ package se.pj.tbike.api.util;
 @FunctionalInterface
 public interface Executor<R> {
 
-	void apply(Response.Builder<? extends Handleable, R> res);
+	void apply(Response.Builder<?, R> res);
 
 	@FunctionalInterface
-	interface WithAll<B extends Handleable, R> {
+	interface WithAllArgs<B extends Handleable, R> {
 
-		void apply(Response.Builder<B, R> res,
-		           B body,
-		           Params params);
+		void apply(Response.Builder<B, R> res, B body, QueryParams queryParams);
 
 	}
 
 	@FunctionalInterface
 	interface WithBody<B extends Handleable, R> {
 
-		void apply(Response.Builder<B, R> res,
-		           B body);
+		void apply(Response.Builder<B, R> res, B body);
 
 	}
 
 	@FunctionalInterface
-	interface WithParams<R> {
+	interface WithQueryParams<R> {
 
-		void apply(Response.Builder<? extends Handleable, R> res,
-		           Params params);
+		void apply(Response.Builder<?, R> res, QueryParams queryParams);
 
 	}
 }

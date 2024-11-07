@@ -9,22 +9,14 @@ import java.util.concurrent.ScheduledFuture;
 
 import java.time.Duration;
 
-public class CacheController {
-
-	public static final Duration DEFAULT_LIFE_TIME = Duration.ofMinutes( 1 );
+public final class CacheControl {
 
 	private final TaskScheduler scheduler;
 	private final Trigger trigger;
 
 	private ScheduledFuture<?> runningTask;
 
-	public CacheController() {
-		this.scheduler = null;
-		this.trigger = null;
-	}
-
-	private CacheController(TaskScheduler scheduler,
-	                        Trigger trigger) {
+	private CacheControl(TaskScheduler scheduler, Trigger trigger) {
 		if ( scheduler == null ) {
 			throw new IllegalArgumentException();
 		}
@@ -35,17 +27,17 @@ public class CacheController {
 		this.trigger = trigger;
 	}
 
-	public CacheController(TaskScheduler scheduler,
-	                       Duration maxLifeTime) {
+	public CacheControl(TaskScheduler scheduler, Duration maxLifeTime) {
 		this( scheduler, createTrigger( maxLifeTime ) );
 	}
 
-	public CacheController(TaskScheduler scheduler) {
-		this( scheduler, DEFAULT_LIFE_TIME );
+	public CacheControl() {
+		this.scheduler = null;
+		this.trigger = null;
 	}
 
-	public static CacheController copy(CacheController other) {
-		return new CacheController( other.scheduler, other.trigger );
+	public static CacheControl copy(CacheControl other) {
+		return new CacheControl( other.scheduler, other.trigger );
 	}
 
 	private static Trigger createTrigger(Duration maxLifeTime) {
@@ -103,7 +95,7 @@ public class CacheController {
 		if ( this == o ) {
 			return true;
 		}
-		if ( !(o instanceof CacheController that) ) {
+		if ( !(o instanceof CacheControl that) ) {
 			return false;
 		}
 		return Objects.equals( trigger, that.trigger ) &&

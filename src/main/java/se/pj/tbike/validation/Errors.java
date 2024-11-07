@@ -1,15 +1,12 @@
 package se.pj.tbike.validation;
 
 import se.pj.tbike.validation.error.AlreadyExistsError;
-import se.pj.tbike.validation.error.EmptyError;
-import se.pj.tbike.validation.error.Error;
-import se.pj.tbike.validation.error.Error.Builder;
+import se.pj.tbike.validation.Error.Builder;
 import se.pj.tbike.validation.error.MaximumOverflowError;
 import se.pj.tbike.validation.error.MinimumOverflowError;
 import se.pj.tbike.validation.error.NoContentError;
 import se.pj.tbike.validation.error.NotExistError;
 import se.pj.tbike.validation.error.NumberFormatError;
-import se.pj.tbike.validation.error.NullValueError;
 import se.pj.tbike.validation.error.UnexpectedValueError;
 import se.pj.tbike.validation.error.UnexpectedTypeError;
 import se.pj.tbike.validation.error.UnknownError;
@@ -29,7 +26,6 @@ public final class Errors {
 			Errors.register( NoContentError.builder() );
 			Errors.register( MaximumOverflowError.builder() );
 			Errors.register( MinimumOverflowError.builder() );
-			Errors.register( NullValueError.builder() );
 			Errors.register( NumberFormatError.builder() );
 			Errors.register( UnexpectedValueError.builder() );
 			Errors.register( UnexpectedTypeError.builder() );

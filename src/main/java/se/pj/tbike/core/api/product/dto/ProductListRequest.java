@@ -1,7 +1,7 @@
 package se.pj.tbike.core.api.product.dto;
 
 import lombok.Getter;
-import se.pj.tbike.core.common.PaginationParams;
+import se.pj.tbike.core.util.PaginationParams;
 import se.pj.tbike.io.RequestType;
 
 @Getter
@@ -18,6 +18,9 @@ public class ProductListRequest
     private final Long minPrice;
 
     private final Long maxPrice;
+
+//    private
+    // order by price
 
     public ProductListRequest(Integer page, Integer size,
                               String name, Long brandId, Long categoryId,

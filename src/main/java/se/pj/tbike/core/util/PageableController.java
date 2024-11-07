@@ -5,10 +5,9 @@ import se.pj.tbike.io.Pagination;
 import se.pj.tbike.io.Response;
 import se.pj.tbike.io.ResponseType;
 import se.pj.tbike.util.Output;
-import se.pj.tbike.validation.ValidatorsChain;
-import se.pj.tbike.validation.validator.IntegerValidator;
+import se.pj.tbike.validation.Requirements;
+import se.pj.tbike.validation.validator.IntValidator;
 import se.pj.tbike.validation.ValidationResult;
-import se.pj.tbike.validation.validator.NumberValidator;
 
 import java.util.function.BiFunction;
 
@@ -19,22 +18,15 @@ public interface PageableController {
 	}
 
 	default ValidationResult validatePageNumber(Object pageNumber) {
-		NumberValidator<Integer> numberValidator =
-				new IntegerValidator().acceptMinValue( getBasedPageNumber() );
-
-		ValidatorsChain chain = ValidatorsChain
-				.createChain()
-				.addValidator( numberValidator );
-
-		return chain.handle( pageNumber );
+		IntValidator validator = new IntValidator();
+		validator.accept( Requirements.minInt( getBasedPageNumber(), false, true ) );
+		return validator.validate( pageNumber );
 	}
 
 	default ValidationResult validatePageSize(Object pageSize) {
-		ValidatorsChain chain = ValidatorsChain
-				.createChain()
-				.addValidator( new IntegerValidator().acceptOnlyPositive() );
-
-		return chain.handle( pageSize );
+		IntValidator validator = new IntValidator();
+		validator.accept( Requirements.positiveInt( false ) );
+		return validator.validate( pageSize );
 	}
 
 	default <T extends ResponseType>

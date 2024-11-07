@@ -1,121 +1,160 @@
 package se.pj.tbike.caching;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class CacheManager<K extends Comparable<K>, V extends Cacheable> {
+public final class CacheManager<K extends Comparable<K>> {
 
-	private final Map<K, CachedData<V>> table;
-	private final Function<V, K> keyMapper;
-	private final CacheController defaultController;
+	public static final Logger LOGGER = LoggerFactory.getLogger( CacheManager.class );
+
+	private final Map<K, Cache> table;
+	private final CacheControl defaultController;
 	private final AtomicInteger size;
 
-	public CacheManager(CacheController defaultController,
-	                    Function<V, K> keyMapper) {
-		if ( keyMapper == null ) {
-			throw new IllegalArgumentException();
-		}
-		this.keyMapper = keyMapper;
+	public CacheManager(CacheControl defaultController) {
 		this.table = new TreeMap<>();
 		this.defaultController = defaultController;
 		this.size = new AtomicInteger( 0 );
 	}
 
-	public CacheManager(Function<V, K> keyMapper) {
-		this( new CacheController(), keyMapper );
+	private String printCache(Map<String, Object> map) {
+		StringBuilder o = new StringBuilder();
+		if ( map == null ) {
+			o.append( "null" );
+		} else if ( map.isEmpty() ) {
+			o.append( "{}" );
+		} else {
+			o.append( "{" ).append( System.lineSeparator() );
+			o.append( String.join(
+					"," + System.lineSeparator(),
+					map.entrySet()
+							.stream()
+							.map( e -> e.getKey() + " = " + e.getValue() )
+							.toList()
+			).indent( 4 ) );
+			o.append( "}" );
+		}
+		return o.toString();
 	}
 
-	public CachedData<V> cache(final K key, final V value,
-	                           final CacheController controller) {
+	private void logUpdate(Map<String, Object> old, Map<String, Object> newCache) {
+		String s = "Current cache size: {}."
+				+ System.lineSeparator()
+				+ "Updated: {} -> {}.";
+		LOGGER.info( s, size, printCache( old ), printCache( newCache ) );
+	}
+
+	private void logCached(Cache value) {
+		String s = "Current cache size: {}."
+				+ System.lineSeparator()
+				+ "Cached: {}.";
+		LOGGER.info( s, size, printCache( value.get() ) );
+	}
+
+	private void logRelease(Cache value) {
+		String s = "Current cache size: {}."
+				+ System.lineSeparator()
+				+ "Released: {}.";
+		LOGGER.info( s, size, printCache( value.get() ) );
+	}
+
+	private Cache cache(K key, Map<String, Object> value,
+	                    CacheControl controller, boolean checked) {
 		if ( key == null ) {
 			throw new IllegalArgumentException();
 		}
-		final CachedData<V> o = table.get( key );
-		if ( o != null ) {
-			if ( o.isEmpty() ) {
-				size.getAndIncrement();
+		Map<String, Object> old;
+		if ( !checked ) {
+			Cache o = table.get( key );
+			if ( o != null ) {
+				old = o.get();
+				if ( o.isNull() && value != null ) {
+					size.getAndIncrement();
+				}
+				o.set( value );
+				logUpdate( old, value );
+				return o;
 			}
-			return o.replace( value );
 		}
-		final CacheController cc = controller != null
-				? controller
-				: defaultController;
-		final CachedData<V> no = new CachedData<>( value, cc, () -> {
-			size.decrementAndGet();
-			String type = value != null
-					? value.getClass().getName()
-					: "Unknown type";
-			return "Release completed: " + type + " with key: " + key + "." +
-					" Current cache size: " + size + ".";
-		} );
-		table.put( key, no );
+		Cache newCache = new Cache(
+				value,
+				controller != null ? controller : defaultController,
+				cache -> {
+					if ( cache.isPresent() ) {
+						size.decrementAndGet();
+					}
+					logRelease( cache );
+				}
+		);
+		table.put( key, newCache );
 		if ( value != null ) {
 			size.getAndIncrement();
 		}
-		return no;
+		logCached( newCache );
+		return newCache;
 	}
 
-	public CachedData<V> cache(K key, V value) {
-		return cache( key, value, defaultController );
+	public Cache cache(K key, Map<String, Object> value, CacheControl controller) {
+		return cache( key, value, controller, false );
 	}
 
-	public CachedData<V> cache(V value, CacheController controller) {
-		if ( value == null ) {
-			throw new IllegalArgumentException();
+	public Cache cache(K key, Map<String, Object> value) {
+		return cache( key, value, null, false );
+	}
+
+	public Cache get(K key) {
+		Cache o = table.get( key );
+		if ( o != null ) {
+			return o;
 		}
-		K key = keyMapper.apply( value );
-		return cache( key, value, controller );
+		return cache( key, null, null, true );
 	}
 
-	public CachedData<V> cache(V value) {
-		return cache( value, defaultController );
+	public void empty(Cache cache) {
+		Map<String, Object> old = cache.get();
+		cache.set( Map.of() );
+		logUpdate( old, Map.of() );
 	}
 
-	public CachedData<V> get(K key) {
-		CachedData<V> o = table.get( key );
-		return o == null ? cache( key, null ) : o;
+	public void set(Cache cache, Map<String, Object> value) {
+		if ( cache.isNull() ) {
+			size.getAndIncrement();
+		}
+		Map<String, Object> old = cache.get();
+		cache.set( value );
+		logUpdate( old, value );
 	}
 
-	public void update(K key, V value) {
+	public void set(K key, Map<String, Object> value) {
 		if ( key == null ) {
 			throw new IllegalArgumentException();
 		}
-		CachedData<V> o = table.get( key );
-		if ( o == null ) {
-			cache( key, value );
+		Cache cache = table.get( key );
+		if ( cache == null ) {
+			cache( key, value, defaultController, true );
 		} else {
-			if ( o.isEmpty() ) {
-				size.getAndIncrement();
-			}
-			o.replace( value );
+			set( cache, value );
 		}
 	}
 
-	public void update(V v) {
-		K key = keyMapper.apply( v );
-		update( key, v );
-	}
-
-	public void remove(K k) {
-		if ( isCaching( k ) ) {
-			size.getAndDecrement();
+	public void remove(K key) {
+		Cache cache = table.get( key );
+		if ( cache != null && cache.isPresent() ) {
+			size.decrementAndGet();
+			cache.set( null );
 		}
-		table.remove( k );
 	}
 
-	public void remove(V v) {
-		remove( keyMapper.apply( v ) );
-	}
-
-	public Stream<V> stream() {
+	public Stream<Cache> stream() {
 		return table.values()
 				.stream()
-				.filter( CachedData::isPresent )
-				.map( CachedData::get );
+				.filter( Cache::isPresent );
 	}
 
 	public int size() {
@@ -123,8 +162,8 @@ public class CacheManager<K extends Comparable<K>, V extends Cacheable> {
 	}
 
 	public boolean isCaching(K key) {
-		CachedData<V> obj = table.get( key );
-		return obj != null && obj.isPresent();
+		Cache o = table.get( key );
+		return o != null && o.isPresent();
 	}
 
 	public boolean isEmpty() {
@@ -136,17 +175,16 @@ public class CacheManager<K extends Comparable<K>, V extends Cacheable> {
 		if ( this == o ) {
 			return true;
 		}
-		if ( !(o instanceof CacheManager<?, ?> that) ) {
+		if ( !(o instanceof CacheManager<?> that) ) {
 			return false;
 		}
 		return (size.get() == that.size.get()) &&
 				Objects.equals( table, that.table ) &&
-				Objects.equals( keyMapper, that.keyMapper ) &&
 				Objects.equals( defaultController, that.defaultController );
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( table, keyMapper, size, defaultController );
+		return Objects.hash( table, size, defaultController );
 	}
 }

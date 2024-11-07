@@ -1,10 +1,11 @@
 package se.pj.tbike.validation.error;
 
+import se.pj.tbike.validation.Error;
+
 public class UnexpectedValueError extends Error {
 
 	public static final int CODE = 10051;
-	public static final String REASON =
-			"The value passed in is an unexpected value.";
+	public static final String REASON = "The value passed in is an unexpected value.";
 
 	private UnexpectedValueError(int code, String reason, String guide) {
 		super( code, reason, guide );

@@ -11,8 +11,10 @@ import se.pj.tbike.core.api.attribute.dto.AttributeRequest;
 import se.pj.tbike.core.api.attribute.dto.AttributeResponse;
 import se.pj.tbike.core.api.attribute.entity.Attribute;
 import se.pj.tbike.core.util.ResponseMapping;
+import se.pj.tbike.validation.Requirements;
 import se.pj.tbike.validation.ValidatorsChain;
 import se.pj.tbike.core.util.SimpleController;
+import se.pj.tbike.validation.validator.LongValidator;
 
 @RequiredArgsConstructor
 @RestController
@@ -45,7 +47,10 @@ public class AttributeController
 
 	@Override
 	public ValidatorsChain validateKey() {
-		return null;
+		LongValidator validator = new LongValidator();
+		validator.accept( Requirements.positiveLong( false, false ) );
+		return ValidatorsChain.createChain()
+				.addValidator( validator );
 	}
 
 	@Override

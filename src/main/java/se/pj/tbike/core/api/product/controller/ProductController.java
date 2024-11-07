@@ -32,6 +32,7 @@ import se.pj.tbike.io.Val;
 import se.pj.tbike.util.Output;
 import se.pj.tbike.util.Output.Pagination;
 import se.pj.tbike.util.Output.Value;
+import se.pj.tbike.validation.Requirements;
 import se.pj.tbike.validation.ValidatorsChain;
 import se.pj.tbike.core.util.PageableController;
 import se.pj.tbike.core.util.SimpleController;
@@ -62,9 +63,9 @@ public class ProductController
 		int size = req.getSize( 10 );
 		return paginated( page, size, (p, s) -> {
 			Pagination<Product> o = service.search(
-					p, s, req.getName(), new Long[] {
-							req.getMinPrice(), req.getMaxPrice()
-					}, req.getBrandId(), req.getCategoryId()
+					p, s, req.getName(),
+					req.getMaxPrice(), req.getMinPrice(),
+					req.getBrandId(), req.getCategoryId()
 			);
 			return o.map( productMapper::map );
 		} );
@@ -110,7 +111,24 @@ public class ProductController
 	                   @RequestBody @Valid ProductRequest req) {
 		put( id, null, k -> {
 			Value<Product> old = service.findByKey( k );
+			if ( old.isNull() ) {
+				throw new RuntimeException( "Product not found" );
+			}
+			Product oldProduct = old.get();
 			Product newProduct = productMapper.map( req );
+			newProduct.setId( oldProduct.getId() );
+			String sku = oldProduct.getSku();
+			String nSku = newProduct.getSku();
+			check_sku: {
+				if (sku == null) {
+					break check_sku;
+				}
+				if ( nSku != null ) {
+					// return 409
+				}
+			}
+
+			service.update( newProduct );
 			return null;
 		} );
 	}
@@ -122,8 +140,10 @@ public class ProductController
 
 	@Override
 	public ValidatorsChain validateKey() {
+		LongValidator validator = new LongValidator();
+		validator.accept( Requirements.positiveLong( false, false ) );
 		return ValidatorsChain.createChain()
-				.addValidator( new LongValidator().acceptOnlyPositive() );
+				.addValidator( validator );
 	}
 
 	@Override

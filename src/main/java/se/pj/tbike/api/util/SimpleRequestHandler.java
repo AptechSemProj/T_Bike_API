@@ -1,9 +1,9 @@
 package se.pj.tbike.api.util;
 
 import org.springframework.http.ResponseEntity;
-import se.pj.tbike.api.util.Executor.WithAll;
+import se.pj.tbike.api.util.Executor.WithAllArgs;
 import se.pj.tbike.api.util.Executor.WithBody;
-import se.pj.tbike.api.util.Executor.WithParams;
+import se.pj.tbike.api.util.Executor.WithQueryParams;
 import se.pj.tbike.api.util.Response.Builder;
 import se.pj.tbike.validation.Validators;
 
@@ -23,7 +23,7 @@ public class SimpleRequestHandler<H extends Handleable, I extends Request<H>, O>
 		return this;
 	}
 
-	protected void handle(Builder<H, O> res, I body, Params params) {
+	protected void handle(Builder<H, O> res, I body, QueryParams queryParams) {
 
 	}
 
@@ -33,7 +33,7 @@ public class SimpleRequestHandler<H extends Handleable, I extends Request<H>, O>
 	}
 
 	@Override
-	public RequestHandler<H, I, O> handle(WithAll<H, O> executor,
+	public RequestHandler<H, I, O> handle(WithAllArgs<H, O> executor,
 	                                      I body) {
 		return this;
 	}
@@ -45,7 +45,7 @@ public class SimpleRequestHandler<H extends Handleable, I extends Request<H>, O>
 	}
 
 	@Override
-	public RequestHandler<H, I, O> handle(WithParams<O> executor) {
+	public RequestHandler<H, I, O> handle(WithQueryParams<O> executor) {
 		return this;
 	}
 

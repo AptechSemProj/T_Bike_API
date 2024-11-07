@@ -4,23 +4,30 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 import se.pj.tbike.core.api.attribute.entity.Attribute;
 import se.pj.tbike.core.api.category.entity.Category;
-import se.pj.tbike.core.common.IdentifiedEntity;
+import se.pj.tbike.core.common.entity.IdentifiedEntity;
 import se.pj.tbike.core.api.brand.entity.Brand;
 import se.pj.tbike.core.api.orderdetail.entity.OrderDetail;
-import se.pj.tbike.caching.Cacheable;
+import se.pj.tbike.core.util.Cacheable;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Getter
@@ -30,10 +37,14 @@ import java.util.Objects;
 		name = "products"
 )
 public class Product
-		extends IdentifiedEntity<Product>
-		implements Cacheable {
+		implements
+		IdentifiedEntity<Product, Long>,
+		Cacheable<Product> {
 
 	//** identifier **//
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@Column(
 			length = 20
@@ -239,12 +250,10 @@ public class Product
 	)
 	private List<Attribute> attributes = new ArrayList<>();
 
+	@Transient
 	@OneToMany(
 			mappedBy = "product",
-			fetch = FetchType.EAGER
-	)
-	@BatchSize(
-			size = 30
+			fetch = FetchType.LAZY
 	)
 	private List<OrderDetail> orders = new ArrayList<>();
 
@@ -256,20 +265,49 @@ public class Product
 	//*************** IMPLEMENTS & OVERRIDE METHODS ******************//
 
 	@Override
+	public Map<String, Object> toCacheObject() {
+		Map<String, Object> map = new HashMap<>();
+		try {
+			Field[] fields = getClass().getDeclaredFields();
+			for ( Field field : fields ) {
+				field.setAccessible( true );
+				String fn = field.getName();
+				map.put( fn, field.get( this ) );
+			}
+		} catch ( IllegalAccessException e ) {
+			throw new RuntimeException( e );
+		}
+		return map;
+	}
+
+	@Override
+	public Product fromCacheObject(Map<String, Object> cacheObject) {
+		try {
+			Field[] fields = getClass().getDeclaredFields();
+			for ( Field field : fields ) {
+				field.setAccessible( true );
+				String fn = field.getName();
+				field.set( this, cacheObject.get( fn ) );
+			}
+		} catch ( IllegalAccessException e ) {
+			throw new RuntimeException( e );
+		}
+		return this;
+	}
+
+	@Override
 	public boolean equals(Object o) {
 		if ( this == o ) {
 			return true;
 		}
-		if ( !super.equals( o ) ) {
-			return false;
-		}
 		if ( !(o instanceof Product that) ) {
 			return false;
 		}
-		return Objects.equals( brand.getId(), that.brand.getId() ) &&
+		return Objects.equals( id, that.id ) &&
+				Objects.equals( brand.getId(), that.brand.getId() ) &&
 				Objects.equals( category.getId(), that.category.getId() ) &&
 				compareAttrs( that.attributes ) &&
-				compareOrders( that.orders ) &&
+//				compareOrders( that.orders ) &&
 				Objects.equals( sku, that.sku ) &&
 				Objects.equals( name, that.name ) &&
 				Objects.equals( size, that.size ) &&
@@ -324,35 +362,35 @@ public class Product
 		return that == null;
 	}
 
-	private boolean compareOrders(List<OrderDetail> that) {
-		if ( orders != null ) {
-			if ( that == null ) {
-				return false;
-			}
-			int s = orders.size();
-			if ( s != that.size() ) {
-				return false;
-			}
-			for ( int i = 0; i < s; i++ ) {
-				OrderDetail o1 = orders.get( i );
-				OrderDetail o2 = that.get( i );
-				if ( o1 == o2 ) {
-					continue;
-				}
-				if ( o1 != null && o2 != null && Objects
-						.equals( o1.getId(), o2.getId() ) ) {
-					continue;
-				}
-				return false;
-			}
-			return true;
-		}
-		return that == null;
-	}
+//	private boolean compareOrders(List<OrderDetail> that) {
+//		if ( orders != null ) {
+//			if ( that == null ) {
+//				return false;
+//			}
+//			int s = orders.size();
+//			if ( s != that.size() ) {
+//				return false;
+//			}
+//			for ( int i = 0; i < s; i++ ) {
+//				OrderDetail o1 = orders.get( i );
+//				OrderDetail o2 = that.get( i );
+//				if ( o1 == o2 ) {
+//					continue;
+//				}
+//				if ( o1 != null && o2 != null && Objects
+//						.equals( o1.getId(), o2.getId() ) ) {
+//					continue;
+//				}
+//				return false;
+//			}
+//			return true;
+//		}
+//		return that == null;
+//	}
 
 	@Override
 	public int hashCode() {
-		int hashed = Objects.hash( super.hashCode(),
+		int hashed = Objects.hash( id,
 				brand.getId(), category.getId(), sku, name,
 				frame, saddle, seatPost, bell, fork, shock,
 				handlebar, handlebarStem,
@@ -373,18 +411,18 @@ public class Product
 			}
 			hashed = Objects.hash( hashed, Arrays.hashCode( ids ) );
 		}
-		if ( orders != null ) {
-			OrderDetail.Id[] ids = new OrderDetail.Id[s = orders.size()];
-			for ( int i = 0; i < s; i++ ) {
-				OrderDetail d = orders.get( i );
-				if ( d != null ) {
-					ids[i] = d.getId();
-				} else {
-					ids[i] = new OrderDetail.Id();
-				}
-			}
-			hashed = Objects.hash( hashed, Arrays.hashCode( ids ) );
-		}
+//		if ( orders != null ) {
+//			OrderDetail.Id[] ids = new OrderDetail.Id[s = orders.size()];
+//			for ( int i = 0; i < s; i++ ) {
+//				OrderDetail d = orders.get( i );
+//				if ( d != null ) {
+//					ids[i] = d.getId();
+//				} else {
+//					ids[i] = new OrderDetail.Id();
+//				}
+//			}
+//			hashed = Objects.hash( hashed, Arrays.hashCode( ids ) );
+//		}
 		return hashed;
 	}
 }

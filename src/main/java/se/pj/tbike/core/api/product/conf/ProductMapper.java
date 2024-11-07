@@ -3,8 +3,6 @@ package se.pj.tbike.core.api.product.conf;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.pj.tbike.core.api.brand.conf.BrandMapper;
-import se.pj.tbike.core.api.brand.data.BrandRepository;
-import se.pj.tbike.core.api.product.data.ProductRepository;
 import se.pj.tbike.core.api.product.dto.ProductRequest;
 import se.pj.tbike.core.api.product.dto.ProductDetail;
 import se.pj.tbike.core.api.product.dto.ProductResponse;
@@ -14,15 +12,11 @@ import se.pj.tbike.core.api.product.dto.mapper.ProductResponseMapper;
 import se.pj.tbike.core.api.product.entity.Product;
 import se.pj.tbike.core.api.attribute.conf.AttributeMapper;
 import se.pj.tbike.core.api.category.conf.CategoryMapper;
-import se.pj.tbike.core.api.category.data.CategoryRepository;
 
 @Service
 @RequiredArgsConstructor
 public class ProductMapper {
 
-	private final ProductRepository repository;
-	private final BrandRepository brandRepository;
-	private final CategoryRepository categoryRepository;
 	private final BrandMapper brandMapper;
 	private final CategoryMapper categoryMapper;
 	private final AttributeMapper attributeMapper;

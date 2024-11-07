@@ -1,4 +1,4 @@
-package se.pj.tbike.core.common;
+package se.pj.tbike.core.util;
 
 import lombok.AllArgsConstructor;
 

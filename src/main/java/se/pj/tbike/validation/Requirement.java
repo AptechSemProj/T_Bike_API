@@ -1,74 +1,56 @@
 package se.pj.tbike.validation;
 
-import se.pj.tbike.validation.validator.*;
+import java.util.function.Consumer;
 
-import java.util.function.Function;
+public abstract class Requirement
+		implements Comparable<Requirement> {
 
-public final class Requirement {
+	//************** Abstract Methods ****************//
 
-	private final Function<Object, ValidationResult> validator;
+	public abstract boolean resolve(Object o, Consumer<Object> out);
 
-	private Requirement(Function<Object, ValidationResult> validator) {
-		this.validator = validator;
+	//
+	/**
+	 * the index of requirement
+	 */
+	private final int identifier;
+
+	/**
+	 * the error return if resolve fail.
+	 */
+	private final Error error;
+
+	public Requirement(int identifier, Error error) {
+		this.identifier = identifier;
+		this.error = error;
 	}
 
-	public static Requirement notNull() {
-		return new Requirement( new NotNullValidator()::validate );
+	public final int getIdentifier() {
+		return identifier;
 	}
 
-	public static Requirement notEmpty() {
-		return new Requirement( (o) -> {
-			Requirement nonNull = notNull();
-			ValidationResult rs = nonNull.validate( o );
-			if ( rs.isFailed() ) {
-				return rs;
-			}
-			EmptyValidator empty = new EmptyValidator();
-			return empty.validate( rs.getValue() );
-		} );
+	public final Error getError() {
+		return error;
 	}
 
-	public static Requirement notBlank() {
-		return new Requirement( (o) -> {
-			var rs = notEmpty().validate( o );
-			if ( rs.isFailed() ) {
-				return rs;
-			}
-			return null;
-//				new InvalidValidator<String>() {
-//					@Override
-//					protected boolean isValid(String value) {
-//						return value != null && !value.isBlank();
-//					}
-//				}
-		} );
-	}
-//
-//	public static Requirement notBlank(int max) {
-//		return new Requirement(
-//				new InvalidValidator<String>() {
-//					@Override
-//					protected boolean isValid(String value) {
-//						return value != null && !value.isBlank();
-//					}
-//				}
-//		);
-//	}
-
-	public static Requirement min(int minValue) {
-		var validator = new IntegerValidator()
-				.acceptMinValue( minValue );
-		return new Requirement( validator::validate );
+	@Override
+	public final int compareTo(Requirement o) {
+		return identifier - o.identifier;
 	}
 
-	public static Requirement min(long minValue) {
-		var validator = new LongValidator()
-				.acceptMinValue( minValue );
-		return new Requirement( validator::validate );
+	@Override
+	public final boolean equals(Object o) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( !(o instanceof Requirement that) ) {
+			return false;
+		}
+		return identifier == that.identifier;
 	}
 
-	//package-private
-	ValidationResult validate(Object v) {
-		return validator.apply( v );
+	@Override
+	public final int hashCode() {
+		return identifier;
 	}
 }

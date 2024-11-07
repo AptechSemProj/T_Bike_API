@@ -19,6 +19,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import se.pj.tbike.core.api.order.entity.Order;
 import se.pj.tbike.core.api.product.entity.Product;
+import se.pj.tbike.core.common.entity.IdentifiedEntity;
 
 import java.util.Objects;
 
@@ -37,7 +38,9 @@ import java.io.Serializable;
 		}
 )
 public class OrderDetail
-		implements Comparable<OrderDetail> {
+		implements
+		IdentifiedEntity<OrderDetail, OrderDetail.Id>,
+		Comparable<OrderDetail> {
 
 	//*************** BASIC ******************//
 
@@ -92,6 +95,15 @@ public class OrderDetail
 	}
 
 	//*************** IMPLEMENTS & OVERRIDE METHODS ******************//
+
+//	@EmbeddedId
+//	public Id getId() {
+//		return id;
+//	}
+
+//	public void setId(Id id) {
+//		this.id = id;
+//	}
 
 	@Override
 	public int compareTo(@NonNull OrderDetail o) {

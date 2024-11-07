@@ -2,48 +2,49 @@ package se.pj.tbike.core.util;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import se.pj.tbike.core.common.entity.IdentifiedEntity;
 import se.pj.tbike.service.CrudService;
 import se.pj.tbike.util.Output;
 
-public class SimpleCrudService<T, K extends Comparable<K>>
-		implements CrudService<T, K> {
+public class SimpleCrudService<
+		E extends IdentifiedEntity<E, K>,
+		K extends Comparable<K>,
+		R extends JpaRepository<E, K>
+		> implements CrudService<E, K> {
 
-	private final JpaRepository<T, K> repository;
-	private final Function<T, K> keyProvider;
+	private final R repository;
 
-	public SimpleCrudService(JpaRepository<T, K> repository,
-	                         Function<T, K> keyProvider) {
+	public SimpleCrudService(R repository) {
 		this.repository = repository;
-		this.keyProvider = keyProvider;
 	}
 
 	@Override
-	public final JpaRepository<T, K> getRepository() {
+	public final R getRepository() {
 		return repository;
 	}
 
 	@Override
-	public Output.Array<T> findAll() {
+	public Output.Array<E> findAll() {
 		return findAll( Sort.unsorted() );
 	}
 
 	@Override
-	public Output.Array<T> findAll(Sort sort) {
-		List<T> list = repository.findAll( sort );
+	public Output.Array<E> findAll(Sort sort) {
+		List<E> list = repository.findAll( sort );
 		return Output.array( list );
 	}
 
 	@Override
-	public Output.Pagination<T> findPage(int num, int size) {
+	public Output.Pagination<E> findPage(int num, int size) {
 		PageRequest req = PageRequest.of( num, size );
-		Page<T> page = repository.findAll( req );
+		Page<E> page = repository.findAll( req );
 		return Output.pagination(
 				page.getContent(),
 				page.getNumber(),
@@ -54,14 +55,14 @@ public class SimpleCrudService<T, K extends Comparable<K>>
 	}
 
 	@Override
-	public Output.Value<T> findByKey(K id) {
-		Optional<T> o = repository.findById( id );
+	public Output.Value<E> findByKey(K id) {
+		Optional<E> o = repository.findById( id );
 		return Output.value( o.orElse( null ) );
 	}
 
 	@Override
-	public boolean exists(T t) {
-		return existsByKey( keyProvider.apply( t ) );
+	public boolean exists(E e) {
+		return repository.exists( Example.of( e ) );
 	}
 
 	@Override
@@ -70,12 +71,12 @@ public class SimpleCrudService<T, K extends Comparable<K>>
 	}
 
 	@Override
-	public T create(T t) {
-		return repository.save( t );
+	public E create(E e) {
+		return repository.save( e );
 	}
 
 	@Override
-	public boolean update(T newVal, T oldVal) {
+	public boolean update(E newVal, E oldVal) {
 		if ( oldVal != null ) {
 			if ( !exists( oldVal ) ) {
 				return false;
@@ -89,8 +90,8 @@ public class SimpleCrudService<T, K extends Comparable<K>>
 	}
 
 	@Override
-	public boolean update(T t) {
-		return update( t, null );
+	public boolean update(E e) {
+		return update( e, null );
 	}
 
 	@Override
@@ -100,8 +101,8 @@ public class SimpleCrudService<T, K extends Comparable<K>>
 	}
 
 	@Override
-	public boolean remove(T t) {
-		repository.delete( t );
+	public boolean remove(E e) {
+		repository.delete( e );
 		return true;
 	}
 }

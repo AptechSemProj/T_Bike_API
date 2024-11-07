@@ -1,10 +1,9 @@
-package se.pj.tbike.validation.error;
+package se.pj.tbike.validation;
 
 import java.util.Objects;
 
-public abstract class Error {
+public class Error {
 
-	private static final String MESSAGE_TEMPLATE = "Error[%05d]: %s";
 	private static final String DEFAULT_GUIDE = "Retry with other value.";
 
 	private final int code;
@@ -58,8 +57,10 @@ public abstract class Error {
 	}
 
 	@Override
-	public final String toString() {
-		return MESSAGE_TEMPLATE.formatted( getCode(), getReason() );
+	public String toString() {
+		return "{ code: " + code + ", " +
+				"reason: \"" + reason + "\", " +
+				"guide: \"" + guide + "\" }";
 	}
 
 	public abstract static class Builder<E extends Error> {

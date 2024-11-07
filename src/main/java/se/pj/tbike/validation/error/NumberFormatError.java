@@ -3,11 +3,10 @@ package se.pj.tbike.validation.error;
 /**
  * The value is not a number.
  */
-public class NumberFormatError extends Error {
+public class NumberFormatError extends NumberError {
 
 	public static final int CODE = 10100;
-	public static final String REASON =
-			"The value passed is not a number.";
+	public static final String REASON = "The value passed is not a number.";
 
 	private NumberFormatError(int code, String reason, String guide) {
 		super( code, reason, guide );

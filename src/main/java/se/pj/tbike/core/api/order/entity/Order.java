@@ -5,10 +5,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -16,7 +17,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
-import se.pj.tbike.core.common.IdentifiedEntity;
+import se.pj.tbike.core.common.entity.IdentifiedEntity;
 import se.pj.tbike.core.api.orderdetail.entity.OrderDetail;
 import se.pj.tbike.core.api.user.entity.User;
 
@@ -34,9 +35,13 @@ import java.sql.Timestamp;
 		name = "orders"
 )
 public class Order
-		extends IdentifiedEntity<Order> {
+		implements IdentifiedEntity<Order, Long> {
 
 	//*************** BASIC ******************//
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@Column(
 			name = "total_amount",
@@ -53,12 +58,12 @@ public class Order
 	)
 	private Timestamp createdAt;
 
-	@Column(
-			nullable = false
-	)
-	@Enumerated(EnumType.STRING)
+	//	@Enumerated(EnumType.STRING)
 	@Convert(
 			converter = StatusConverter.class
+	)
+	@Column(
+			nullable = false
 	)
 	private Status status = Status.CART;
 
@@ -92,6 +97,16 @@ public class Order
 	}
 
 	//*************** IMPLEMENTS & OVERRIDE METHODS ******************//
+//
+//	@Override
+//	public Long getId() {
+//		return id;
+//	}
+//
+//	@Override
+//	public void setId(Long id) {
+//		this.id = id;
+//	}
 
 	@Override
 	public boolean equals(Object o) {

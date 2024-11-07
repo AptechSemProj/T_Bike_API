@@ -3,7 +3,7 @@ package se.pj.tbike.api.util;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import se.pj.tbike.api.util.ResponseTemplate.Replaceable;
-import se.pj.tbike.validation.error.Error;
+import se.pj.tbike.validation.Error;
 
 import java.util.HashMap;
 import java.util.Map;

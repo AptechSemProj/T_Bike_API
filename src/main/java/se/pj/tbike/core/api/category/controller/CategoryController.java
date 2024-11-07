@@ -23,7 +23,8 @@ import se.pj.tbike.io.Response;
 import se.pj.tbike.io.ResponseType;
 import se.pj.tbike.io.Val;
 import se.pj.tbike.util.Output;
-import se.pj.tbike.validation.validator.IntegerValidator;
+import se.pj.tbike.validation.Requirements;
+import se.pj.tbike.validation.validator.IntValidator;
 import se.pj.tbike.validation.ValidationResult;
 import se.pj.tbike.validation.ValidatorsChain;
 import se.pj.tbike.core.util.SimpleController;
@@ -42,10 +43,9 @@ public class CategoryController
 
 	@Override
 	public ValidationResult validatePageSize(Object pageSize) {
-		ValidatorsChain chain = ValidatorsChain
-				.createChain()
-				.addValidator( new IntegerValidator().acceptMinValue( 0 ) );
-		return chain.handle( pageSize );
+		IntValidator validator = new IntValidator();
+		validator.accept( Requirements.minInt( 0 ) );
+		return validator.validate( pageSize );
 	}
 
 	@GetMapping({ Urls.URL_LIST_1, Urls.URL_LIST_2 })
@@ -105,8 +105,10 @@ public class CategoryController
 
 	@Override
 	public ValidatorsChain validateKey() {
+		LongValidator validator = new LongValidator();
+		validator.accept( Requirements.positiveLong( false, false ) );
 		return ValidatorsChain.createChain()
-				.addValidator( new LongValidator().acceptMinValue( 1L ) );
+				.addValidator( validator );
 	}
 
 	@Override
