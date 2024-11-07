@@ -53,33 +53,29 @@ public class ImageController {
 		try {
 			String saved = service.saveFile( IMAGE_DIRECTORY, file );
 			String url = createUrl( saved, request );
-			return ResponseEntity.ok(
-					new HashMap<>() {{
-						put( "status", HttpStatus.OK.value() );
-						put( "message", HttpStatus.OK.getReasonPhrase() );
-						put( "data", url );
-					}}
-			);
+			return ResponseEntity.ok( new HashMap<>() {{
+				put( "status", HttpStatus.OK.value() );
+				put( "message", "Uploaded file." );
+				put( "data", url );
+			}} );
 		} catch ( IOException e ) {
-			return ResponseEntity.internalServerError()
-					.body( new HashMap<>() {{
-						put( "status", HttpStatus.INTERNAL_SERVER_ERROR.value() );
-						put( "message", e.getMessage() );
-					}} );
+			return ResponseEntity.ok( new HashMap<>() {{
+				put( "status", HttpStatus.INTERNAL_SERVER_ERROR.value() );
+				put( "message", e.getMessage() );
+			}} );
 		} catch ( UnsupportedOperationException e ) {
-			return ResponseEntity.badRequest()
-					.body( new HashMap<>() {{
-						put( "status", HttpStatus.BAD_REQUEST.value() );
-						put( "message", e.getMessage() );
-					}} );
+			return ResponseEntity.ok( new HashMap<>() {{
+				put( "status", HttpStatus.BAD_REQUEST.value() );
+				put( "message", e.getMessage() );
+			}} );
 		}
 	}
 
 	@GetMapping({ ImageApiUrls.URL_QUERY })
-	public ResponseEntity<Resource> download(@PathVariable String filename) {
+	public ResponseEntity<Object> download(@PathVariable String filename) {
 		Path path = service.readFile( IMAGE_DIRECTORY, filename );
-		if ( path != null ) {
-			try {
+		try {
+			if ( path != null ) {
 				String mimeType = Files.probeContentType( path );
 				File file = path.toFile();
 				Resource resource = new UrlResource( file.toURI() );
@@ -88,26 +84,43 @@ public class ImageController {
 						.contentLength( file.length() )
 						.header(
 								HttpHeaders.CONTENT_DISPOSITION,
-								"attachment; filename=\""
-										+ filename
-										+ "\""
-						).body( resource );
-			} catch ( IOException e ) {
-				return ResponseEntity.internalServerError().build();
+								"attachment; filename=\"" + filename + "\""
+						)
+						.body( resource );
+			} else {
+				return ResponseEntity.ok( new HashMap<>() {{
+					put( "status", HttpStatus.NOT_FOUND.value() );
+					put( "message", "The file '" + filename + "' not found." );
+				}} );
 			}
+		} catch ( Exception e ) {
+			return ResponseEntity.ok( new HashMap<>() {{
+				put( "status", HttpStatus.INTERNAL_SERVER_ERROR.value() );
+				put( "message", e.getMessage() );
+			}} );
 		}
-		return ResponseEntity.notFound().build();
 	}
 
 	@DeleteMapping({ ImageApiUrls.URL_QUERY })
 	public ResponseEntity<Object> delete(@PathVariable String filename) {
 		try {
 			boolean isDeleted = service.deleteFile( IMAGE_DIRECTORY, filename );
-			return isDeleted
-					? ResponseEntity.noContent().build()
-					: ResponseEntity.notFound().build();
+			if ( isDeleted ) {
+				return ResponseEntity.ok( new HashMap<>() {{
+					put( "status", HttpStatus.NO_CONTENT.value() );
+					put( "message", "Delete file '" + filename + "' successfully." );
+				}} );
+			} else {
+				return ResponseEntity.ok( new HashMap<>() {{
+					put( "status", HttpStatus.NOT_FOUND.value() );
+					put( "message", "The file '" + filename + "' not found." );
+				}} );
+			}
 		} catch ( IOException e ) {
-			return ResponseEntity.internalServerError().build();
+			return ResponseEntity.ok( new HashMap<>() {{
+				put( "status", HttpStatus.INTERNAL_SERVER_ERROR.value() );
+				put( "message", e.getMessage() );
+			}} );
 		}
 	}
 }

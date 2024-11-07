@@ -113,7 +113,11 @@ public abstract class SimpleFileManager
 				return cache.path;
 			}
 			Path target = resolvePath( dir.path, filename );
-			return dir.addFile( filename, target );
+			if ( Files.exists( target ) ) {
+				return dir.addFile( filename, target );
+			} else {
+				return dir.addNotExistsFile( filename );
+			}
 		}
 		return null;
 	}
@@ -133,6 +137,9 @@ public abstract class SimpleFileManager
 				target = cache.path;
 			} else {
 				target = resolvePath( dir.path, filename );
+			}
+			if ( target == null ) {
+				return false;
 			}
 			boolean deleted;
 			if ( (deleted = Files.deleteIfExists( target )) && cache != null ) {
@@ -211,7 +218,7 @@ public abstract class SimpleFileManager
 		private Item(String name, Path path,
 		             Item parent, Map<String, Item> children) {
 			checkDirName( name );
-			checkPath( path );
+//			checkPath( path );
 			this.name = name;
 			this.path = path;
 			this.parent = parent;
@@ -249,6 +256,12 @@ public abstract class SimpleFileManager
 
 		public Path addFile(String name, Path path) {
 			return add( name, path, null );
+		}
+
+		public Path addNotExistsFile(String name) {
+			Item child = new Item( name, null, this, null );
+			this.children.put( child.name, child );
+			return child.path;
 		}
 
 		public Path add(String name, Path path,
