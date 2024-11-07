@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
@@ -17,10 +18,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 public abstract class SimpleFileManager
 		implements FileManager {
+
+	public static final Set<String> SUPPORTED_FILE_EXTENSION = Set.of(
+			"jpg", "jpeg", "png", "gif"
+	);
 
 	private static final String ROOT = "root";
 
@@ -59,9 +63,15 @@ public abstract class SimpleFileManager
 		String original = file.getOriginalFilename();
 		String extension;
 		if ( original == null ) {
-			extension = "jpg";
+			extension = "";
 		} else {
-			extension = FilenameUtils.getExtension( original );
+			String ex = FilenameUtils.getExtension( original );
+			extension = ex.equals( "jpeg" ) ? "jpg" : ex;
+		}
+		if ( !SUPPORTED_FILE_EXTENSION.contains( extension ) ) {
+			throw new UnsupportedOperationException(
+					"file with extension '" + extension + "' is not supported"
+			);
 		}
 		AtomicReference<Path> target = new AtomicReference<>();
 		String filename = generateFilename(
@@ -83,16 +93,11 @@ public abstract class SimpleFileManager
 				width - ((width / 100) * 10),
 				height - ((height / 100) * 10)
 		);
-//		long bytes = Files.copy(
-//				resized.get,
-////				file.getInputStream(),
-//				target.get(),
-//				StandardCopyOption.REPLACE_EXISTING
-//		);
 		if ( ImageIO.write( resized, extension, target.get().toFile() ) ) {
 			root.addFile( filename, target.get() );
+			return filename;
 		}
-		return filename;
+		throw new IOException( "Could not save file" );
 	}
 
 	@Override
@@ -229,11 +234,6 @@ public abstract class SimpleFileManager
 			checkPath( path );
 			mkDirs( path );
 			return new Item( name, path, null, new LinkedHashMap<>() );
-		}
-
-		public void move(Item i, Item to) {
-			to.add( i.name, i.path, i.children );
-			delete( i );
 		}
 
 		public void delete(Item i) {

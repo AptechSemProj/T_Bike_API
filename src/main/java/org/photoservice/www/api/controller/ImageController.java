@@ -66,6 +66,12 @@ public class ImageController {
 						put( "status", HttpStatus.INTERNAL_SERVER_ERROR.value() );
 						put( "message", e.getMessage() );
 					}} );
+		} catch ( UnsupportedOperationException e ) {
+			return ResponseEntity.badRequest()
+					.body( new HashMap<>() {{
+						put( "status", HttpStatus.BAD_REQUEST.value() );
+						put( "message", e.getMessage() );
+					}} );
 		}
 	}
 
