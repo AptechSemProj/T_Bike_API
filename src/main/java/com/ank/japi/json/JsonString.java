@@ -1,64 +1,45 @@
 package com.ank.japi.json;
 
+import com.ank.japi.exception.NotAssignableException;
+
 import java.util.NoSuchElementException;
 
-public record JsonString(String name, boolean nullable)
-        implements JsonField {
+public class JsonString
+        implements Json {
 
-    public JsonString(String name) {
-        this( name, true );
+    private final boolean nullable;
+    private       String  value;
+
+    public JsonString(boolean nullable) {
+        this.nullable = nullable;
     }
 
     @Override
-    public String getName() {
-        return name;
+    public boolean isAssignable(Object o) {
+        if ( o == null ) {
+            return nullable;
+        }
+        return o instanceof CharSequence;
     }
 
     @Override
-    public JsonType getJsonType() {
-        return JsonType.STRING;
+    public Object get() throws NoSuchElementException {
+        if ( isAssignable( value ) ) {
+            return value;
+        }
+        throw new NoSuchElementException();
     }
 
     @Override
-    public boolean isAssignable(Object value) {
-        return value == null
-               ? nullable
-               : value instanceof CharSequence;
-    }
-
-    @Override
-    public boolean isNullable() {
-        return nullable;
-    }
-
-    @Override
-    public Value value() {
-        return new Value() {
-
-            private String value;
-
-            @Override
-            public Object get() throws NoSuchElementException {
-                if ( value != null ) {
-                    return value;
-                }
-                if ( nullable ) {
-                    return null;
-                }
-                throw new NoSuchElementException();
-            }
-
-            @Override
-            public void set(Object value) throws NotAssignableException {
-                if ( isAssignable( value ) ) {
-                    this.value = value == null
-                                 ? null
-                                 : value.toString();
-                }
-                else {
-                    throw new NotAssignableException();
-                }
-            }
-        };
+    public void set(Object o) throws NotAssignableException {
+        if ( !isAssignable( o ) ) {
+            throw new NotAssignableException();
+        }
+        if ( o == null ) {
+            this.value = null;
+        }
+        else {
+            this.value = o.toString();
+        }
     }
 }

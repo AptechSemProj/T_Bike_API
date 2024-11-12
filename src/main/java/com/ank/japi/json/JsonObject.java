@@ -1,172 +1,80 @@
 package com.ank.japi.json;
 
+import com.ank.japi.exception.NotAssignableException;
+
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
-public abstract class JsonObject
-        implements JsonField {
+public class JsonObject
+        implements Json {
 
-    public static final  String NAME_SEPARATOR   = ".";
-    private static final int    HASH_MAP_LIMITED = 10;
-
-    private final String                 name;
+    private final Map<String, JsonField> structure;
     private final boolean                nullable;
-    private       boolean                modifiable = true;
-    private       Map<String, JsonField> structure;
+    private       Map<String, Object>    value;
 
-    public JsonObject(String name, boolean nullable) {
-        this.structure = new HashMap<>();
+    public JsonObject(Map<String, JsonField> structure, boolean nullable) {
+        this.structure = structure;
         this.nullable = nullable;
-        this.name = name;
-    }
-
-    public JsonObject(String name) {
-        this( name, true );
-    }
-
-    protected void initStructure() {
-    }
-
-    private void recreateStructure() {
-        if ( !modifiable ) {
-            return;
-        }
-        if ( structure instanceof LinkedHashMap ) {
-            return;
-        }
-        if ( structure.size() > HASH_MAP_LIMITED ) {
-            structure = new LinkedHashMap<>( structure );
-        }
-    }
-
-    protected final void addField(JsonField field) {
-        if ( !modifiable ) {
-            return;
-        }
-        structure.put( field.getName(), field );
-        recreateStructure();
-    }
-
-    public final void setModifiable(boolean flag) {
-        modifiable = flag;
-        if ( modifiable ) {
-            if ( structure.size() < HASH_MAP_LIMITED ) {
-                structure = new HashMap<>( structure );
-            }
-            else {
-                structure = new LinkedHashMap<>( structure );
-            }
-        }
-        else {
-            this.structure = Map.copyOf( structure );
-        }
     }
 
     @Override
-    public String getName() {
-        return name;
+    public boolean isAssignable(Object o) {
+        if ( o == null ) {
+            return nullable;
+        }
+        return o instanceof Map;
     }
 
     @Override
-    public JsonType getJsonType() {
-        return JsonType.OBJECT;
+    public boolean isObject() {
+        return true;
     }
 
     @Override
-    public boolean isAssignable(Object value) {
-        return value == null
-               ? nullable
-               : value instanceof Map;
+    public Map<String, Object> get()
+    throws NoSuchElementException {
+        if ( isAssignable( value ) ) {
+            return value;
+        }
+        throw new NoSuchElementException();
+    }
+
+    public Object get(String name) {
+        if ( value == null ) {
+            return null;
+        }
+        return value.get( name );
     }
 
     @Override
-    public boolean isNullable() {
-        return nullable;
+    public void set(Object o)
+    throws NotAssignableException {
+        if ( !isAssignable( o ) ) {
+            throw new NotAssignableException();
+        }
+        Map<?, ?> fields = (Map<?, ?>) o;
+        this.value = null;
+        this.structure.forEach( (n, f) -> set( f, fields.get( n ) ) );
     }
 
-    @Override
-    public ObjectValue value() {
-        return new ObjectValue( this );
+    public void set(String name, Object value) {
+        if ( name == null ) {
+            throw new IllegalArgumentException( "name is null" );
+        }
+        JsonField f = this.structure.get( name );
+        if ( f == null ) {
+            throw new NullPointerException( "Field '" + name + "' not found" );
+        }
+        set( f, value );
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if ( this == o ) {
-            return true;
+    private void set(JsonField f, Object o) {
+        if ( this.value == null ) {
+            this.value = new HashMap<>();
         }
-        if ( !(o instanceof JsonObject that) ) {
-            return false;
-        }
-        return nullable == that.nullable
-                && modifiable == that.modifiable
-                && Objects.equals( name, that.name )
-                && Objects.equals( structure, that.structure );
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash( name, nullable, modifiable, structure );
-    }
-
-    public static final class ObjectValue
-            implements Value {
-
-        private final JsonObject          field;
-        private       Map<String, Object> value;
-
-        private ObjectValue(JsonObject field) {
-            this.field = field;
-        }
-
-        @Override
-        public Map<String, Object> get() throws NoSuchElementException {
-            if ( value != null ) {
-                return value;
-            }
-            if ( field.nullable ) {
-                return null;
-            }
-            throw new NoSuchElementException();
-        }
-
-        private void set(JsonField f, Object o) {
-            if ( this.value == null ) {
-                this.value = new HashMap<>();
-            }
-            Value fv = f.value();
-            fv.set( o );
-            this.value.put( f.getName(), fv.get() );
-        }
-
-        public void set(String name, Object value) {
-            if ( name == null ) {
-                throw new IllegalArgumentException( "name is null" );
-            }
-            JsonField f = this.field.structure.get( name );
-            if ( f != null ) {
-                set( f, value );
-            }
-            else {
-                throw new NullPointerException( name + " not found" );
-            }
-        }
-
-        @Override
-        public void set(Object value) throws NotAssignableException {
-            if ( !this.field.isAssignable( value ) ) {
-                throw new NotAssignableException();
-            }
-            @SuppressWarnings("unchecked")
-            Map<String, Object> fields = (Map<String, Object>) value;
-            this.value = fields.size() > HASH_MAP_LIMITED
-                         ? new LinkedHashMap<>()
-                         : new HashMap<>();
-            this.field.structure.forEach(
-                    (n, f) -> set( f, fields.get( n ) )
-            );
-        }
+        JsonField.Value fv = f.value();
+        fv.set( o );
+        this.value.put( f.getName(), fv.get() );
     }
 }

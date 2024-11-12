@@ -1,75 +1,64 @@
 package com.ank.japi.json;
 
+import com.ank.japi.exception.NotAssignableException;
 import com.ank.japi.util.ArraySupport;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
-public record JsonArray(String name, boolean nullable)
-        implements JsonField {
+public final class JsonArray
+        implements Json {
 
-    public JsonArray(String name) {
-        this( name, true );
+    private final boolean      nullable;
+    private       List<Object> value;
+
+    public JsonArray(boolean nullable) {
+        this.nullable = nullable;
     }
 
     @Override
-    public String getName() {
-        return name;
+    public boolean isAssignable(Object o) {
+        if ( o == null ) {
+            return nullable;
+        }
+        return o instanceof Iterable
+                || ArraySupport.isArray( o );
     }
 
     @Override
-    public JsonType getJsonType() {
-        return JsonType.ARRAY;
+    public boolean isArray() {
+        return true;
     }
 
     @Override
-    public boolean isAssignable(Object value) {
-        return value == null
-               ? nullable
-               : value instanceof Iterable || ArraySupport.isArray( value );
+    public Iterable<Object> get()
+    throws NoSuchElementException {
+        if ( isAssignable( value ) ) {
+            return value;
+        }
+        throw new NoSuchElementException();
     }
 
     @Override
-    public boolean isNullable() {
-        return nullable;
+    public void set(Object o)
+    throws NotAssignableException {
+        if ( !isAssignable( o ) ) {
+            throw new NotAssignableException();
+        }
+        this.value = null;
+        if ( o instanceof Iterable<?> i ) {
+            i.forEach( this::add );
+        }
+        else {
+            ArraySupport.foreach( o, this::add );
+        }
     }
 
-    @Override
-    public Value value() {
-        return new Value() {
-
-            private Iterable<?> value;
-
-            @Override
-            public Iterable<?> get() throws NoSuchElementException {
-                if ( value != null ) {
-                    return value;
-                }
-                else if ( nullable ) {
-                    return null;
-                }
-                else {
-                    throw new NoSuchElementException();
-                }
-            }
-
-            @Override
-            public void set(Object value) throws NotAssignableException {
-                if ( !isAssignable( value ) ) {
-                    throw new NotAssignableException();
-                }
-                Iterable<?> val;
-                if ( value instanceof Iterable<?> i ) {
-                    val = i;
-                }
-                else {
-                    int len = ArraySupport.getLength( value );
-                    val = new ArrayList<>( len ) {{
-                        ArraySupport.foreach( value, this::add );
-                    }};
-                }
-                this.value = val;
-            }
-        };
+    public void add(Object value) {
+        if ( this.value == null ) {
+            this.value = new ArrayList<>();
+        }
+        this.value.add( value );
     }
 }

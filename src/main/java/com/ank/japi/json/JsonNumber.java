@@ -1,124 +1,60 @@
 package com.ank.japi.json;
 
+import com.ank.japi.exception.NotAssignableException;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
-public final class JsonNumber
-        implements JsonField {
+public class JsonNumber
+        implements Json {
 
-    private final String  name;
     private final boolean nullable;
-    private       boolean onlyInteger = false;
-    private       boolean onlyFloat   = false;
+    private final boolean onlyInteger;
+    private final boolean onlyFloat;
+    private       Number  value;
 
-    public JsonNumber(String name, boolean nullable) {
-        this.name = name;
+    public JsonNumber(
+            boolean nullable, boolean onlyInteger, boolean onlyFloat
+    ) {
         this.nullable = nullable;
-    }
-
-    public JsonNumber(String name) {
-        this( name, true );
-    }
-
-    public JsonNumber acceptAll() {
-        onlyInteger = false;
-        onlyFloat = false;
-        return this;
-    }
-
-    public JsonNumber acceptOnlyInteger() {
-        onlyInteger = true;
-        onlyFloat = false;
-        return this;
-    }
-
-    public JsonNumber acceptOnlyFloat() {
-        onlyFloat = true;
-        onlyInteger = false;
-        return this;
+        this.onlyInteger = onlyInteger;
+        this.onlyFloat = onlyFloat;
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public JsonType getJsonType() {
-        return JsonType.NUMBER;
-    }
-
-    @Override
-    public boolean isAssignable(Object value) {
-        if ( value == null ) {
+    public boolean isAssignable(Object o) {
+        if ( o == null ) {
             return nullable;
         }
         if ( onlyFloat ) {
-            return value instanceof Float || value instanceof Double
-                    || value instanceof BigDecimal;
+            return o instanceof Float
+                    || o instanceof Double
+                    || o instanceof BigDecimal;
         }
         if ( onlyInteger ) {
-            return value instanceof Byte || value instanceof Short
-                    || value instanceof Integer || value instanceof Long
-                    || value instanceof BigInteger;
+            return o instanceof Byte
+                    || o instanceof Short
+                    || o instanceof Integer
+                    || o instanceof Long
+                    || o instanceof BigInteger;
         }
-        return value instanceof Number && value instanceof Comparable;
+        return o instanceof Number && o instanceof Comparable;
     }
 
     @Override
-    public boolean isNullable() {
-        return nullable;
-    }
-
-    @Override
-    public Value value() {
-        return new Value() {
-
-            private Number value;
-
-            @Override
-            public Number get() throws NoSuchElementException {
-                if ( value != null ) {
-                    return value;
-                }
-                else if ( nullable ) {
-                    return null;
-                }
-                else {
-                    throw new NoSuchElementException();
-                }
-            }
-
-            @Override
-            public void set(Object value) throws NotAssignableException {
-                if ( isAssignable( value ) ) {
-                    this.value = (Number) value;
-                }
-                else {
-                    throw new NotAssignableException();
-                }
-            }
-        };
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if ( this == o ) {
-            return true;
+    public Number get() throws NoSuchElementException {
+        if ( isAssignable( value ) ) {
+            return value;
         }
-        if ( !(o instanceof JsonNumber that) ) {
-            return false;
-        }
-        return nullable == that.nullable
-                && onlyInteger == that.onlyInteger
-                && onlyFloat == that.onlyFloat
-                && Objects.equals( name, that.name );
+        throw new NoSuchElementException();
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash( name, nullable, onlyInteger, onlyFloat );
+    public void set(Object o) throws NotAssignableException {
+        if ( !isAssignable( o ) ) {
+            throw new NotAssignableException();
+        }
+        this.value = (Number) o;
     }
 }

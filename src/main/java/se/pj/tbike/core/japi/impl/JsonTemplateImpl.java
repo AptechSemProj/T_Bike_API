@@ -1,9 +1,9 @@
 package se.pj.tbike.core.japi.impl;
 
-import com.ank.japi.json.Any;
+import com.ank.japi.json.JsonAnyField;
 import com.ank.japi.json.JsonField;
-import com.ank.japi.json.JsonNumber;
-import com.ank.japi.json.JsonString;
+import com.ank.japi.json.JsonNumberField;
+import com.ank.japi.json.JsonStringField;
 import com.ank.japi.json.JsonTemplate;
 
 import java.util.HashSet;
@@ -22,15 +22,15 @@ public final class JsonTemplateImpl
     }
 
     public JsonField statusField() {
-        return new JsonNumber( "status", false )
+        return new JsonNumberField( "status", false )
                 .acceptOnlyInteger();
     }
 
     public JsonField messageField() {
-        return new JsonString( "message", true );
+        return new JsonStringField( "message", true );
     }
 
     public JsonField bodyField() {
-        return new Any( "data", true );
+        return new JsonAnyField( "data", true );
     }
 }

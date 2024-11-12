@@ -1,6 +1,6 @@
 package com.ank.japi;
 
-import com.ank.japi.json.Any;
+import com.ank.japi.json.JsonAnyField;
 import com.ank.japi.json.JsonField;
 import com.ank.japi.json.JsonTemplate;
 import com.ank.japi.validation.ValidationError;
@@ -26,7 +26,7 @@ public interface ResponseConfigurer {
                 }
                 return Set.of( fields )
                           .parallelStream()
-                          .map( Any::new )
+                          .map( JsonAnyField::new )
                           .collect( Collectors.toSet() );
             }
         } );

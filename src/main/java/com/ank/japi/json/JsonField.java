@@ -1,41 +1,22 @@
 package com.ank.japi.json;
 
+import com.ank.japi.exception.NotAssignableException;
+
 import java.util.NoSuchElementException;
 
 public interface JsonField {
 
     interface Value {
 
+        boolean isAssignable(Object o);
+
         Object get() throws NoSuchElementException;
 
-        void set(Object value) throws NotAssignableException;
+        void set(Object o) throws NotAssignableException;
 
-        final class NotAssignableException
-                extends RuntimeException {
-
-            public NotAssignableException() {
-                super();
-            }
-
-            public NotAssignableException(String message) {
-                super( message );
-            }
-
-            public NotAssignableException(String message, Throwable cause) {
-                super( message, cause );
-            }
-
-            public NotAssignableException(Throwable cause) {
-                super( cause );
-            }
-        }
     }
 
     String getName();
-
-    JsonType getJsonType();
-
-    boolean isAssignable(Object value);
 
     boolean isNullable();
 
