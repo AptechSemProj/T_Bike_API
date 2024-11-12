@@ -10,10 +10,10 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderRequest {
 
-	private Long userId;
+    private Long user;
 
-	private List<OrderDetailRequest> details;
+    private List<OrderDetailRequest> details;
 
-	private String status;
+//	private String status;
 
 }

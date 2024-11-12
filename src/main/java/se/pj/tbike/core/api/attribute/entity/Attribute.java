@@ -12,7 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import se.pj.tbike.api.util.Handleable;
+import com.ank.japi.Handleable;
 import se.pj.tbike.core.common.entity.IdentifiedEntity;
 import se.pj.tbike.core.api.product.entity.Product;
 import se.pj.tbike.core.util.Cacheable;

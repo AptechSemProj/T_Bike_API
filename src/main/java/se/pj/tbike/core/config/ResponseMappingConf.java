@@ -4,17 +4,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import se.pj.tbike.core.util.ResponseMapping;
 import se.pj.tbike.io.Response;
-import se.pj.tbike.validation.error.AlreadyExistsError;
-import se.pj.tbike.validation.error.MaximumOverflowError;
-import se.pj.tbike.validation.error.MinimumOverflowError;
-import se.pj.tbike.validation.error.NegativeNumberError;
-import se.pj.tbike.validation.error.NoContentError;
-import se.pj.tbike.validation.error.NotExistError;
-import se.pj.tbike.validation.error.NumberFormatError;
-import se.pj.tbike.validation.error.PositiveNumberError;
-import se.pj.tbike.validation.error.UnexpectedTypeError;
-import se.pj.tbike.validation.error.UnexpectedValueError;
-import se.pj.tbike.validation.error.UnknownError;
+import com.ank.japi.validation.error.AlreadyExistsError;
+import com.ank.japi.validation.error.MaximumOverflowError;
+import com.ank.japi.validation.error.MinimumOverflowError;
+import com.ank.japi.validation.error.NegativeNumberError;
+import com.ank.japi.validation.error.NoContentError;
+import com.ank.japi.validation.error.NotExistError;
+import com.ank.japi.validation.error.NumberFormatError;
+import com.ank.japi.validation.error.PositiveNumberError;
+import com.ank.japi.validation.error.UnexpectedTypeError;
+import com.ank.japi.validation.error.UnexpectedValueError;
+import com.ank.japi.validation.error.UnknownError;
 
 @Configuration
 public class ResponseMappingConf {

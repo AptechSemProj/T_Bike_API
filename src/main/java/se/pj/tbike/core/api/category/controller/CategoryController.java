@@ -23,13 +23,13 @@ import se.pj.tbike.io.Response;
 import se.pj.tbike.io.ResponseType;
 import se.pj.tbike.io.Val;
 import se.pj.tbike.util.Output;
-import se.pj.tbike.validation.Requirements;
-import se.pj.tbike.validation.validator.IntValidator;
-import se.pj.tbike.validation.ValidationResult;
-import se.pj.tbike.validation.ValidatorsChain;
+import com.ank.japi.validation.Requirements;
+import com.ank.japi.validation.validator.IntValidator;
+import com.ank.japi.validation.ValidationResult;
+import com.ank.japi.validation.ValidatorsChain;
 import se.pj.tbike.core.util.SimpleController;
 import se.pj.tbike.core.util.PageableController;
-import se.pj.tbike.validation.validator.LongValidator;
+import com.ank.japi.validation.validator.LongValidator;
 
 @RequiredArgsConstructor
 @RestController

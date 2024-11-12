@@ -5,9 +5,9 @@ import se.pj.tbike.io.Pagination;
 import se.pj.tbike.io.Response;
 import se.pj.tbike.io.ResponseType;
 import se.pj.tbike.util.Output;
-import se.pj.tbike.validation.Requirements;
-import se.pj.tbike.validation.validator.IntValidator;
-import se.pj.tbike.validation.ValidationResult;
+import com.ank.japi.validation.Requirements;
+import com.ank.japi.validation.validator.IntValidator;
+import com.ank.japi.validation.ValidationResult;
 
 import java.util.function.BiFunction;
 

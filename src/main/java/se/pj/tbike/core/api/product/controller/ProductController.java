@@ -32,122 +32,147 @@ import se.pj.tbike.io.Val;
 import se.pj.tbike.util.Output;
 import se.pj.tbike.util.Output.Pagination;
 import se.pj.tbike.util.Output.Value;
-import se.pj.tbike.validation.Requirements;
-import se.pj.tbike.validation.ValidatorsChain;
+import com.ank.japi.validation.Requirements;
+import com.ank.japi.validation.ValidatorsChain;
 import se.pj.tbike.core.util.PageableController;
 import se.pj.tbike.core.util.SimpleController;
-import se.pj.tbike.validation.validator.LongValidator;
+import com.ank.japi.validation.validator.LongValidator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping({ ProductApiUrls.PRODUCT_API })
 public class ProductController
-		implements PageableController,
-		SimpleController<Long> {
+        implements PageableController,
+                   SimpleController<Long> {
 
-	private final BrandService brandService;
-	private final ProductService service;
-	private final CategoryService categoryService;
-	private final AttributeService attributeService;
-	private final ProductMapper productMapper;
-	private final AttributeMapper attributeMapper;
-	private final ResponseMapping responseMapping;
+    private final BrandService     brandService;
+    private final ProductService   service;
+    private final CategoryService  categoryService;
+    private final AttributeService attributeService;
+    private final ProductMapper    productMapper;
+    private final AttributeMapper  attributeMapper;
+    private final ResponseMapping  responseMapping;
 
-	@PostMapping({ "/list", "/search" })
-	public Response<Arr<ProductResponse>>
-	getList(@RequestBody ProductListRequest req) {
-		int page = req.getPage( 0 );
-		int size = req.getSize( 10 );
-		return paginated( page, size, (p, s) -> {
-			Pagination<Product> o = service.search(
-					p, s, req.getName(),
-					req.getMaxPrice(), req.getMinPrice(),
-					req.getBrandId(), req.getCategoryId()
-			);
-			return o.map( productMapper::map );
-		} );
-	}
+    @PostMapping({ "/list", "/search" })
+    public Response<Arr<ProductResponse>>
+    getList(@RequestBody ProductListRequest req) {
+        int page = req.getPage( 0 );
+        int size = req.getSize( 10 );
+        return paginated( page, size, (p, s) -> {
+            Pagination<Product> o = service.search(
+                    p, s, req.getName(),
+                    req.getMaxPrice(), req.getMinPrice(),
+                    req.getBrandId(), req.getCategoryId()
+            );
+            return o.map( productMapper::map );
+        } );
+    }
 
-	@GetMapping({ Urls.URL_INFO })
-	public Response<ProductDetail>
-	getDetail(@PathVariable String id) {
-		return get( id, k -> {
-			Output.Value<Product> r = service.findByKey( k );
-			return r.map( productMapper::toDetail );
-		} );
-	}
+    @GetMapping({ Urls.URL_INFO })
+    public Response<ProductDetail>
+    getDetail(@PathVariable String id) {
+        return get( id, k -> {
+            Output.Value<Product> r = service.findByKey( k );
+            return r.map( productMapper::toDetail );
+        } );
+    }
 
-	@PostMapping({ Urls.URL_LIST_1, Urls.URL_LIST_2 })
-	public Response<Val<Object>>
-	create(@RequestBody @Valid ProductRequest req) {
-		return post( req, (r) -> {
-//            brandService.existsByKey( r.getBrandId() );
+    @PostMapping({ Urls.URL_LIST_1, Urls.URL_LIST_2 })
+    public Response<Val<Object>>
+    create(@RequestBody @Valid ProductRequest req) {
+        return post( req, (r) -> {
+            if ( !brandService.existsByKey( r.getBrandId() ) ) {
+                throw new RuntimeException();
+            }
+            if ( !categoryService.existsByKey( r.getCategoryId() ) ) {
+                throw new RuntimeException();
+            }
 
-			Product p = productMapper.map( r );
-			Brand b = new Brand();
-			b.setId( r.getBrandId() );
-			p.setBrand( b );
-			Category c = new Category();
-			c.setId( r.getCategoryId() );
-			p.setCategory( c );
-			List<Attribute> attrs = new ArrayList<>();
-			p.setAttributes( attrs );
-			Product created = service.create( p );
-			r.getColors().forEach( attr -> {
-				Attribute attribute = attributeMapper.map( attr );
-				attribute.setProduct( created );
-				attrs.add( attribute );
-			} );
-			attrs.forEach( attributeService::create );
-			return created.getId();
-		} );
-	}
+            Product p = productMapper.map( r );
+            Brand b = new Brand();
+            b.setId( r.getBrandId() );
+            p.setBrand( b );
+            Category c = new Category();
+            c.setId( r.getCategoryId() );
+            p.setCategory( c );
+            List<Attribute> attrs = new ArrayList<>();
+            p.setAttributes( attrs );
+            Product created = service.create( p );
+            r.getColors().forEach( attr -> {
+                Attribute attribute = attributeMapper.map( attr );
+                attribute.setProduct( created );
+                attrs.add( attribute );
+            } );
+            attrs.forEach( attributeService::create );
+            return created.getId();
+        } );
+    }
 
-	@PutMapping({ Urls.URL_INFO })
-	public void update(@PathVariable String id,
-	                   @RequestBody @Valid ProductRequest req) {
-		put( id, null, k -> {
-			Value<Product> old = service.findByKey( k );
-			if ( old.isNull() ) {
-				throw new RuntimeException( "Product not found" );
-			}
-			Product oldProduct = old.get();
-			Product newProduct = productMapper.map( req );
-			newProduct.setId( oldProduct.getId() );
-			String sku = oldProduct.getSku();
-			String nSku = newProduct.getSku();
-			check_sku: {
-				if (sku == null) {
-					break check_sku;
-				}
-				if ( nSku != null ) {
-					// return 409
-				}
-			}
+    @PutMapping({ Urls.URL_INFO })
+    public void update(
+            @PathVariable String id,
+            @RequestBody @Valid ProductRequest req
+    ) {
+        put( id, null, k -> {
+            Value<Product> old = service.findByKey( k );
+            if ( old.isNull() ) {
+                throw new RuntimeException( "Product not found" );
+            }
+            Product oldProduct = old.get();
+            Product newProduct = productMapper.map( req );
+            newProduct.setId( oldProduct.getId() );
+            String sku = oldProduct.getSku();
+            String nSku = newProduct.getSku();
+            check_sku:
+            {
+                if ( sku == null ) {
+                    break check_sku;
+                }
+                if ( nSku != null ) {
+                    // return 409
+                }
+            }
 
-			service.update( newProduct );
-			return null;
-		} );
-	}
+            service.update( newProduct );
+            return null;
+        } );
+    }
 
-	@Override
-	public ResponseMapping getResponseMapping() {
-		return responseMapping;
-	}
+    @GetMapping("/test")
+    public Map<String, String> test() {
+        return new HashMap<>() {{
+            put( "key1", "'value1\"" );
+            put( "key2", "\"&value2\"" );
+            put( "key3", "\"value3\"" );
+        }};
+    }
 
-	@Override
-	public ValidatorsChain validateKey() {
-		LongValidator validator = new LongValidator();
-		validator.accept( Requirements.positiveLong( false, false ) );
-		return ValidatorsChain.createChain()
-				.addValidator( validator );
-	}
+//    @GetMapping("/test")
+//    public String test() {
+//        System.out.println( "here: "+ '\u2028' );
+//        return "{\"key1\": \"\\\"value1\\\"\"}";
+//    }
 
-	@Override
-	public boolean isExists(Long key) {
-		return service.existsByKey( key );
-	}
+    @Override
+    public ResponseMapping getResponseMapping() {
+        return responseMapping;
+    }
+
+    @Override
+    public ValidatorsChain validateKey() {
+        LongValidator validator = new LongValidator();
+        validator.accept( Requirements.positiveLong( false, false ) );
+        return ValidatorsChain.createChain()
+                              .addValidator( validator );
+    }
+
+    @Override
+    public boolean isExists(Long key) {
+        return service.existsByKey( key );
+    }
 }

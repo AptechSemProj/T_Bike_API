@@ -11,9 +11,9 @@ import se.pj.tbike.io.Val;
 
 import se.pj.tbike.util.Output;
 
-import se.pj.tbike.validation.ValidatorsChain;
-import se.pj.tbike.validation.ValidationResult;
-import se.pj.tbike.validation.validator.ExistenceValidator;
+import com.ank.japi.validation.ValidatorsChain;
+import com.ank.japi.validation.ValidationResult;
+import com.ank.japi.validation.validator.ExistenceValidator;
 
 public interface SimpleController<K> {
 

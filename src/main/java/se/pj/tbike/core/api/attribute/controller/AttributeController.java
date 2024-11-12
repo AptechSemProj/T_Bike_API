@@ -3,18 +3,13 @@ package se.pj.tbike.core.api.attribute.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import se.pj.tbike.api.util.RequestHandler;
-import se.pj.tbike.api.util.SimpleRequestHandler;
 import se.pj.tbike.core.api.attribute.conf.AttributeMapper;
 import se.pj.tbike.core.api.attribute.data.AttributeService;
-import se.pj.tbike.core.api.attribute.dto.AttributeRequest;
-import se.pj.tbike.core.api.attribute.dto.AttributeResponse;
-import se.pj.tbike.core.api.attribute.entity.Attribute;
 import se.pj.tbike.core.util.ResponseMapping;
-import se.pj.tbike.validation.Requirements;
-import se.pj.tbike.validation.ValidatorsChain;
+import com.ank.japi.validation.Requirements;
+import com.ank.japi.validation.ValidatorsChain;
 import se.pj.tbike.core.util.SimpleController;
-import se.pj.tbike.validation.validator.LongValidator;
+import com.ank.japi.validation.validator.LongValidator;
 
 @RequiredArgsConstructor
 @RestController
@@ -27,16 +22,17 @@ public class AttributeController
 
 	@GetMapping()
 	public void getList() {
-		RequestHandler<Attribute, AttributeRequest, AttributeResponse>
-				handler = new SimpleRequestHandler<>();
-		handler.handle( (res) -> {
-
-		} );
-
-		RequestHandler<Attribute, AttributeRequest, Long>
-				handler1 = new SimpleRequestHandler<>();
-		var resp = handler1.handle( (res, body) -> {
-		}, null );
+//		RequestHandler<Attribute, AttributeRequest, AttributeResponse>
+//				handler = new StdRequestHandler<>( req );
+//		handler.handle( (res) -> {
+//			return null;
+//		} );
+//
+//		RequestHandler<Attribute, AttributeRequest, Long>
+//				handler1 = new StdRequestHandler<>( req );
+//		var resp = handler1.handle( (res, body) -> {
+//			return null;
+//		} );
 
 	}
 

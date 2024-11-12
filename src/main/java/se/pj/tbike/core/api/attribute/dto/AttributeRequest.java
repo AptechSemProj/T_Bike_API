@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import se.pj.tbike.api.util.Request;
+import com.ank.japi.Request;
 import se.pj.tbike.core.api.attribute.entity.Attribute;
 import se.pj.tbike.io.RequestType;
 
