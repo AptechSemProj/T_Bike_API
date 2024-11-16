@@ -1,4 +1,4 @@
-package com.ank.japi.std;
+package com.ank.japi.impl;
 
 import com.ank.japi.QueryParamsReader;
 

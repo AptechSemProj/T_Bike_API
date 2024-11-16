@@ -45,3 +45,9 @@ file-storage:
   directories:
     images: 'images'
     videos: 'videos'
+
+application:
+  security:
+    jwt:
+      secret-key: afe037d4197e043959f6ac4dde6c0ffa00e27a8837af537a16facb4b625b9991
+      expiration: 86400000 # a day

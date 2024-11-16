@@ -1,8 +1,11 @@
 package com.ank.japi;
 
-public interface Response<T> {
+/**
+ * @param <B> response body type
+ */
+public interface Response<B> {
 
-    T getResponseBody();
+    B getResponseBody();
 
     int getStatusCode();
 

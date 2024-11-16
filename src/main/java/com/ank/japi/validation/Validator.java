@@ -1,16 +1,16 @@
 package com.ank.japi.validation;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Validator {
 
-    private final Set<Requirement> requirements;
+    private final List<Requirement> requirements;
 
     public Validator() {
-        this.requirements = new TreeSet<>();
+        this.requirements = new LinkedList<>();
     }
 
     public final int accept(Requirement... rs) {

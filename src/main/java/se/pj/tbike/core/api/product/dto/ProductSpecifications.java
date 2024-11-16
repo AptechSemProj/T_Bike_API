@@ -1,6 +1,5 @@
 package se.pj.tbike.core.api.product.dto;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,56 +7,56 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProductSpecifications {
 
-	private String size;
+    private String size;
 
-	private String frame;
+    private String frame;
 
-	private String saddle;
+    private String saddle;
 
-	private String seatPost;
+    private String seatPost;
 
-	private String bell;
+    private String bell;
 
-	private String fork;
+    private String fork;
 
-	private String shock;
+    private String shock;
 
-	//** steering system **//
+    //** steering system **//
 
-	private String handlebar;
+    private String handlebar;
 
-	private String handlebarStem;
+    private String handlebarStem;
 
-	private String pedal;
+    private String pedal;
 
-	private String crankset;
+    private String crankset;
 
-	private String bottomBracket;
+    private String bottomBracket;
 
-	private String chain;
+    private String chain;
 
-	private String chainGuard;
+    private String chainGuard;
 
-	private String cassette;
+    private String cassette;
 
-	private String frontDerailleur;
+    private String frontDerailleur;
 
-	private String rearDerailleur;
+    private String rearDerailleur;
 
-	//** motion system **//
+    //** motion system **//
 
-	private String rims;
+    private String rims;
 
-	private String hubs;
+    private String hubs;
 
-	private String spokes;
+    private String spokes;
 
-	private String tires;
+    private String tires;
 
-	private String valve;
+    private String valve;
 
-	private String brakes;
+    private String brakes;
 
-	private String brakeLevers;
+    private String brakeLevers;
 
 }

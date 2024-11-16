@@ -5,8 +5,6 @@ import com.ank.japi.validation.Requirements;
 
 public interface QueryParamsWriter {
 
-    QueryParamsReader getReader();
-
     void set(String name, Object value, Requirement... requirements);
 
     default void setString(

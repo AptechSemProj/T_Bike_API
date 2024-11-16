@@ -1,0 +1,35 @@
+Rule/Option api
+
+{
+    - Rule/Opt before : must exec before exec current Rule/Opt
+        * auto apply if not exists
+    - Rule/Opt[] after: Rules/Opts may have after exec current Rule/Opt
+        * throw if next Rule/Opt not have in declared
+    - Rule/Opt[] equal: Rules/Opts has exec position is equal,
+                        they can exist together ignore before
+    - Rule/Opt[] overrides: Rules/Opts can be overridden by current Rule/Opt,
+                        if they are exist together (include current)
+    - Identifier id: support before/after
+}
+
+Pos:
+    * Sorted
+    * No duplicate
+Neg:
+    * Longer
+    * Solid
+
+Syntax:
+    var req = static_type_name(val).rule/opt(...?).rule/opt(...?)
+
+    ValidationResult/Validated/Result result = exec_class.static_method(val, req)
+
+Example:
+    [byte/short/int/long/float/double/integer/decimal]+Val(val)
+        .nullable() // override not_null (by default)
+        .min(val) // equal max()
+        .max(val) // equal min()
+        .range(min, max) // override min(), max()
+        .equal(val) // override range()
+        .negative(max (include)) // override max() + positive(), equal range(min, max)
+        .positive(min (include)) // override min() + negative(), equal range(min, max)

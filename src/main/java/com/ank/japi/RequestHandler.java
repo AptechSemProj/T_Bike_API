@@ -2,61 +2,42 @@ package com.ank.japi;
 
 import com.ank.japi.validation.Validators;
 
-public interface RequestHandler<H extends Handleable, I extends Request<H>, O> {
+import java.util.function.Consumer;
 
-    RequestHandler<H, I, O> validateParams(QueryValidator func);
+public interface RequestHandler<RQ extends Request<RP>, RP> {
 
-    RequestHandler<H, I, O> validateBody(BodyValidator<H> func);
+    RequestHandler<RQ, RP> setQueryParams(Consumer<QueryParamsWriter> func);
 
-    Response<O> handle(Exec1<H, O> exec);
+    Response<RP> handle(RQ req, Exec1<RP, RQ> exec);
 
-    Response<O> handle(Exec2<H, O> exec);
+    Response<RP> handle(RQ req, Exec2<RP, RQ> exec);
 
-    Response<O> handle(Exec3<H, O> exec);
-
-    Response<O> handle(Exec4<H, O> exec);
+    Response<RP> handle(
+            RQ req,
+            Exec2<RP, RQ> exec,
+            Exec3<RP, RQ> requestValidate
+    );
 
     @FunctionalInterface
-    interface Exec1<T extends Handleable, R> {
+    interface Exec1<RP, RQ extends Request<RP>> {
 
-        Response<R> apply(ResponseBuilder<T, R> rb) throws Throwable;
+        Response<RP> apply(ResponseBuilder<RP> res, RQ req) throws Throwable;
 
     }
 
     @FunctionalInterface
-    interface Exec2<T extends Handleable, R> {
+    interface Exec2<RP, RQ extends Request<RP>> {
 
-        Response<R> apply(ResponseBuilder<T, R> rb, T t) throws Throwable;
-
-    }
-
-    @FunctionalInterface
-    interface Exec3<T extends Handleable, R> {
-
-        Response<R> apply(ResponseBuilder<T, R> rb, QueryParamsReader r)
-        throws Throwable;
+        Response<RP> apply(
+                ResponseBuilder<RP> res, RQ req, QueryParamsReader query
+        ) throws Throwable;
 
     }
 
     @FunctionalInterface
-    interface Exec4<T extends Handleable, R> {
+    interface Exec3<RP, RQ extends Request<RP>> {
 
-        Response<R> apply(ResponseBuilder<T, R> rb, T t, QueryParamsReader r)
-        throws Throwable;
-
-    }
-
-    @FunctionalInterface
-    interface QueryValidator {
-
-        void accept(QueryParamsWriter w) throws Throwable;
-
-    }
-
-    @FunctionalInterface
-    interface BodyValidator<T extends Handleable> {
-
-        void accept(T t, Validators v) throws Throwable;
+        void apply(RQ req, Validators validators) throws Throwable;
 
     }
 }

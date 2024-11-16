@@ -14,6 +14,6 @@ public interface ProductService
 	                           String name, Long maxPrice, Long minPrice,
 	                           Long brand, Long category);
 
-	boolean skuExists(String sku);
+	Product findBySku(String sku);
 
 }

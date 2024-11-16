@@ -15,6 +15,7 @@ import com.ank.japi.validation.ValidatorsChain;
 import com.ank.japi.validation.ValidationResult;
 import com.ank.japi.validation.validator.ExistenceValidator;
 
+@Deprecated
 public interface SimpleController<K> {
 
 	ResponseMapping getResponseMapping();

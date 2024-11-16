@@ -12,25 +12,18 @@ import java.util.Set;
 public final class JsonTemplateImpl
         extends JsonTemplate {
 
+    public static final JsonTemplate INSTANCE = new JsonTemplateImpl();
+
+    public static final String STATUS  = "status";
+    public static final String MESSAGE = "message";
+    public static final String DATA    = "data";
+
     @Override
     protected Set<JsonField> configure() {
         return new HashSet<>() {{
-            add( statusField() );
-            add( messageField() );
-            add( bodyField() );
+            add( new JsonNumberField( STATUS, false ).acceptOnlyInteger() );
+            add( new JsonStringField( MESSAGE, true ) );
+            add( new JsonAnyField( DATA, true ) );
         }};
-    }
-
-    public JsonField statusField() {
-        return new JsonNumberField( "status", false )
-                .acceptOnlyInteger();
-    }
-
-    public JsonField messageField() {
-        return new JsonStringField( "message", true );
-    }
-
-    public JsonField bodyField() {
-        return new JsonAnyField( "data", true );
     }
 }

@@ -19,11 +19,11 @@ public final class Requirements {
         throw new IllegalStateException( "Utility class" );
     }
 
-    public static final int NULL_IDENTIFIER = 10;
+    public static final int ASSERT_IDENTIFIER = 10;
 
     public static Requirement assertNull() {
         return new Requirement(
-                NULL_IDENTIFIER,
+                ASSERT_IDENTIFIER,
                 Errors.get( UnexpectedValueError.class )
         ) {
             @Override
@@ -38,7 +38,7 @@ public final class Requirements {
 
     public static Requirement notNull() {
         return new Requirement(
-                NULL_IDENTIFIER,
+                ASSERT_IDENTIFIER,
                 Errors.get( NoContentError.class )
         ) {
             @Override
@@ -154,9 +154,10 @@ public final class Requirements {
     public static final int NUMBER_IDENTIFIER = 40;
 
     public static Requirement isInt(boolean allowsNull) {
-        ValidationError error = Errors.get( NumberFormatError.class );
-        return new Requirement( NUMBER_IDENTIFIER, error ) {
-
+        return new Requirement(
+                NUMBER_IDENTIFIER,
+                Errors.get( NumberFormatError.class )
+        ) {
             @Override
             public boolean resolve(Object o, Consumer<Object> out) {
                 if ( o == null ) {
@@ -188,9 +189,10 @@ public final class Requirements {
     }
 
     public static Requirement isLong(boolean allowsNull) {
-        ValidationError error = Errors.get( NumberFormatError.class );
-        return new Requirement( NUMBER_IDENTIFIER, error ) {
-
+        return new Requirement(
+                NUMBER_IDENTIFIER,
+                Errors.get( NumberFormatError.class )
+        ) {
             @Override
             public boolean resolve(Object o, Consumer<Object> out) {
                 if ( o == null ) {
@@ -250,7 +252,8 @@ public final class Requirements {
             int val, boolean allowsNull, boolean inclusive
     ) {
         return new Requirement(
-                MAX_IDENTIFIER, Errors.get( MaximumOverflowError.class )
+                MAX_IDENTIFIER,
+                Errors.get( MaximumOverflowError.class )
         ) {
             @Override
             public boolean resolve(Object o, Consumer<Object> out) {
@@ -270,7 +273,8 @@ public final class Requirements {
             long val, boolean allowsNull, boolean inclusive
     ) {
         return new Requirement(
-                MAX_IDENTIFIER, Errors.get( MaximumOverflowError.class )
+                MAX_IDENTIFIER,
+                Errors.get( MaximumOverflowError.class )
         ) {
             @Override
             public boolean resolve(Object o, Consumer<Object> out) {
@@ -292,7 +296,8 @@ public final class Requirements {
             int val, boolean allowsNull, boolean inclusive
     ) {
         return new Requirement(
-                MIN_IDENTIFIER, Errors.get( MinimumOverflowError.class )
+                MIN_IDENTIFIER,
+                Errors.get( MinimumOverflowError.class )
         ) {
             @Override
             public boolean resolve(Object object, Consumer<Object> out) {
@@ -312,7 +317,8 @@ public final class Requirements {
             long val, boolean allowsNull, boolean inclusive
     ) {
         return new Requirement(
-                MIN_IDENTIFIER, Errors.get( MinimumOverflowError.class )
+                MIN_IDENTIFIER,
+                Errors.get( MinimumOverflowError.class )
         ) {
             @Override
             public boolean resolve(Object object, Consumer<Object> out) {
@@ -368,6 +374,22 @@ public final class Requirements {
 
     public static Requirement positiveInt() {
         return positiveInt( true );
+    }
+
+    public static Requirement assertLong(long val) {
+        return new Requirement(
+                ASSERT_IDENTIFIER,
+                Errors.get( UnexpectedValueError.class )
+        ) {
+            @Override
+            public boolean resolve(Object object, Consumer<Object> out) {
+                final boolean allowsNull = false;
+                return compareNumber(
+                        object, out, isLong( allowsNull ), Long.class,
+                        Predicate.isEqual( val )
+                );
+            }
+        };
     }
 
     private static class StringUtils {

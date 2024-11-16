@@ -1,18 +1,13 @@
-package com.ank.japi.std;
+package com.ank.japi.impl;
 
-import com.ank.japi.Handleable;
 import com.ank.japi.Response;
 import com.ank.japi.ResponseBuilder;
-import com.ank.japi.ResponseConfigurer;
-import com.ank.japi.validation.ValidationError;
 
-import java.util.function.Function;
+public abstract class StdResponseBuilder<T>
+        implements ResponseBuilder<T> {
 
-public abstract class StdResponseBuilder<T extends Handleable, R>
-        implements ResponseBuilder<T, R> {
-
-    protected abstract Response<R> createResponse(
-            int statusCode, String message, R data
+    protected abstract Response<T> createResponse(
+            int statusCode, String message, T data
     );
 
     public static final int OK                              = 200;
@@ -55,69 +50,43 @@ public abstract class StdResponseBuilder<T extends Handleable, R>
     public static final int GATEWAY_TIMEOUT                 = 504;
     public static final int HTTP_VERSION_NOT_SUPPORTED      = 505;
 
-    protected final ResponseConfigurer configurer;
-    private final   T                  handleable;
-
-    protected StdResponseBuilder(ResponseConfigurer configurer, T handleable) {
-        this.handleable = handleable;
-        if ( configurer == null ) {
-            throw new NullPointerException( "configurer is null" );
-        }
-        this.configurer = configurer;
-    }
-
 //    @Override
 //    public Map<String, List<String>> headers() {
 //        return null;
 //    }
 
     @Override
-    public Response<R> ok(Function<T, R> func) {
-        return ok( func.apply( handleable ) );
-    }
-
-    @Override
-    public Response<R> ok(R data) {
+    public Response<T> ok(T data) {
         return createResponse( OK, "OK", data );
     }
 
     @Override
-    public Response<R> created(Function<T, R> func) {
-        return created( func.apply( handleable ) );
-    }
-
-    @Override
-    public Response<R> created(R data) {
+    public Response<T> created(T data) {
         return createResponse( CREATED, "CREATED", data );
     }
 
     @Override
-    public Response<R> noContent() {
+    public Response<T> noContent() {
         return createResponse( NO_CONTENT, "NO CONTENT", null );
     }
 
     @Override
-    public Response<R> notFound(String message) {
+    public Response<T> badRequest(String message) {
+        return createResponse( BAD_REQUEST, message, null );
+    }
+
+    @Override
+    public Response<T> notFound(String message) {
         return createResponse( NOT_FOUND, "NOT FOUND", null );
     }
 
     @Override
-    public Response<R> conflict(String message) {
+    public Response<T> conflict(String message) {
         return createResponse( CONFLICT, message, null );
     }
 
     @Override
-    public Response<R> internalServerError(String message) {
+    public Response<T> internalServerError(String message) {
         return createResponse( INTERNAL_SERVER_ERROR, message, null );
-    }
-
-    @Override
-    public Response<R> error(ValidationError error) {
-        return configurer.getBoundResponse( error );
-    }
-
-    @Override
-    public Response<R> throwable(Throwable throwable) {
-        return configurer.getBoundResponse( throwable );
     }
 }

@@ -1,10 +1,9 @@
 package com.ank.japi;
 
-import com.ank.japi.validation.ValidationError;
-
-import java.util.function.Function;
-
-public interface ResponseBuilder<H extends Handleable, T> {
+/**
+ * @param <T> response type
+ */
+public interface ResponseBuilder<T> {
 
 //    Map<String, List<String>> headers();
 
@@ -12,26 +11,28 @@ public interface ResponseBuilder<H extends Handleable, T> {
 
     /* 2xx */
 
-    Response<T> ok(Function<H, T> func);
-
     Response<T> ok(T data);
 
     default Response<T> ok() {
-        return ok( (T) null );
+        return ok( null );
     }
-
-    Response<T> created(Function<H, T> func);
 
     Response<T> created(T data);
 
     default Response<T> created() {
-        return created( (T) null );
+        return created( null );
     }
 
     Response<T> noContent();
 
     /* 3xx */
     /* 4xx */
+
+    default Response<T> badRequest() {
+        return badRequest( null );
+    }
+
+    Response<T> badRequest(String message);
 
     default Response<T> notFound() {
         return notFound( null );
@@ -53,13 +54,4 @@ public interface ResponseBuilder<H extends Handleable, T> {
 
     Response<T> internalServerError(String message);
 
-    /* extra */
-
-    default Response<T> error(ValidationError.Builder<?> err) {
-        return error( err.build() );
-    }
-
-    Response<T> error(ValidationError err);
-
-    Response<T> throwable(Throwable throwable);
 }

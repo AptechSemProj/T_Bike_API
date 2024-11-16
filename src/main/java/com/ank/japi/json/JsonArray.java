@@ -51,7 +51,7 @@ public final class JsonArray
             i.forEach( this::add );
         }
         else {
-            ArraySupport.foreach( o, this::add );
+            ArraySupport.forEach( o, this::add );
         }
     }
 

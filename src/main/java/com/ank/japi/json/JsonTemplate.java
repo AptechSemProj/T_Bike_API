@@ -28,8 +28,17 @@ public abstract class JsonTemplate {
         }
     }
 
-    public final Json createJson() {
-        return new Json( template );
+    public static JsonTemplate copy(JsonTemplate template) {
+        return new JsonTemplate() {
+            @Override
+            protected Set<JsonField> configure() {
+                return template.configure();
+            }
+        };
+    }
+
+    public final JsonObject createJsonObject() {
+        return new JsonObject( template, false );
     }
 
     public final boolean isConfigured() {

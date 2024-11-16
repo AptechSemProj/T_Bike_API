@@ -49,4 +49,6 @@ public abstract class Requirement
     public final int hashCode() {
         return identifier;
     }
+
+    public record Identifier() {}
 }

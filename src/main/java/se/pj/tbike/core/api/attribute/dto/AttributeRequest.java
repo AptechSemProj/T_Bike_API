@@ -1,34 +1,85 @@
 package se.pj.tbike.core.api.attribute.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import com.ank.japi.Request;
-import se.pj.tbike.core.api.attribute.entity.Attribute;
 import se.pj.tbike.io.RequestType;
+
+/*
+@Request(
+    responseType = Long.class,
+    mapper = @ClassMapper(
+        targetClass = Attribute.class,
+        constructorParameters = {},
+        methodName? = "map",
+        reverseMethodName? = "map",
+        (
+            staticClass? = true,
+            finalClass = true,
+            finalMethod? = false,
+            strategy? = GENERATE,
+            className? = "AttributeRequestMapper"
+        )
+        <or/>
+        (
+            strategy? =  DECLARED,
+            declaredClass? = AttributeRequestMapper.class
+        )
+    )
+)
+*/
 
 @Getter
 @AllArgsConstructor
 public class AttributeRequest
-		implements RequestType,
-		Request<Attribute> {
+        /* implements Request<Long> */
+        implements RequestType,
+                   Request<Long> {
 
-	@NotBlank
-	private String name;
+    /*
+        public static final class AttributeRequestMapper
+            implements RequestMapper<AttributeRequest, Attribute> {
+            @Override
+            public Attribute map(AttributeRequest request) {
+                Attribute target = new Attribute();
+                if (request.getId() == null) {
+                    throw new NullPointerException("id is null");
+                }
+                target.setId(AttributeTransform.transformId(request.getId()));
+                target.setName(request.getName());
+                ...
+                return target;
+            }
+        }
+     */
+    /*
+        @Mapping(
+            ( value? = "id", )
+            <or/>
+            ( targetField? = "id", )
+            getterMethod? = "getId",
+            setterMethod? = "setId",
+            transform? = @Mapping.Transform(
+                declaredClass? = AttributeTransform.class,
+                staticMethod? = true,
+                methodName? = "transformId"
+            )
+        )
+        @NotNull
+     */
+    private Long id;
 
-	private String imageUrl;
+    private String name;
 
-	@Min(0)
-	private long price;
+    private String imageUrl;
 
-	@Min(0)
-	private int quantity;
+    private long price;
 
-	private Boolean represent;
+    private int quantity;
 
-	@Override
-	public Attribute toHandleableObject() {
-		return null;
-	}
+    private Boolean represent;
+
+    public boolean getRepresent() {
+        return represent != null && represent;
+    }
 }

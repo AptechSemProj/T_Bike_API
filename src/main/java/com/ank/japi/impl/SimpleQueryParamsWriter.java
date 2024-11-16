@@ -1,33 +1,16 @@
-package com.ank.japi.std;
+package com.ank.japi.impl;
 
-import com.ank.japi.QueryParamsReader;
 import com.ank.japi.QueryParamsWriter;
 import com.ank.japi.validation.Requirement;
-import com.ank.japi.validation.ValidationError;
 import com.ank.japi.validation.Validators;
 
-import java.util.concurrent.atomic.AtomicReference;
-
-public class SimpleQueryParamsWriter
+public final class SimpleQueryParamsWriter
         implements QueryParamsWriter {
 
     private final Validators validators;
 
     public SimpleQueryParamsWriter(Validators validators) {
         this.validators = validators;
-    }
-
-    @Override
-    public QueryParamsReader getReader() {
-        var err = new AtomicReference<ValidationError>( null );
-        var values = validators.validate( err::set );
-        ValidationError e = err.get();
-        if ( e != null ) {
-            throw e;
-        }
-        else {
-            return new SimpleQueryParamsReader( values );
-        }
     }
 
     @Override

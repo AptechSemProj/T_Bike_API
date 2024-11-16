@@ -20,11 +20,14 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import se.pj.tbike.core.api.order.entity.Order;
 import se.pj.tbike.core.common.entity.SoftDeletionEntity;
+import se.pj.tbike.core.util.Cacheable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Getter
@@ -45,7 +48,8 @@ import java.util.Objects;
 )
 public class User
         implements SoftDeletionEntity<User, Long>,
-                   UserDetails {
+                   UserDetails,
+                   Cacheable<User> {
 
     //*************** BASIC ******************//
 
@@ -178,7 +182,34 @@ public class User
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of( new SimpleGrantedAuthority( role.name() ) );
+        return List.of( new SimpleGrantedAuthority( "ROLE_" + role.name() ) );
+    }
+
+    @Override
+    public Map<String, Object> toCacheObject() {
+        var map = new HashMap<String, Object>();
+        map.put( "id", getId() );
+        map.put( "name", getName() );
+        map.put( "phoneNumber", getPhoneNumber() );
+        map.put( "avatarImage", getAvatarImage() );
+        map.put( "deleted", isDeleted() );
+        map.put( "role", getRole() );
+        map.put( "username", getUsername() );
+        map.put( "password", getPassword() );
+        return map;
+    }
+
+    @Override
+    public User fromCacheObject(Map<String, Object> cacheObject) {
+        setId( (Long) cacheObject.get( "id" ) );
+        setName( (String) cacheObject.get( "name" ) );
+        setPhoneNumber( (String) cacheObject.get( "phoneNumber" ) );
+        setAvatarImage( (String) cacheObject.get( "avatarImage" ) );
+        setDeleted( (Boolean) cacheObject.get( "deleted" ) );
+        setRole( (Role) cacheObject.get( "role" ) );
+        setUsername( (String) cacheObject.get( "username" ) );
+        setPassword( (String) cacheObject.get( "password" ) );
+        return this;
     }
 
     public enum Role {

@@ -6,20 +6,20 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
 
-class StdResponseJsonSerializer
-        extends StdSerializer<StdResponse<?>> {
+class ResponseImplJsonSerializer
+        extends StdSerializer<ResponseImpl<?>> {
 
-    public StdResponseJsonSerializer() {
+    public ResponseImplJsonSerializer() {
         this( null );
     }
 
-    protected StdResponseJsonSerializer(Class<StdResponse<?>> t) {
+    protected ResponseImplJsonSerializer(Class<ResponseImpl<?>> t) {
         super( t );
     }
 
     @Override
     public void serialize(
-            StdResponse<?> resp, JsonGenerator gen, SerializerProvider provider
+            ResponseImpl<?> resp, JsonGenerator gen, SerializerProvider provider
     )
     throws IOException {
         gen.writeObject( resp.toJson() );
