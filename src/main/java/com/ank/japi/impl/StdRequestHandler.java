@@ -71,6 +71,17 @@ public class StdRequestHandler<RQ extends Request<RP>, RP>
 
     @Override
     public Response<RP> handle(
+            RQ req, Exec1<RP, RQ> exec, Exec3<RP, RQ> requestValidate
+    ) {
+        return handle(
+                req,
+                (res, req1, query) -> exec.apply( res, req1 ),
+                requestValidate
+        );
+    }
+
+    @Override
+    public Response<RP> handle(
             RQ req,
             Exec2<RP, RQ> exec,
             Exec3<RP, RQ> requestValidate

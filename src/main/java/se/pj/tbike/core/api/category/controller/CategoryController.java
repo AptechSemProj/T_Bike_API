@@ -1,5 +1,6 @@
 package se.pj.tbike.core.api.category.controller;
 
+import com.ank.japi.validation.Validator;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,7 +46,7 @@ public class CategoryController
 
     @Override
     public ValidationResult validatePageSize(Object pageSize) {
-        IntValidator validator = new IntValidator();
+        Validator validator = new Validator();
         validator.accept( Requirements.minInt( 0 ) );
         return validator.validate( pageSize );
     }

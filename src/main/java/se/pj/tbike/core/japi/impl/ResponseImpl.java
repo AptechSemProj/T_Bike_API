@@ -10,40 +10,34 @@ import com.ank.japi.Response;
 public final class ResponseImpl<T>
         implements Response<T> {
 
-    private final JsonTemplate template;
-    private final T            data;
-    private final int          statusCode;
-    private final String       message;
+    public static final JsonTemplate JSON_TEMPLATE;
 
-    public ResponseImpl(
-            JsonTemplate template,
-            int statusCode, String message, T data
-    ) {
-        this.template = template;
+    static {
+        JSON_TEMPLATE = JsonTemplateImpl.INSTANCE;
+    }
+
+    private final T data;
+    private final int statusCode;
+    private final String message;
+
+    public ResponseImpl(int statusCode, String message, T data) {
         this.statusCode = statusCode;
         this.message = message;
         this.data = data;
     }
 
-    public ResponseImpl(JsonTemplate template, HttpStatus status, T data) {
-        this( template, status.value(), status.getReasonPhrase(), data );
-    }
-
-    public ResponseImpl(
-            JsonTemplate template, HttpStatus status, String message
-    ) {
-        this( template, status.value(), message, null );
+    public ResponseImpl(HttpStatus status, String message) {
+        this(status.value(), message, null);
     }
 
     Object toJson() {
-        if ( template.isConfigured() ) {
-            JsonObject json = template.createJsonObject();
-            json.set( JsonTemplateImpl.STATUS, statusCode );
-            json.set( JsonTemplateImpl.MESSAGE, message );
-            json.set( JsonTemplateImpl.DATA, data );
+        if (JSON_TEMPLATE.isConfigured()) {
+            JsonObject json = JSON_TEMPLATE.createJsonObject();
+            json.set(JsonTemplateImpl.STATUS, statusCode);
+            json.set(JsonTemplateImpl.MESSAGE, message);
+            json.set(JsonTemplateImpl.DATA, data);
             return json.get();
-        }
-        else {
+        } else {
             return data;
         }
     }

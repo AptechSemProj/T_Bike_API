@@ -14,6 +14,12 @@ public interface RequestHandler<RQ extends Request<RP>, RP> {
 
     Response<RP> handle(
             RQ req,
+            Exec1<RP, RQ> exec,
+            Exec3<RP, RQ> requestValidate
+    );
+
+    Response<RP> handle(
+            RQ req,
             Exec2<RP, RQ> exec,
             Exec3<RP, RQ> requestValidate
     );
