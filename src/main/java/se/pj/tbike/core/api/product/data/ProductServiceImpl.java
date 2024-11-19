@@ -67,7 +67,7 @@ public class ProductServiceImpl
     ) {
         CacheManager<Long> manager = getCacheManager();
         PageRequest request = PageRequest.of( page, size );
-        repository.findAll();
+//        repository.findAll();
         get_from_cache:
         {
             long offset = request.getOffset();

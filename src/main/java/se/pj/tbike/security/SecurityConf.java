@@ -34,51 +34,56 @@ public class SecurityConf {
             JwtFilter filter,
             AuthenticationProvider provider
     ) throws Exception {
-        http.csrf( AbstractHttpConfigurer::disable )
-            .authenticationProvider( provider )
-            .addFilterBefore(
-                    filter, UsernamePasswordAuthenticationFilter.class
-            )
-            .sessionManagement( sc -> sc.sessionCreationPolicy( STATELESS ) )
-            .authorizeHttpRequests( r -> r
-                    .requestMatchers(
-                            HttpMethod.GET,
-                            "/api/brands/**",
-                            "/api/categories/**",
-                            "/api/products/**"
-                    )
-                    .permitAll().requestMatchers(
-                            HttpMethod.POST,
-                            "/api/auth/**",
-                            "/api/products/list/**",
-                            "/api/products/search/**"
-                    )
-                    .permitAll()
-            ).authorizeHttpRequests( r -> r
-                    .requestMatchers(
-                            HttpMethod.POST,
-                            "/api/brands",
-                            "/api/categories",
-                            "/api/products"
-                    )
-                    .hasRole( User.Role.ADMIN.name() )
-                    .requestMatchers(
-                            HttpMethod.PUT,
-                            "/api/brands/**",
-                            "/api/categories/**",
-                            "/api/products/**"
-                    )
-                    .hasRole( User.Role.ADMIN.name() )
-                    .requestMatchers(
-                            HttpMethod.DELETE,
-                            "/api/brands/**",
-                            "/api/categories/**",
-                            "/api/products/**"
-                    )
-                    .hasRole( User.Role.ADMIN.name() )
-                    .anyRequest()
-                    .authenticated()
-            );
+        http.csrf(AbstractHttpConfigurer::disable)
+                .authenticationProvider(provider)
+                .addFilterBefore(
+                        filter, UsernamePasswordAuthenticationFilter.class
+                )
+                .sessionManagement(sc -> sc.sessionCreationPolicy(STATELESS))
+                .authorizeHttpRequests(r -> r
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/brands/**",
+                                "/api/categories/**",
+                                "/api/products/**",
+                                "/api/images/**"
+                        )
+                        .permitAll()
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/auth/**",
+                                "/api/products/list/**",
+                                "/api/products/search/**"
+                        )
+                        .permitAll()
+                )
+                .authorizeHttpRequests(r -> r
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/brands",
+                                "/api/categories",
+                                "/api/products",
+                                "/api/images/**"
+                        )
+                        .hasRole(User.Role.ADMIN.name())
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/brands/**",
+                                "/api/categories/**",
+                                "/api/products/**"
+                        )
+                        .hasRole(User.Role.ADMIN.name())
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/api/brands/**",
+                                "/api/categories/**",
+                                "/api/products/**",
+                                "/api/images/**"
+                        )
+                        .hasRole(User.Role.ADMIN.name())
+                        .anyRequest()
+                        .authenticated()
+                );
         return http.build();
     }
 
@@ -93,8 +98,8 @@ public class SecurityConf {
             PasswordEncoder encoder
     ) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService( service );
-        provider.setPasswordEncoder( encoder );
+        provider.setUserDetailsService(service);
+        provider.setPasswordEncoder(encoder);
         return provider;
     }
 
