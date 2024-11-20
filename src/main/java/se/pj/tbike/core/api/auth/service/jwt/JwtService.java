@@ -1,4 +1,4 @@
-package se.pj.tbike.security.jwt;
+package se.pj.tbike.core.api.auth.service.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

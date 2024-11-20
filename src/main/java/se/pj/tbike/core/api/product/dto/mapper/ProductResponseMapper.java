@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 import se.pj.tbike.core.api.attribute.entity.Attribute;
-import se.pj.tbike.core.api.brand.dto.mapper.BrandResponseMapper;
+import se.pj.tbike.core.api.brand.dto.BrandMapper;
 
 import se.pj.tbike.core.api.product.entity.Product;
 import se.pj.tbike.core.api.product.dto.ProductResponse;
@@ -18,7 +18,7 @@ import se.pj.tbike.io.ResponseMapper;
 public class ProductResponseMapper
 		implements ResponseMapper<Product, ProductResponse> {
 
-	private final BrandResponseMapper brandMapper;
+	private final BrandMapper brandMapper;
 	private final CategoryResponseMapper categoryMapper;
 
 	@Override

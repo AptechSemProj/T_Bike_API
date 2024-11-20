@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import se.pj.tbike.core.api.category.data.CategoryRepository;
 import se.pj.tbike.core.api.category.data.CategoryService;
-import se.pj.tbike.core.api.category.data.CategoryServiceImpl;
+import se.pj.tbike.core.api.category.impl.CategoryServiceImpl;
 
 @Configuration
 public class CategoryServiceConf {

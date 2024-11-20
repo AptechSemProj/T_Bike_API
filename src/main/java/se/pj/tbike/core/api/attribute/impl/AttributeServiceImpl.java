@@ -1,8 +1,10 @@
-package se.pj.tbike.core.api.attribute.data;
+package se.pj.tbike.core.api.attribute.impl;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import se.pj.tbike.caching.CacheControl;
 import se.pj.tbike.caching.CacheManager;
+import se.pj.tbike.core.api.attribute.data.AttributeRepository;
+import se.pj.tbike.core.api.attribute.data.AttributeService;
 import se.pj.tbike.core.api.attribute.entity.Attribute;
 import se.pj.tbike.core.util.SimpleCacheableService;
 

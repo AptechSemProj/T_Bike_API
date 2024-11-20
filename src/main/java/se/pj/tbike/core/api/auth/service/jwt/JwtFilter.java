@@ -1,4 +1,4 @@
-package se.pj.tbike.security.jwt;
+package se.pj.tbike.core.api.auth.service.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,13 +10,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import se.pj.tbike.core.api.auth.conf.AuthApiUrls;
-import se.pj.tbike.security.jwt.JwtService.JwtToken;
-import se.pj.tbike.security.jwt.JwtService.TokenType;
+import se.pj.tbike.core.api.auth.service.jwt.JwtService.JwtToken;
+import se.pj.tbike.core.api.auth.service.jwt.JwtService.TokenType;
 
 import java.io.IOException;
 
@@ -25,7 +24,7 @@ import java.io.IOException;
 public class JwtFilter
         extends OncePerRequestFilter {
 
-    private final JwtService         jwtService;
+    private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
     @Override

@@ -10,6 +10,7 @@ import java.util.Collection;
  *
  * @param <V> type of value
  */
+@Deprecated
 public sealed class Val<V>
 		implements ResponseType
 		permits Arr {

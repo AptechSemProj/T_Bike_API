@@ -6,7 +6,7 @@ import se.pj.tbike.core.api.brand.data.BrandService;
 import se.pj.tbike.core.api.category.data.CategoryService;
 import se.pj.tbike.core.api.product.data.ProductRepository;
 import se.pj.tbike.core.api.product.data.ProductService;
-import se.pj.tbike.core.api.product.data.ProductServiceImpl;
+import se.pj.tbike.core.api.product.impl.ProductServiceImpl;
 import se.pj.tbike.core.api.attribute.data.AttributeRepository;
 
 @Configuration

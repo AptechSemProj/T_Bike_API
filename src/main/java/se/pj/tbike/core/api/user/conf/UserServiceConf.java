@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import se.pj.tbike.core.api.user.data.UserRepository;
 import se.pj.tbike.core.api.user.data.UserService;
-import se.pj.tbike.core.api.user.data.UserServiceImpl;
+import se.pj.tbike.core.api.user.impl.UserServiceImpl;
 
 @Configuration
 public class UserServiceConf {

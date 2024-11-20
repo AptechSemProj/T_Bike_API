@@ -1,9 +1,11 @@
-package se.pj.tbike.core.api.user.data;
+package se.pj.tbike.core.api.user.impl;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import se.pj.tbike.caching.Cache;
 import se.pj.tbike.caching.CacheControl;
 import se.pj.tbike.caching.CacheManager;
+import se.pj.tbike.core.api.user.data.UserRepository;
+import se.pj.tbike.core.api.user.data.UserService;
 import se.pj.tbike.core.api.user.entity.User;
 import se.pj.tbike.core.util.SimpleCrudService;
 

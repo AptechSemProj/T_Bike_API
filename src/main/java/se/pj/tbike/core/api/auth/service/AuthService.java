@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import se.pj.tbike.core.api.auth.dto.AuthResponse;
 import se.pj.tbike.core.api.auth.dto.LoginRequest;
 import se.pj.tbike.core.api.auth.dto.RegisterRequest;
+import se.pj.tbike.core.api.auth.service.jwt.JwtService;
 import se.pj.tbike.core.api.user.data.UserService;
 import se.pj.tbike.core.api.user.entity.User;
-import se.pj.tbike.security.jwt.JwtService;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +19,7 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder       passwordEncoder;
-    private final JwtService            jwtService;
+    private final JwtService jwtService;
     private final UserService           userService;
 
     public AuthResponse register(RegisterRequest req) {

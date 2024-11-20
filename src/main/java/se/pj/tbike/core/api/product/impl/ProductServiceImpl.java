@@ -1,4 +1,4 @@
-package se.pj.tbike.core.api.product.data;
+package se.pj.tbike.core.api.product.impl;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -7,6 +7,8 @@ import se.pj.tbike.core.api.attribute.entity.Attribute;
 import se.pj.tbike.core.api.brand.data.BrandService;
 import se.pj.tbike.core.api.brand.entity.Brand;
 import se.pj.tbike.core.api.category.data.CategoryService;
+import se.pj.tbike.core.api.product.data.ProductRepository;
+import se.pj.tbike.core.api.product.data.ProductService;
 import se.pj.tbike.core.api.product.entity.Product;
 import se.pj.tbike.core.api.attribute.data.AttributeRepository;
 import se.pj.tbike.core.util.SimpleCacheableService;

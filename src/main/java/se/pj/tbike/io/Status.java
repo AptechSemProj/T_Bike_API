@@ -2,7 +2,7 @@ package se.pj.tbike.io;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
+@Deprecated
 @AllArgsConstructor
 @Getter
 public enum Status {

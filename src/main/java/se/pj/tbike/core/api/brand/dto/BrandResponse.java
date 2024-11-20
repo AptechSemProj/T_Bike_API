@@ -1,20 +1,18 @@
 package se.pj.tbike.core.api.brand.dto;
 
-import lombok.Builder;
 import lombok.Getter;
-import se.pj.tbike.io.ResponseType;
+import lombok.Setter;
 
 @Getter
-@Builder(builderClassName = "Builder")
-public class BrandResponse
-		implements ResponseType {
+@Setter
+public class BrandResponse {
 
-	private long id;
+    private long id;
 
-	private String name;
+    private String name;
 
-	private String imageUrl;
+    private String imageUrl;
 
-	private String description;
+    private String description;
 
 }

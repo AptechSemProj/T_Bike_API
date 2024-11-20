@@ -1,8 +1,10 @@
-package se.pj.tbike.core.api.category.data;
+package se.pj.tbike.core.api.category.impl;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import se.pj.tbike.caching.CacheControl;
 import se.pj.tbike.caching.CacheManager;
+import se.pj.tbike.core.api.category.data.CategoryRepository;
+import se.pj.tbike.core.api.category.data.CategoryService;
 import se.pj.tbike.core.api.category.entity.Category;
 import se.pj.tbike.core.util.SoftDeletionCacheableService;
 

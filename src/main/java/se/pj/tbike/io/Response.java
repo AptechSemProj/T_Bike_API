@@ -7,6 +7,7 @@ import se.pj.tbike.util.result.ResultPage;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 @Getter
 public class Response<T extends ResponseType>
 		implements DynamicJson {

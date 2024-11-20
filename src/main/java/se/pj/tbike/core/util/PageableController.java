@@ -1,64 +1,64 @@
 package se.pj.tbike.core.util;
 
-import com.ank.japi.validation.Validator;
-import se.pj.tbike.io.Arr;
-import se.pj.tbike.io.Pagination;
-import se.pj.tbike.io.Response;
-import se.pj.tbike.io.ResponseType;
+import com.ank.japi.Response;
+import org.springframework.http.HttpStatus;
+import se.pj.tbike.core.japi.impl.ResponseImpl;
+import se.pj.tbike.io.Pagination.Metadata;
 import se.pj.tbike.util.Output;
-import com.ank.japi.validation.Requirements;
-import com.ank.japi.validation.ValidationResult;
+import se.pj.tbike.util.Output.Array;
 
+import java.util.Collection;
 import java.util.function.BiFunction;
 
 public interface PageableController {
 
-    default int getBasedPageNumber() {
-        return 0;
+    interface Config {
+
+        int basedPageSize();
+
+        int basedPageNumber();
+
     }
 
-    default ValidationResult validatePageNumber(Object pageNumber) {
-        Validator validator = new Validator();
-        validator.accept(
-                Requirements.minInt(getBasedPageNumber(), false, true)
-        );
-        return validator.validate(pageNumber);
+    default Config configure() {
+        return new Config() {
+            @Override
+            public int basedPageSize() {
+                return 1;
+            }
+
+            @Override
+            public int basedPageNumber() {
+                return 0;
+            }
+        };
     }
 
-    default ValidationResult validatePageSize(Object pageSize) {
-        Validator validator = new Validator();
-        validator.accept(Requirements.positiveInt(false));
-        return validator.validate(pageSize);
-    }
-
-    default <T extends ResponseType> Response<Arr<T>> paginated(
-            Object pageNumber, Object pageSize,
-            BiFunction<Integer, Integer, Output.Array<T>> handler
+    default <T> Response<Collection<T>> paginated(
+            PageableParameters parameters,
+            BiFunction<Integer, Integer, Array<T>> handler
     ) {
         if (handler == null) {
             throw new NullPointerException("handler is null");
         }
-        ValidationResult page, size;
-        page = validatePageNumber(pageNumber);
-        size = validatePageSize(pageSize);
-        if (page.isFailed()) {
-            return Response.badRequest(page.getError().getReason());
-        }
-        if (size.isFailed()) {
-            return Response.badRequest(size.getError().getReason());
-        }
-        Output.Array<T> r = handler.apply(
-                page.getValue(Integer.class),
-                size.getValue(Integer.class)
+        Config config = configure();
+        Array<T> array = handler.apply(
+                parameters.getPageNumber(config.basedPageNumber()),
+                parameters.getPageSize(config.basedPageSize())
         );
-        if (r instanceof Output.Pagination<T> p) {
-            Pagination.Metadata metadata = new Pagination.Metadata(
+        ResponseImpl<Collection<T>> resp = ResponseImpl
+                .<Collection<T>>status(HttpStatus.OK)
+                .data(array.get())
+                .build();
+        if (array instanceof Output.Pagination<T> p) {
+            Metadata metadata = new Metadata(
                     p.getTotalElements(), p.getTotalPages(),
                     p.getSize(), p.getNumber(),
                     p.next(), p.previous()
             );
-            return new Pagination<>(p.get(), metadata);
+            return resp.addExtraField("metadata", metadata.toJson());
+        } else {
+            return resp;
         }
-        return Response.ok(Arr.of(r.get()));
     }
 }

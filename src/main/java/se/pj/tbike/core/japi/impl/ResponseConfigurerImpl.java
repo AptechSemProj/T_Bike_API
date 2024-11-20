@@ -79,9 +79,9 @@ public class ResponseConfigurerImpl<T>
 
     private <E extends Throwable>
     Function<E, Response<T>> response(HttpStatus status) {
-        return throwable -> new ResponseImpl<>(
-                status, throwable.getMessage()
-        );
+        return throwable -> ResponseImpl.<T>status(status)
+                .message(throwable.getLocalizedMessage())
+                .build();
     }
 
     @Override
@@ -91,9 +91,10 @@ public class ResponseConfigurerImpl<T>
             protected Response<T> createResponse(
                     int statusCode, String message, T data
             ) {
-                return new ResponseImpl<>(
-                        statusCode, message, data
-                );
+                return ResponseImpl.<T>status(statusCode)
+                        .message(message)
+                        .data(data)
+                        .build();
             }
         };
     }

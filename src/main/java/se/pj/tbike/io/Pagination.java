@@ -6,7 +6,7 @@ import java.util.Map;
 
 import se.pj.tbike.util.json.DynamicJson;
 import se.pj.tbike.util.result.ResultPage;
-
+@Deprecated
 public class Pagination<E extends ResponseType>
 		extends Response<Arr<E>> {
 

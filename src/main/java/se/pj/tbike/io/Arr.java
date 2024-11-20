@@ -10,6 +10,7 @@ import java.util.List;
  *
  * @param <E> type of element.
  */
+@Deprecated
 public final class Arr<E> extends Val<Collection<E>> {
 
 	private Arr(Collection<E> data) {

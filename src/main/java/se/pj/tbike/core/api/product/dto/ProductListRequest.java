@@ -1,12 +1,12 @@
 package se.pj.tbike.core.api.product.dto;
 
 import lombok.Getter;
-import se.pj.tbike.core.util.PaginationParams;
+import se.pj.tbike.core.util.PageableParameters;
 import se.pj.tbike.io.RequestType;
 
 @Getter
 public class ProductListRequest
-        extends PaginationParams
+        extends PageableParameters
         implements RequestType {
 
     private final String name;
@@ -22,10 +22,10 @@ public class ProductListRequest
 //    private
     // order by price
 
-    public ProductListRequest(Integer page, Integer size,
+    public ProductListRequest(String page, String size,
                               String name, Long brandId, Long categoryId,
                               Long minPrice, Long maxPrice) {
-        super( page, size );
+        super(page, size);
         this.name = name;
         this.brandId = brandId;
         this.categoryId = categoryId;

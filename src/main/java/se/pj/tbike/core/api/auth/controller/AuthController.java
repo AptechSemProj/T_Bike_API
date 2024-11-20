@@ -15,9 +15,9 @@ import se.pj.tbike.core.api.auth.dto.RegisterRequest;
 import se.pj.tbike.core.api.auth.service.AuthService;
 import se.pj.tbike.core.japi.impl.ResponseConfigurerImpl;
 
-@AllArgsConstructor
-@RestController
 @RequestMapping(AuthApiUrls.AUTH_URL)
+@RestController
+@AllArgsConstructor
 public class AuthController {
 
     private final AuthService authService;

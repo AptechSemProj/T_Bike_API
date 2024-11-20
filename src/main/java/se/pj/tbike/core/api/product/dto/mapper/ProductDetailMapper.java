@@ -1,12 +1,12 @@
 package se.pj.tbike.core.api.product.dto.mapper;
 
 import org.modelmapper.ModelMapper;
+import se.pj.tbike.core.api.attribute.dto.AttributeMapper;
+import se.pj.tbike.core.api.brand.dto.BrandMapper;
 import se.pj.tbike.core.api.brand.dto.BrandResponse;
-import se.pj.tbike.core.api.brand.dto.mapper.BrandResponseMapper;
 import se.pj.tbike.core.api.product.entity.Product;
 import se.pj.tbike.core.api.product.dto.ProductDetail;
 import se.pj.tbike.core.api.product.dto.ProductSpecifications;
-import se.pj.tbike.core.api.attribute.dto.mapper.AttributeResponseMapper;
 import se.pj.tbike.core.api.attribute.dto.AttributeResponse;
 import se.pj.tbike.core.api.category.dto.CategoryResponse;
 import se.pj.tbike.io.ResponseMapper;
@@ -19,23 +19,23 @@ public class ProductDetailMapper
 		implements ResponseMapper<Product, ProductDetail> {
 
 	private final ModelMapper specificationsMapper;
-	private final AttributeResponseMapper attributeResponseMapper;
-	private final BrandResponseMapper brandResponseMapper;
+	private final AttributeMapper attributeMapper;
+	private final BrandMapper brandMapper;
 	private final CategoryResponseMapper categoryResponseMapper;
 
 	public ProductDetailMapper(
-			BrandResponseMapper brandResponseMapper,
+			BrandMapper brandMapper,
 			CategoryResponseMapper categoryResponseMapper,
-			AttributeResponseMapper attributeResponseMapper) {
+			AttributeMapper attributeMapper) {
 		this.specificationsMapper = new ModelMapper();
-		this.brandResponseMapper = brandResponseMapper;
+		this.brandMapper = brandMapper;
 		this.categoryResponseMapper = categoryResponseMapper;
-		this.attributeResponseMapper = attributeResponseMapper;
+		this.attributeMapper = attributeMapper;
 	}
 
 	@Override
 	public ProductDetail map(Product product) {
-		BrandResponse brand = brandResponseMapper.map( product.getBrand() );
+		BrandResponse brand = brandMapper.map( product.getBrand() );
 		CategoryResponse category =
 				categoryResponseMapper.map( product.getCategory() );
 
@@ -49,7 +49,7 @@ public class ProductDetailMapper
 
 		product.getAttributes()
 				.parallelStream()
-				.map( attributeResponseMapper::map )
+				.map( attributeMapper::map )
 				.forEach( attrs::add );
 
 		return new ProductDetail(

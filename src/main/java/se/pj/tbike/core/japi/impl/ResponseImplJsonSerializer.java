@@ -10,18 +10,16 @@ class ResponseImplJsonSerializer
         extends StdSerializer<ResponseImpl<?>> {
 
     public ResponseImplJsonSerializer() {
-        this( null );
+        this(null);
     }
 
     protected ResponseImplJsonSerializer(Class<ResponseImpl<?>> t) {
-        super( t );
+        super(t);
     }
 
     @Override
-    public void serialize(
-            ResponseImpl<?> resp, JsonGenerator gen, SerializerProvider provider
-    )
-    throws IOException {
-        gen.writeObject( resp.toJson() );
+    public void serialize(ResponseImpl<?> resp, JsonGenerator gen,
+                          SerializerProvider provider) throws IOException {
+        gen.writeObject(resp.toJson());
     }
 }
