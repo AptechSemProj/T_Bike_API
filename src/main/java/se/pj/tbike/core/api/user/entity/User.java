@@ -1,20 +1,9 @@
 package se.pj.tbike.core.api.user.entity;
 
-import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Converter;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.BatchSize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,19 +26,23 @@ import java.util.Objects;
         name = "users",
         indexes = {
                 @Index(
-                        name = "idx_account",
-                        columnList = "username, password"
+                        name = "idx_user_account",
+                        columnList = "username, password, deleted, id"
                 ),
                 @Index(
-                        name = "entity_deleted_idx",
-                        columnList = "deleted"
+                        name = "idx_user_id_deleted",
+                        columnList = "deleted, id"
+                ),
+                @Index(
+                        name = "idx_user_username_id_deleted",
+                        columnList = "username, id, deleted"
                 )
         }
 )
 public class User
         implements SoftDeletionEntity<User, Long>,
-                   UserDetails,
-                   Cacheable<User> {
+        UserDetails,
+        Cacheable<User> {
 
     //*************** BASIC ******************//
 
@@ -57,18 +50,12 @@ public class User
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(
-            nullable = false
-    )
+    @Column(nullable = false)
+    @Setter(AccessLevel.PRIVATE)
     private boolean deleted;
 
-    // @Enumerated(EnumType.STRING)
-    @Convert(
-            converter = RoleConverter.class
-    )
-    @Column(
-            nullable = false
-    )
+    @Convert(converter = RoleConverter.class)
+    @Column(nullable = false)
     private Role role;
 
     @Column(
@@ -105,49 +92,46 @@ public class User
 
     //*************** RELATIONSHIPS ******************//
 
-    @OneToMany(
-            mappedBy = "user",
-            fetch = FetchType.EAGER
-    )
-    @BatchSize(
-            size = 20
-    )
+    @Transient
+    @OneToMany(mappedBy = "user")
     private List<Order> orders = new ArrayList<>();
+
+    //*************** EQUALS & HASHCODE ******************//
 
     @Override
     public boolean equals(Object o) {
-        if ( this == o ) {
+        if (this == o) {
             return true;
         }
-        if ( !super.equals( o ) ) {
+        if (!super.equals(o)) {
             return false;
         }
-        if ( !(o instanceof User that) ) {
+        if (!(o instanceof User that)) {
             return false;
         }
-        if ( !(Objects.equals( username, that.username ) &&
-                Objects.equals( password, that.password ) &&
-                Objects.equals( name, that.name ) &&
-                Objects.equals( phoneNumber, that.phoneNumber ) &&
-                Objects.equals( avatarImage, that.avatarImage )) ) {
+        if (!(Objects.equals(username, that.username) &&
+                Objects.equals(password, that.password) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(phoneNumber, that.phoneNumber) &&
+                Objects.equals(avatarImage, that.avatarImage))) {
             return false;
         }
-        if ( orders != null ) {
-            if ( that.orders == null ) {
+        if (orders != null) {
+            if (that.orders == null) {
                 return false;
             }
             int s = orders.size();
-            if ( s != that.orders.size() ) {
+            if (s != that.orders.size()) {
                 return false;
             }
-            for ( int i = 0; i < s; i++ ) {
-                Order o1 = orders.get( i );
-                Order o2 = that.orders.get( i );
-                if ( o1 == o2 ) {
+            for (int i = 0; i < s; i++) {
+                Order o1 = orders.get(i);
+                Order o2 = that.orders.get(i);
+                if (o1 == o2) {
                     continue;
                 }
-                if ( o1 != null && o2 != null && Objects
-                        .equals( o1.getId(), o2.getId() ) ) {
+                if (o1 != null && o2 != null && Objects
+                        .equals(o1.getId(), o2.getId())) {
                     continue;
                 }
                 return false;
@@ -159,79 +143,73 @@ public class User
 
     @Override
     public int hashCode() {
-        int hashed = Objects.hash( super.hashCode(),
-                                   username, password,
-                                   name, phoneNumber, avatarImage
+        int hashed = Objects.hash(super.hashCode(),
+                username, password,
+                name, phoneNumber, avatarImage
         );
-        if ( orders == null ) {
+        if (orders == null) {
             return hashed;
         }
         int s = orders.size();
         Long[] ids = new Long[s];
-        for ( int i = 0; i < s; i++ ) {
-            Order o = orders.get( i );
-            if ( o != null ) {
+        for (int i = 0; i < s; i++) {
+            Order o = orders.get(i);
+            if (o != null) {
                 ids[i] = o.getId();
-            }
-            else {
+            } else {
                 ids[i] = 0L;
             }
         }
-        return Objects.hash( hashed, Arrays.hashCode( ids ) );
+        return Objects.hash(hashed, Arrays.hashCode(ids));
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of( new SimpleGrantedAuthority( "ROLE_" + role.name() ) );
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+    }
+
+    //*************** IMPLEMENTS METHODS ******************//
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return !deleted;
     }
 
     @Override
     public Map<String, Object> toCacheObject() {
         var map = new HashMap<String, Object>();
-        map.put( "id", getId() );
-        map.put( "name", getName() );
-        map.put( "phoneNumber", getPhoneNumber() );
-        map.put( "avatarImage", getAvatarImage() );
-        map.put( "deleted", isDeleted() );
-        map.put( "role", getRole() );
-        map.put( "username", getUsername() );
-        map.put( "password", getPassword() );
+        map.put("id", getId());
+        map.put("name", getName());
+        map.put("phoneNumber", getPhoneNumber());
+        map.put("avatarImage", getAvatarImage());
+        map.put("deleted", isDeleted());
+        map.put("role", getRole());
+        map.put("username", getUsername());
+//        map.put("password", getPassword());
         return map;
     }
 
     @Override
     public User fromCacheObject(Map<String, Object> cacheObject) {
-        setId( (Long) cacheObject.get( "id" ) );
-        setName( (String) cacheObject.get( "name" ) );
-        setPhoneNumber( (String) cacheObject.get( "phoneNumber" ) );
-        setAvatarImage( (String) cacheObject.get( "avatarImage" ) );
-        setDeleted( (Boolean) cacheObject.get( "deleted" ) );
-        setRole( (Role) cacheObject.get( "role" ) );
-        setUsername( (String) cacheObject.get( "username" ) );
-        setPassword( (String) cacheObject.get( "password" ) );
+        setId((Long) cacheObject.get("id"));
+        setName((String) cacheObject.get("name"));
+        setPhoneNumber((String) cacheObject.get("phoneNumber"));
+        setAvatarImage((String) cacheObject.get("avatarImage"));
+        setDeleted((Boolean) cacheObject.get("deleted"));
+        setRole((Role) cacheObject.get("role"));
+        setUsername((String) cacheObject.get("username"));
+//        setPassword((String) cacheObject.get("password"));
         return this;
     }
 
-    public enum Role {
-        USER,
-        ADMIN,
-    }
-
-    @Converter
-    private static class RoleConverter
-            implements AttributeConverter<Role, String> {
-
-        @Override
-        public String convertToDatabaseColumn(Role role) {
-            return role.name().toLowerCase();
-        }
-
-        @Override
-        public Role convertToEntityAttribute(String name) {
-            if ( name == null ) {
-                throw new NullPointerException();
-            }
-            return Role.valueOf( name.toUpperCase() );
-        }
-    }
 }

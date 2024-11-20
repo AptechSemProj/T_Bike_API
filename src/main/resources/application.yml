@@ -8,8 +8,8 @@ spring:
 
   #******************** connection config ********************#
   datasource:
-    driver-class-name: 'com.mysql.cj.jdbc.Driver'
-    url: 'jdbc:mysql://localhost:3306/t_bike?createDatabaseIfNotExist=true&charset=utf8'
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/t_bike?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8
     username: 'root'
     password: '12345678'
 
@@ -20,8 +20,8 @@ spring:
     #******************** naming config ********************#
     hibernate:
       naming:
-        implicit-strategy: 'org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy'
-        physical-strategy: 'org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl'
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 
     #******************** debug config ********************#
     show-sql: true
@@ -45,10 +45,10 @@ spring:
 
 file-storage:
   resources-base: true
-  root: 'files'
+  root: files
   directories:
-    images: 'images'
-    videos: 'videos'
+    images: images
+    videos: videos
 
 application:
   security:

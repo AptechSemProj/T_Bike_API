@@ -11,6 +11,7 @@ import se.pj.tbike.core.api.auth.dto.LoginRequest;
 import se.pj.tbike.core.api.auth.dto.RegisterRequest;
 import se.pj.tbike.core.api.auth.service.jwt.JwtService;
 import se.pj.tbike.core.api.user.data.UserService;
+import se.pj.tbike.core.api.user.entity.Role;
 import se.pj.tbike.core.api.user.entity.User;
 
 @Service
@@ -24,9 +25,9 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest req) {
         User user = new User();
-        User.Role role = User.Role.USER;
+        Role role = Role.USER;
         try {
-            role = User.Role.valueOf( req.getRole().toUpperCase() );
+            role = Role.valueOf( req.getRole().toUpperCase() );
         }
         catch ( RuntimeException ignored ) {
         }
@@ -36,7 +37,6 @@ public class AuthService {
         user.setName( req.getName() );
         user.setAvatarImage( null );
         user.setPhoneNumber( req.getPhoneNumber() );
-        user.setDeleted( false );
         userService.create( user );
         String token = jwtService.generateToken( user );
         return new AuthResponse( token );

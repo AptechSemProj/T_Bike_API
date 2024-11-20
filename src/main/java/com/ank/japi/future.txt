@@ -33,3 +33,24 @@ Example:
         .equal(val) // override range()
         .negative(max (include)) // override max() + positive(), equal range(min, max)
         .positive(min (include)) // override min() + negative(), equal range(min, max)
+
+/*
+    @Identified(
+        type = Long.class,
+        column = @Column(
+            name = "id" // default
+        ),
+        access = @Access( AccessType.FIELD ),
+        generatedValue = @GeneratedValue(
+            strategy = GenerationType.IDENTITY
+        ),
+        annotations = {}
+    )
+    @SoftDelete(
+        column = @Column(
+            name = "deleted" // default
+        ),
+        access = @Access( AccessType.FIELD ),
+        annotations = {}
+    )
+ */

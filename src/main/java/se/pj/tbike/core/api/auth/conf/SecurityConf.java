@@ -17,8 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import se.pj.tbike.core.api.user.entity.User;
+import se.pj.tbike.core.api.user.entity.Role;
 import se.pj.tbike.core.api.auth.service.jwt.JwtFilter;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -47,47 +46,48 @@ public class SecurityConf {
                 )
                 .sessionManagement(sc -> sc.sessionCreationPolicy(STATELESS))
                 .authorizeHttpRequests(r -> r
-                                .requestMatchers(
-                                        "/api/brands/**",
-                                        "/api/categories/**",
-                                        "/api/products/**",
-                                        "/api/images/**"
-                                )
-                                .permitAll()
-                                .requestMatchers(
-                                        HttpMethod.POST,
-                                        "/api/auth/**",
-                                        "/api/products/list",
-                                        "/api/products/search"
-                                )
-                                .permitAll()
-                                .requestMatchers(
-                                        HttpMethod.POST,
-                                        "/api/brands",
-                                        "/api/categories",
-                                        "/api/products",
-                                        "/api/images/**"
-                                )
-                                .hasRole(User.Role.ADMIN.name())
-                                .requestMatchers(
-                                        HttpMethod.PUT,
-                                        "/api/brands/**",
-                                        "/api/categories/**",
-                                        "/api/products/**"
-                                )
-                                .hasRole(User.Role.ADMIN.name())
-                                .requestMatchers(
-                                        HttpMethod.DELETE,
-                                        "/api/brands/**",
-                                        "/api/categories/**",
-                                        "/api/products/**",
-                                        "/api/images/**"
-                                )
-                                .hasRole(User.Role.ADMIN.name())
-                                .anyRequest()
-                                .permitAll()
-//                        .authenticated()
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/brands/**",
+                                "/api/categories/**",
+                                "/api/products/**",
+                                "/api/images/**"
+                        )
+                        .permitAll()
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/auth/**",
+                                "/api/products/list",
+                                "/api/products/search"
+                        )
+                        .permitAll()
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/brands",
+                                "/api/categories",
+                                "/api/products",
+                                "/api/images/**"
+                        )
+                        .hasRole(Role.ADMIN.name())
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/api/brands/**",
+                                "/api/categories/**",
+                                "/api/products/**"
+                        )
+                        .hasRole(Role.ADMIN.name())
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/api/brands/**",
+                                "/api/categories/**",
+                                "/api/products/**",
+                                "/api/images/**"
+                        )
+                        .hasRole(Role.ADMIN.name())
+                        .anyRequest()
+                        .permitAll()
                 );
+//                        .authenticated()
         return http.build();
     }
 
