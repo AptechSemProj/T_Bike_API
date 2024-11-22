@@ -42,10 +42,6 @@ public interface QueryParamsWriter {
         }
     }
 
-//	void setByte(String name, Object value, Requirement... requirements);
-//
-//	void setShort(String name, Object value, Requirement... requirements);
-
     default void setInt(
             String name, Object value, Requirement... requirements
     ) {
@@ -64,35 +60,4 @@ public interface QueryParamsWriter {
         set( name, value, rs );
     }
 
-//	void setFloat(String name, Object value, Requirement... requirements);
-//
-//	void setDouble(String name, Object value, Requirement... requirements);
-
-//	void setBigDecimal(String name, Object value, Requirement... requirements);
-//
-//	void setBigInteger(String name, Object value, Requirement... requirements);
-
-//	void setArray(String name, Object value, Requirement... requirements);
-//
-//	void setStringArray(String name, Object value, Requirement... requirements);
-//
-//	void setBooleanArray(String name, Object value, Requirement... requirements);
-//
-//	void setBooleanArray(String name, Object value, boolean exact, Requirement... requirements);
-//
-//	void setByteArray(String name, Object value, Requirement... requirements);
-//
-//	void setShortArray(String name, Object value, Requirement... requirements);
-//
-//	void setIntArray(String name, Object value, Requirement... requirements);
-//
-//	void setLongArray(String name, Object value, Requirement... requirements);
-//
-//	void setFloatArray(String name, Object value, Requirement... requirements);
-//
-//	void setDoubleArray(String name, Object value, Requirement... requirements);
-//
-//	void setBigDecimalArray(String name, Object value, Requirement... requirements);
-//
-//	void setBigIntegerArray(String name, Object value, Requirement... requirements);
 }

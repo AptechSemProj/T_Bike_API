@@ -1,13 +1,12 @@
 package se.pj.tbike.core.japi.impl;
 
-import com.ank.japi.json.JsonObject;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.springframework.http.HttpStatus;
-import com.ank.japi.json.JsonTemplate;
 import com.ank.japi.Response;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @JsonSerialize(using = ResponseImplJsonSerializer.class)
 public class ResponseImpl<T>
@@ -38,21 +37,20 @@ public class ResponseImpl<T>
         }
     }
 
-    public static final JsonTemplate JSON_TEMPLATE;
+    private static final String STATUS = "status";
+    private static final String MESSAGE = "message";
+    private static final String DATA = "data";
+    private static final String METADATA = "metadata";
 
-    static {
-        JSON_TEMPLATE = JsonTemplateImpl.INSTANCE;
-    }
-
-    private final T data;
-    private final int statusCode;
-    private final String message;
-    private Map<String, Object> extra;
+    private final Map<String, Object> json;
 
     private ResponseImpl(int statusCode, String message, T data) {
-        this.statusCode = statusCode;
-        this.message = message;
-        this.data = data;
+        json = new HashMap<>();
+        json.put(STATUS, statusCode);
+        json.put(MESSAGE, Objects.requireNonNull(message));
+        if (data != null) {
+            json.put(DATA, data);
+        }
     }
 
     public static <T> Builder<T> status(int statusCode) {
@@ -63,38 +61,36 @@ public class ResponseImpl<T>
         return new Builder<>(status.value(), status.getReasonPhrase());
     }
 
-    public ResponseImpl<T> addExtraField(String key, Object value) {
-        if (extra == null) {
-            extra = new HashMap<>();
-        }
-        extra.put(key, value);
+    public ResponseImpl<T> metadata(long totalElements,
+                                    int totalPages,
+                                    int size,
+                                    int current,
+                                    Integer next,
+                                    Integer previous) {
+        Map<String, Number> metadata = new HashMap<>() {{
+            put("total_elements", totalElements);
+            put("total_pages", totalPages);
+            put("page_size", size);
+            put("current_page", current);
+            put("next", next);
+            put("previous", previous);
+        }};
+        json.put(METADATA, metadata);
         return this;
     }
 
-    Object toJson() {
-        if (JSON_TEMPLATE.isConfigured()) {
-            JsonObject json = JSON_TEMPLATE.createJsonObject();
-            json.set(JsonTemplateImpl.STATUS, statusCode);
-            json.set(JsonTemplateImpl.MESSAGE, message);
-            json.set(JsonTemplateImpl.DATA, data);
-            if (extra != null) {
-                for (Map.Entry<String, Object> entry : extra.entrySet()) {
-                    json.set(entry.getKey(), entry.getValue());
-                }
-            }
-            return json.get();
-        } else {
-            return data;
-        }
-    }
-
+    @SuppressWarnings("unchecked")
     @Override
     public T getResponseBody() {
-        return data;
+        return (T) json.get(DATA);
     }
 
     @Override
     public int getStatusCode() {
-        return statusCode;
+        return (int) json.get(STATUS);
+    }
+
+    Object toJson() {
+        return json;
     }
 }

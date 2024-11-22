@@ -36,10 +36,10 @@ public abstract class Requirement
 
     @Override
     public final boolean equals(Object o) {
-        if ( this == o ) {
+        if (this == o) {
             return true;
         }
-        if ( !(o instanceof Requirement that) ) {
+        if (!(o instanceof Requirement that)) {
             return false;
         }
         return identifier == that.identifier;
@@ -50,5 +50,5 @@ public abstract class Requirement
         return identifier;
     }
 
-    public record Identifier() {}
+//    public record Identifier() {}
 }

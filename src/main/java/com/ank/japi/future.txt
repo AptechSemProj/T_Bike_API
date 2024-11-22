@@ -34,23 +34,81 @@ Example:
         .negative(max (include)) // override max() + positive(), equal range(min, max)
         .positive(min (include)) // override min() + negative(), equal range(min, max)
 
-/*
-    @Identified(
-        type = Long.class,
-        column = @Column(
-            name = "id" // default
-        ),
-        access = @Access( AccessType.FIELD ),
-        generatedValue = @GeneratedValue(
-            strategy = GenerationType.IDENTITY
-        ),
-        annotations = {}
+new supported annotations
+
+@Identified(
+    type = Long. class,
+    column = @Column(
+        name = "id" // default
+    ),
+    access = @Access( AccessType.FIELD ),
+    generatedValue = @GeneratedValue(
+        strategy = GenerationType. IDENTITY
+    ),
+    annotations = {}
+)
+@SoftDelete(
+    column = @Column(
+        name = "deleted" // default
+    ),
+    access = @Access( AccessType.FIELD ),
+    annotations = {}
+)
+@Request(
+    responseType = Long. class,
+    mapper = @ClassMapper(
+        targetClass = Attribute. class,
+        constructorParameters = {},
+        methodName? = "map",
+        reverseMethodName? = "map",
+        (
+            staticClass? = true,
+            finalClass = true,
+            finalMethod? = false,
+            strategy? = GENERATE,
+            className? = "AttributeRequestMapper"
+        )
+        <or/>
+        (
+            strategy? =  DECLARED,
+            declaredClass? = AttributeRequestMapper.class
+        )
     )
-    @SoftDelete(
-        column = @Column(
-            name = "deleted" // default
-        ),
-        access = @Access( AccessType.FIELD ),
-        annotations = {}
+)
+class ? implements Request<?> {
+
+    @Generated
+    public static final class AttributeRequestMapper
+        implements RequestMapper<AttributeRequest, Attribute> {
+        @Override
+        public Attribute map(AttributeRequest request) {
+            Attribute target = new Attribute();
+            if (request.getId() == null) {
+                throw new NullPointerException("id is null");
+            }
+            target.setId(AttributeTransform.transformId(request.getId()));
+            target.setName(request.getName());
+            ...
+            return target;
+        }
+    }
+
+    @Mapping(
+        ( value? = "id", )
+        <or/>
+        ( targetField? = "id", )
+        getterMethod? = "getId",
+        setterMethod? = "setId",
+        transform? = @Mapping.Transform(
+            declaredClass? = AttributeTransform. class,
+            staticMethod? = true,
+            methodName? = "transformId"
+        )
     )
- */
+    @NotNull
+    private Object field;
+}
+
+//        ServletRequestAttributes sra = (ServletRequestAttributes)
+//                RequestContextHolder.currentRequestAttributes();
+//        System.out.println(sra.getRequest().getParameterMap());

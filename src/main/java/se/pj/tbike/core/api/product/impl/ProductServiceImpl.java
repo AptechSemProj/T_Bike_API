@@ -1,16 +1,14 @@
 package se.pj.tbike.core.api.product.impl;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.util.StringUtils;
+import se.pj.tbike.core.api.attribute.data.AttributeService;
 import se.pj.tbike.core.api.attribute.entity.Attribute;
-import se.pj.tbike.core.api.brand.data.BrandService;
-import se.pj.tbike.core.api.brand.entity.Brand;
-import se.pj.tbike.core.api.category.data.CategoryService;
 import se.pj.tbike.core.api.product.data.ProductRepository;
 import se.pj.tbike.core.api.product.data.ProductService;
 import se.pj.tbike.core.api.product.entity.Product;
-import se.pj.tbike.core.api.attribute.data.AttributeRepository;
 import se.pj.tbike.core.util.SimpleCacheableService;
 import se.pj.tbike.caching.CacheControl;
 import se.pj.tbike.caching.CacheManager;
@@ -18,125 +16,175 @@ import se.pj.tbike.util.Output.Pagination;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class ProductServiceImpl
         extends SimpleCacheableService<Product, Long, ProductRepository>
         implements ProductService {
 
-    private static final int      POOL_SIZE     = 10;
-    private static final Duration MAX_LIFE_TIME = Duration.ofMinutes( 10 );
+    private static final int POOL_SIZE = 10;
+    private static final Duration MAX_LIFE_TIME = Duration.ofMinutes(10);
 
-    private final ProductRepository   repository = getRepository();
-    private final AttributeRepository attributeRepository;
-    private final BrandService        brandService;
-    private final CategoryService     categoryService;
+    private final AttributeService attributeService;
 
     public ProductServiceImpl(
             ProductRepository repository,
-            AttributeRepository attributeRepository,
-            BrandService brandService,
-            CategoryService categoryService
+            AttributeService attributeService
     ) {
-        super( repository, Product::new, Product::getId );
-        this.attributeRepository = attributeRepository;
-        this.brandService = brandService;
-        this.categoryService = categoryService;
+        super(repository, Product::new, Product::getId);
+        this.attributeService = attributeService;
     }
 
     @Override
     protected CacheManager<Long> createCacheManager() {
         var scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setPoolSize( POOL_SIZE );
+        scheduler.setPoolSize(POOL_SIZE);
         scheduler.initialize();
-        var controller = new CacheControl( scheduler, MAX_LIFE_TIME );
-        return new CacheManager<>( controller );
+        var controller = new CacheControl(scheduler, MAX_LIFE_TIME);
+        return new CacheManager<>(controller);
     }
 
-    @Override
-    public void deleteByBrand(Brand brand) {
-        List<Product> products = repository.findAllByBrand( brand );
-        products.forEach(
-                p -> attributeRepository.deleteAllByProductId( p.getId() ) );
-        repository.deleteAll( products );
-    }
-
-    // TODO: cache result
-    @Override
-    public Pagination<Product> search(
-            int page, int size,
-            String name, Long maxPrice, Long minPrice,
-            Long brand, Long category
-    ) {
-        CacheManager<Long> manager = getCacheManager();
-        PageRequest request = PageRequest.of( page, size );
-//        repository.findAll();
-        get_from_cache:
-        {
-            long offset = request.getOffset();
-            int cacheSize = manager.size();
-            if ( offset >= cacheSize ) {
-                break get_from_cache;
-            }
-            // manager.size() < (offset + size)
-            if ( !isFullCaching() ) {
-                break get_from_cache;
-            }
-            List<Product> products = manager
-                    .stream().parallel()
-                    .map( super::createEntityFromCache )
-                    .filter( p -> {
-                        if ( name == null ) {
-                            return true;
-                        }
-                        String productName = p.getName().toLowerCase();
-                        String n = name.toLowerCase();
-                        return productName.contains( n );
-                    } )
-                    .filter( p -> {
-                        if ( brand == null ) {
-                            return true;
-                        }
-                        return brand.equals( p.getBrand().getId() );
-                    } )
-                    .filter( p -> {
-                        if ( category == null ) {
-                            return true;
-                        }
-                        return category.equals( p.getCategory().getId() );
-                    } )
-                    .filter( p -> p
-                            .getAttributes()
-                            .parallelStream()
-                            .map( Attribute::getPrice )
-                            .anyMatch( price -> {
-                                long min = minPrice != null ? minPrice : 0;
-                                long max = maxPrice != null
-                                           ? maxPrice
-                                           : Long.MAX_VALUE;
-                                return price >= min && price <= max;
-                            } )
-                    )
-                    .toList();
-            long totalElements = products.size();
-            int totalPages = (int) Math.ceil( totalElements / (double) size );
-            return Pagination.of(
-                    products.stream().skip( offset ).limit( size ).toList(),
-                    request.getPageNumber(), request.getPageSize(),
-                    totalElements, totalPages
+    private List<Product> searchInCache(long offset, CacheManager<Long> manager,
+                                        String name, Long brand, Long category,
+                                        Range<Long> range) {
+        if (offset >= manager.size()) {
+            return null;
+        }
+        // manager.size() < (offset + size)
+        if (!isFullCaching()) {
+            return null;
+        }
+        Stream<Product> stream = manager
+                .stream().parallel()
+                .map(super::createEntityFromCache);
+        if (brand != null && brand > 0) {
+            stream = stream.filter(p -> brand.equals(p.getBrand().getId()));
+        }
+        if (category != null && category > 0) {
+            stream = stream.filter(
+                    p -> category.equals(p.getCategory().getId())
             );
         }
-        Page<Product> paged = repository.search(
-                name, brand, category, minPrice, maxPrice, request );
-        paged.forEach(
-                p -> getCacheManager().cache( p.getId(), p.toCacheObject() ) );
-        return Pagination.of(
-                paged.getContent(), paged.getNumber(), paged.getSize(),
+        if (StringUtils.hasText(name)) {
+            stream = stream.filter(p -> {
+                String n1 = p.getName().toLowerCase();
+                String n2 = name.toLowerCase();
+                return n1.contains(n2);
+            });
+        }
+        stream = stream.filter(p -> p.getAttributes()
+                .parallelStream()
+                .map(Attribute::getPrice)
+                .anyMatch(range::contains)
+        );
+        return stream.toList();
+    }
+
+    private Specification<Product> containsName(String name) {
+        return (root, query, builder) -> {
+            if (StringUtils.hasText(name)) {
+                return builder.like(
+                        builder.lower(root.get("name")),
+                        "%" + name.toLowerCase() + "%"
+                );
+            }
+            return builder.conjunction();
+        };
+    }
+
+    private Specification<Product> hasBrand(Long id) {
+        return (root, query, builder) -> {
+            root.join("brand").on(builder.equal(
+                    root.get("brand").get("deleted"), false
+            ));
+            if (id != null && id > 0) {
+                return builder.equal(
+                        root.get("brand").get("id"), id
+                );
+            }
+            return builder.conjunction();
+        };
+    }
+
+    private Specification<Product> hasCategory(Long id) {
+        return (root, query, builder) -> {
+            root.join("category").on(builder.equal(
+                    root.get("category").get("deleted"), false
+            ));
+            if (id != null && id > 0) {
+                return builder.equal(
+                        root.get("category").get("id"), id
+                );
+            }
+            return builder.conjunction();
+        };
+    }
+
+    private Specification<Product> hasPriceInRange(Range<Long> range) {
+        return (root, query, builder) -> {
+            if (query != null) {
+                query.distinct(true);
+            }
+            Optional<Long> min = range.getLowerBound().getValue();
+            Optional<Long> max = range.getUpperBound().getValue();
+            return builder.between(
+                    root.join("attributes").get("price"),
+                    min.orElse(0L), max.orElse(Long.MAX_VALUE)
+            );
+        };
+    }
+
+    @Override
+    public Pagination<Product> search(Pageable pageable, String name,
+                                      Long brand, Long category,
+                                      Range<Long> range) {
+        Page<Product> paged;
+        CacheManager<Long> manager = getCacheManager();
+        long offset = pageable.getOffset();
+        List<Product> products = searchInCache(
+                offset, manager, name, brand, category, range
+        );
+        if (products != null) {
+            paged = new PageImpl<>(
+                    products.stream()
+                            .skip(offset)
+                            .limit(pageable.getPageSize())
+                            .toList(),
+                    pageable,
+                    products.size()
+            );
+        } else {
+            paged = getRepository().findAll(Specification.allOf(
+                    hasBrand(brand),
+                    hasCategory(category),
+                    containsName(name),
+                    hasPriceInRange(range)
+            ), pageable);
+            paged.forEach(p -> manager
+                    .cache(p.getId(), p.toCacheObject())
+            );
+        }
+        return Pagination.of(paged.getContent(),
+                paged.getNumber(), paged.getSize(),
                 paged.getTotalElements(), paged.getTotalPages()
         );
     }
 
     @Override
-    public Product findBySku(String sku) {
-        return null;
+    public Optional<Product> findBySku(String sku) {
+        return getRepository().findBySku(sku);
+    }
+
+    @Override
+    public boolean remove(Product product) {
+        attributeService.deleteAllByProduct(product);
+        return super.remove(product);
+    }
+
+    @Override
+    public boolean removeByKey(Long id) {
+        Optional<Product> o = getRepository().findById(id);
+        return o.filter(this::remove).isPresent();
     }
 }

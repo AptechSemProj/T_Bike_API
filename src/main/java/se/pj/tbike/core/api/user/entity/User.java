@@ -1,6 +1,15 @@
 package se.pj.tbike.core.api.user.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +21,6 @@ import se.pj.tbike.core.common.entity.SoftDeletionEntity;
 import se.pj.tbike.core.util.Cacheable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -103,72 +111,31 @@ public class User
         if (this == o) {
             return true;
         }
-        if (!super.equals(o)) {
-            return false;
-        }
         if (!(o instanceof User that)) {
             return false;
         }
-        if (!(Objects.equals(username, that.username) &&
-                Objects.equals(password, that.password) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(phoneNumber, that.phoneNumber) &&
-                Objects.equals(avatarImage, that.avatarImage))) {
-            return false;
-        }
-        if (orders != null) {
-            if (that.orders == null) {
-                return false;
-            }
-            int s = orders.size();
-            if (s != that.orders.size()) {
-                return false;
-            }
-            for (int i = 0; i < s; i++) {
-                Order o1 = orders.get(i);
-                Order o2 = that.orders.get(i);
-                if (o1 == o2) {
-                    continue;
-                }
-                if (o1 != null && o2 != null && Objects
-                        .equals(o1.getId(), o2.getId())) {
-                    continue;
-                }
-                return false;
-            }
-            return true;
-        }
-        return that.orders == null;
+        return deleted == that.deleted
+                && Objects.equals(id, that.id)
+                && role == that.role
+                && Objects.equals(username, that.username)
+                && Objects.equals(password, that.password)
+                && Objects.equals(name, that.name)
+                && Objects.equals(phoneNumber, that.phoneNumber)
+                && Objects.equals(avatarImage, that.avatarImage);
     }
 
     @Override
     public int hashCode() {
-        int hashed = Objects.hash(super.hashCode(),
-                username, password,
-                name, phoneNumber, avatarImage
-        );
-        if (orders == null) {
-            return hashed;
-        }
-        int s = orders.size();
-        Long[] ids = new Long[s];
-        for (int i = 0; i < s; i++) {
-            Order o = orders.get(i);
-            if (o != null) {
-                ids[i] = o.getId();
-            } else {
-                ids[i] = 0L;
-            }
-        }
-        return Objects.hash(hashed, Arrays.hashCode(ids));
+        return Objects.hash(id, deleted, role, username, password, name,
+                phoneNumber, avatarImage);
     }
+
+    //*************** IMPLEMENTS METHODS ******************//
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
-
-    //*************** IMPLEMENTS METHODS ******************//
 
     @Override
     public String getUsername() {

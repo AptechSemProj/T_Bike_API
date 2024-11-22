@@ -7,6 +7,7 @@ import com.ank.japi.validation.*;
 import com.ank.japi.validation.error.NotExistError;
 import com.ank.japi.validation.error.UnexpectedTypeError;
 import com.ank.japi.validation.error.UnknownError;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -60,17 +61,29 @@ public class ProductController
     private final AttributeMapper attributeMapper;
     private final ResponseMapping responseMapping;
 
+    @Override
+    public Config configure() {
+        return new Config() {
+            @Override
+            public int basedPageSize() {
+                return 10;
+            }
+
+            @Override
+            public int basedPageNumber() {
+                return 0;
+            }
+        };
+    }
+
     @PostMapping({"/list", "/search"})
     public com.ank.japi.Response<Collection<ProductResponse>>
     getList(@RequestBody ProductListRequest req) {
-//        ServletRequestAttributes sra = (ServletRequestAttributes)
-//                RequestContextHolder.currentRequestAttributes();
-//        System.out.println(sra.getRequest().getParameterMap());
         return paginated(req, (page, size) -> {
             Pagination<Product> o = service.search(
-                    page, size, req.getName(),
-                    req.getMaxPrice(), req.getMinPrice(),
-                    req.getBrandId(), req.getCategoryId()
+                    PageRequest.of(page, size),
+                    req.getName(), req.getBrandId(), req.getCategoryId(),
+                    req.getPriceRange()
             );
             return o.map(productMapper::map);
         });

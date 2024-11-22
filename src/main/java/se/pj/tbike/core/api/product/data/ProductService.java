@@ -1,19 +1,20 @@
 package se.pj.tbike.core.api.product.data;
 
-import se.pj.tbike.core.api.brand.entity.Brand;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Range;
 import se.pj.tbike.core.api.product.entity.Product;
 import se.pj.tbike.service.CrudService;
 import se.pj.tbike.util.Output.Pagination;
 
+import java.util.Optional;
+
 public interface ProductService
-		extends CrudService<Product, Long> {
+        extends CrudService<Product, Long> {
 
-	void deleteByBrand(Brand brand);
+    Pagination<Product> search(Pageable pageable,
+                               String name, Long brand, Long category,
+                               Range<Long> priceRange);
 
-	Pagination<Product> search(int page, int size,
-	                           String name, Long maxPrice, Long minPrice,
-	                           Long brand, Long category);
-
-	Product findBySku(String sku);
+    Optional<Product> findBySku(String sku);
 
 }

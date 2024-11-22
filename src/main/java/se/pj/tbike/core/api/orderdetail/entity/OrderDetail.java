@@ -62,7 +62,7 @@ public class OrderDetail
 
     //*************** RELATIONSHIPS ******************//
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("orderId")
     @JoinColumn(
             name = "order_id",
@@ -82,6 +82,7 @@ public class OrderDetail
 
     //*************** EQUALS & HASHCODE ******************//
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -90,14 +91,16 @@ public class OrderDetail
         if (!(o instanceof OrderDetail that)) {
             return false;
         }
-        return Objects.equals(id, that.id) &&
-                quantity == that.quantity &&
-                totalAmount == that.totalAmount;
+        return quantity == that.quantity
+                && totalAmount == that.totalAmount
+                && Objects.equals(id, that.id)
+                && Objects.equals(order, that.order)
+                && Objects.equals(product, that.product);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, quantity, totalAmount);
+        return Objects.hash(id, quantity, totalAmount, order, product);
     }
 
     @Override
@@ -131,6 +134,23 @@ public class OrderDetail
             long l1 = orderId + productId;
             long l2 = o.orderId + o.productId;
             return Long.compare(l1, l2);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof Id that)) {
+                return false;
+            }
+            return orderId == that.orderId
+                    && productId == that.productId;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(orderId, productId);
         }
     }
 }

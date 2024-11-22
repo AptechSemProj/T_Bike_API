@@ -13,16 +13,15 @@ public class Validator {
         this.requirements = new LinkedList<>();
     }
 
-    public final int accept(Requirement... rs) {
-        if ( rs == null || rs.length == 0 ) {
-            return 0;
+    public final void accept(Requirement... rs) {
+        if (rs == null) {
+            return;
         }
         for ( Requirement r : rs ) {
             if ( r != null ) {
                 this.requirements.add( r );
             }
         }
-        return this.requirements.size();
     }
 
     public ValidationResult validate(final Object value) {

@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import se.pj.tbike.core.api.brand.controller.QueryBrandController;
 import se.pj.tbike.core.api.user.entity.Role;
 import se.pj.tbike.core.api.auth.service.jwt.JwtFilter;
 
@@ -27,10 +28,6 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConf {
-
-//                                new AntPathRequestMatcher(
-//                                        HttpMethod.GET.name()
-//                                ),
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -48,7 +45,8 @@ public class SecurityConf {
                 .authorizeHttpRequests(r -> r
                         .requestMatchers(
                                 HttpMethod.GET,
-                                "/api/brands/**",
+                                QueryBrandController.API_URL,
+                                "/api/brands/{id}",
                                 "/api/categories/**",
                                 "/api/products/**",
                                 "/api/images/**"
@@ -57,15 +55,15 @@ public class SecurityConf {
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/auth/**",
-                                "/api/products/list",
-                                "/api/products/search"
+                                "/api/products/list/**",
+                                "/api/products/search/**"
                         )
                         .permitAll()
                         .requestMatchers(
                                 HttpMethod.POST,
-                                "/api/brands",
-                                "/api/categories",
-                                "/api/products",
+                                "/api/brands/**",
+                                "/api/categories/**",
+                                "/api/products/**",
                                 "/api/images/**"
                         )
                         .hasRole(Role.ADMIN.name())

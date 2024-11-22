@@ -81,8 +81,4 @@ public interface QueryParamsReader {
         BigInteger b = getBigInteger( name );
         return b == null ? defaultValue : b;
     }
-
-//	Object[] getArray(String name);
-//
-//	Object[] getArray(String name, Object[] defaultValue);
 }

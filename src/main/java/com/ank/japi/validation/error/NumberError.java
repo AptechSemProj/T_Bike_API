@@ -7,8 +7,4 @@ public abstract class NumberError
     protected NumberError(int code, String reason, String guide) {
         super( code, reason, guide );
     }
-
-    protected NumberError(int code, String reason) {
-        super( code, reason );
-    }
 }

@@ -1,6 +1,8 @@
 package se.pj.tbike.core.api.product.dto;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import org.springframework.data.domain.Range;
 import se.pj.tbike.core.util.PageableParameters;
 import se.pj.tbike.io.RequestType;
 
@@ -15,8 +17,10 @@ public class ProductListRequest
 
     private final Long categoryId;
 
+    @Getter(AccessLevel.PRIVATE)
     private final Long minPrice;
 
+    @Getter(AccessLevel.PRIVATE)
     private final Long maxPrice;
 
 //    private
@@ -31,5 +35,11 @@ public class ProductListRequest
         this.categoryId = categoryId;
         this.minPrice = minPrice;
         this.maxPrice = maxPrice;
+    }
+
+    public Range<Long> getPriceRange() {
+        long min = minPrice != null ? minPrice : 0;
+        long max = maxPrice != null ? maxPrice : Long.MAX_VALUE;
+        return Range.closed(min, max);
     }
 }

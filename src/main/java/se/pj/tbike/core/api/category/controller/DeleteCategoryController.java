@@ -1,4 +1,4 @@
-package se.pj.tbike.core.api.brand.controller;
+package se.pj.tbike.core.api.category.controller;
 
 import com.ank.japi.RequestHandler;
 import com.ank.japi.Response;
@@ -9,44 +9,44 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import se.pj.tbike.core.api.brand.data.BrandService;
-import se.pj.tbike.core.api.brand.dto.BrandRequest;
-import se.pj.tbike.core.api.brand.entity.Brand;
+import se.pj.tbike.core.api.category.data.CategoryService;
+import se.pj.tbike.core.api.category.dto.CategoryRequest;
+import se.pj.tbike.core.api.category.entity.Category;
 import se.pj.tbike.util.Output.Value;
 
-@RequestMapping(DeleteBrandController.API_URL)
+@RequestMapping(DeleteCategoryController.API_URL)
 @PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequiredArgsConstructor
-public class DeleteBrandController {
+public class DeleteCategoryController {
 
-    public static final String API_URL = "/api/brands/{id}";
+    public static final String API_URL = "/api/categories/{id}";
 
-    private final RequestHandler<BrandRequest, Long> requestHandler;
-    private final BrandService service;
+    private final RequestHandler<CategoryRequest, Long> requestHandler;
+    private final CategoryService service;
 
     @DeleteMapping({"", "/"})
     public Response<Long> delete(@PathVariable String id) {
         return requestHandler.handle(null, (res, body) -> {
-            Long brandId;
+            Long categoryId;
             try {
-                brandId = NumberUtils.parseNumber(id, Long.class);
-            } catch (IllegalArgumentException ex) {
+                categoryId = NumberUtils.parseNumber(id, Long.class);
+            } catch (IllegalArgumentException e) {
                 return res.badRequest(
                         "Cannot convert [" + id + "] to number."
                 );
             }
-            Value<Brand> old = service.findByKey(brandId);
-            if (old.isNull()) {
+            Value<Category> o = service.findByKey(categoryId);
+            if (o.isNull()) {
                 return res.notFound(
-                        "Brand with id [" + brandId + "] not found"
+                        "Category with id [" + categoryId + "] not found"
                 );
             }
-            if (service.remove(old.get())) {
+            if (service.remove(o.get())) {
                 return res.noContent();
             }
             return res.internalServerError(
-                    "Cannot delete brand with id [" + brandId + ']'
+                    "Cannot delete category with id [" + categoryId + ']'
             );
         });
     }

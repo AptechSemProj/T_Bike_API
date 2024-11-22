@@ -24,8 +24,7 @@ public class ResponseConfigurerImpl<T>
         extends StdResponseConfigurer<T> {
 
     public ResponseConfigurerImpl() {
-        configureJsonTemplate(ResponseImpl.JSON_TEMPLATE)
-                .setResponseBinding(
+                setResponseBinding(
                         AlreadyExistsError.class,
                         response(HttpStatus.CONFLICT)
                 )

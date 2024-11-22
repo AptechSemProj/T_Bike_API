@@ -12,6 +12,7 @@ import jakarta.persistence.Transient;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 import se.pj.tbike.core.api.product.entity.Product;
 import se.pj.tbike.core.util.Cacheable;
 import se.pj.tbike.core.common.entity.SoftDeletionEntity;
@@ -71,6 +72,7 @@ public class Brand
 
     @Transient
     @OneToMany(mappedBy = "brand")
+    @BatchSize(size = 20)
     private List<Product> products = new ArrayList<>();
 
     //*************** EQUALS & HASHCODE ******************//

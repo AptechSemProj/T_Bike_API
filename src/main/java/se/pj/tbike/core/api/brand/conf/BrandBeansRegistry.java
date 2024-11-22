@@ -8,6 +8,7 @@ import se.pj.tbike.core.api.brand.data.BrandRepository;
 import se.pj.tbike.core.api.brand.data.BrandService;
 import se.pj.tbike.core.api.brand.dto.BrandMapper;
 import se.pj.tbike.core.api.brand.dto.BrandRequest;
+import se.pj.tbike.core.api.brand.dto.BrandResponse;
 import se.pj.tbike.core.api.brand.impl.BrandMapperImpl;
 import se.pj.tbike.core.api.brand.impl.BrandServiceImpl;
 import se.pj.tbike.core.japi.impl.ResponseConfigurerImpl;
@@ -27,6 +28,11 @@ public class BrandBeansRegistry {
 
     @Bean
     public RequestHandler<BrandRequest, Long> modifyBrandHandler() {
+        return new StdRequestHandler<>(ResponseConfigurerImpl::new);
+    }
+
+    @Bean
+    public RequestHandler<?, BrandResponse> findBrandHandler() {
         return new StdRequestHandler<>(ResponseConfigurerImpl::new);
     }
 }

@@ -4,13 +4,13 @@ import org.modelmapper.ModelMapper;
 import se.pj.tbike.core.api.attribute.dto.AttributeMapper;
 import se.pj.tbike.core.api.brand.dto.BrandMapper;
 import se.pj.tbike.core.api.brand.dto.BrandResponse;
+import se.pj.tbike.core.api.category.dto.CategoryMapper;
 import se.pj.tbike.core.api.product.entity.Product;
 import se.pj.tbike.core.api.product.dto.ProductDetail;
 import se.pj.tbike.core.api.product.dto.ProductSpecifications;
 import se.pj.tbike.core.api.attribute.dto.AttributeResponse;
 import se.pj.tbike.core.api.category.dto.CategoryResponse;
 import se.pj.tbike.io.ResponseMapper;
-import se.pj.tbike.core.api.category.dto.mapper.CategoryResponseMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +21,15 @@ public class ProductDetailMapper
 	private final ModelMapper specificationsMapper;
 	private final AttributeMapper attributeMapper;
 	private final BrandMapper brandMapper;
-	private final CategoryResponseMapper categoryResponseMapper;
+	private final CategoryMapper categoryMapper;
 
 	public ProductDetailMapper(
 			BrandMapper brandMapper,
-			CategoryResponseMapper categoryResponseMapper,
+			CategoryMapper categoryMapper,
 			AttributeMapper attributeMapper) {
 		this.specificationsMapper = new ModelMapper();
 		this.brandMapper = brandMapper;
-		this.categoryResponseMapper = categoryResponseMapper;
+		this.categoryMapper = categoryMapper;
 		this.attributeMapper = attributeMapper;
 	}
 
@@ -37,7 +37,7 @@ public class ProductDetailMapper
 	public ProductDetail map(Product product) {
 		BrandResponse brand = brandMapper.map( product.getBrand() );
 		CategoryResponse category =
-				categoryResponseMapper.map( product.getCategory() );
+				categoryMapper.map( product.getCategory() );
 
 		ProductSpecifications specifications =
 				specificationsMapper.map(

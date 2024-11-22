@@ -1,8 +1,8 @@
 package com.ank.japi.impl;
 
+import com.ank.japi.HttpStatus;
 import com.ank.japi.Response;
 import com.ank.japi.ResponseConfigurer;
-import com.ank.japi.json.JsonTemplate;
 import com.ank.japi.validation.error.UnknownError;
 
 import java.util.LinkedHashMap;
@@ -13,12 +13,11 @@ public abstract class StdResponseConfigurer<T>
         implements ResponseConfigurer<T> {
 
     private final Map<Class<?>, Function<Throwable, Response<T>>>
-                               errorHandlers;
-    private       JsonTemplate jsonTemplate;
+            errorHandlers;
 
     public StdResponseConfigurer() {
         this.errorHandlers = new LinkedHashMap<>();
-        setResponseBinding( UnknownError.class, t -> new Response<>() {
+        setResponseBinding(UnknownError.class, t -> new Response<>() {
             @Override
             public T getResponseBody() {
                 return null;
@@ -26,20 +25,9 @@ public abstract class StdResponseConfigurer<T>
 
             @Override
             public int getStatusCode() {
-                return StdResponseBuilder.NOT_IMPLEMENTED;
+                return HttpStatus.NOT_IMPLEMENTED;
             }
-        } );
-    }
-
-    @Override
-    public ResponseConfigurer<T> configureJsonTemplate(JsonTemplate template) {
-        this.jsonTemplate = JsonTemplate.copy( template );
-        return this;
-    }
-
-    @Override
-    public JsonTemplate getConfiguredTemplate() {
-        return jsonTemplate;
+        });
     }
 
     @Override
@@ -50,17 +38,17 @@ public abstract class StdResponseConfigurer<T>
     ) {
         @SuppressWarnings("unchecked")
         var c = (Function<Throwable, Response<T>>) constructor;
-        this.errorHandlers.put( clazz, c );
+        this.errorHandlers.put(clazz, c);
         return this;
     }
 
     @Override
     public Response<T> getBoundResponse(Throwable t) {
-        var constructor = errorHandlers.get( t.getClass() );
-        if ( constructor == null ) {
+        var constructor = errorHandlers.get(t.getClass());
+        if (constructor == null) {
             String msg = "No response is bound to " + t.getClass().getName();
-            throw UnknownError.builder().reason( msg ).build();
+            throw UnknownError.builder().reason(msg).build();
         }
-        return constructor.apply( t );
+        return constructor.apply(t);
     }
 }

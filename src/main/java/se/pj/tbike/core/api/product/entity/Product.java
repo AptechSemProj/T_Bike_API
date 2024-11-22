@@ -260,89 +260,44 @@ public class Product
         if (!(o instanceof Product that)) {
             return false;
         }
-        return Objects.equals(id, that.id) &&
-                Objects.equals(brand.getId(), that.brand.getId()) &&
-                Objects.equals(category.getId(), that.category.getId()) &&
-                compareAttrs(that.attributes) &&
-                Objects.equals(sku, that.sku) &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(size, that.size) &&
-                Objects.equals(frame, that.frame) &&
-                Objects.equals(saddle, that.saddle) &&
-                Objects.equals(seatPost, that.seatPost) &&
-                Objects.equals(bell, that.bell) &&
-                Objects.equals(fork, that.fork) &&
-                Objects.equals(shock, that.shock) &&
-                Objects.equals(handlebar, that.handlebar) &&
-                Objects.equals(handlebarStem, that.handlebarStem) &&
-                Objects.equals(pedal, that.pedal) &&
-                Objects.equals(crankset, that.crankset) &&
-                Objects.equals(bottomBracket, that.bottomBracket) &&
-                Objects.equals(chain, that.chain) &&
-                Objects.equals(chainGuard, that.chainGuard) &&
-                Objects.equals(cassette, that.cassette) &&
-                Objects.equals(frontDerailleur, that.frontDerailleur) &&
-                Objects.equals(rearDerailleur, that.rearDerailleur) &&
-                Objects.equals(rims, that.rims) &&
-                Objects.equals(hubs, that.hubs) &&
-                Objects.equals(spokes, that.spokes) &&
-                Objects.equals(tires, that.tires) &&
-                Objects.equals(valve, that.valve) &&
-                Objects.equals(brakes, that.brakes) &&
-                Objects.equals(brakeLevers, that.brakeLevers);
-    }
-
-    private boolean compareAttrs(List<Attribute> that) {
-        if (attributes != null) {
-            if (that == null) {
-                return false;
-            }
-            int s = attributes.size();
-            if (s != that.size()) {
-                return false;
-            }
-            for (int i = 0; i < s; i++) {
-                Attribute a1 = attributes.get(i);
-                Attribute a2 = that.get(i);
-                if (a1 == a2) {
-                    continue;
-                }
-                if (a1 != null && a2 != null && Objects
-                        .equals(a1.getId(), a2.getId())) {
-                    continue;
-                }
-                return false;
-            }
-            return true;
-        }
-        return that == null;
+        return Objects.equals(id, that.id)
+                && Objects.equals(sku, that.sku)
+                && Objects.equals(name, that.name)
+                && Objects.equals(size, that.size)
+                && Objects.equals(frame, that.frame)
+                && Objects.equals(saddle, that.saddle)
+                && Objects.equals(seatPost, that.seatPost)
+                && Objects.equals(bell, that.bell)
+                && Objects.equals(fork, that.fork)
+                && Objects.equals(shock, that.shock)
+                && Objects.equals(handlebar, that.handlebar)
+                && Objects.equals(handlebarStem, that.handlebarStem)
+                && Objects.equals(pedal, that.pedal)
+                && Objects.equals(crankset, that.crankset)
+                && Objects.equals(bottomBracket, that.bottomBracket)
+                && Objects.equals(chain, that.chain)
+                && Objects.equals(chainGuard, that.chainGuard)
+                && Objects.equals(cassette, that.cassette)
+                && Objects.equals(frontDerailleur, that.frontDerailleur)
+                && Objects.equals(rearDerailleur, that.rearDerailleur)
+                && Objects.equals(rims, that.rims)
+                && Objects.equals(hubs, that.hubs)
+                && Objects.equals(spokes, that.spokes)
+                && Objects.equals(tires, that.tires)
+                && Objects.equals(valve, that.valve)
+                && Objects.equals(brakes, that.brakes)
+                && Objects.equals(brakeLevers, that.brakeLevers)
+                && Objects.equals(brand, that.brand)
+                && Objects.equals(category, that.category);
     }
 
     @Override
     public int hashCode() {
-        int hashed = Objects.hash(id, sku, name,
-                frame, saddle, seatPost,
-                bell, fork, shock, handlebar, handlebarStem,
-                pedal, crankset, bottomBracket, chain,
-                chainGuard, cassette,
-                frontDerailleur, rearDerailleur,
-                rims, hubs, spokes, tires, valve,
-                brakes, brakeLevers
-        );
-        if (attributes == null) {
-            return hashed;
-        }
-        int s;
-        Long[] ids = new Long[s = attributes.size()];
-        for (int i = 0; i < s; i++) {
-            Attribute a = attributes.get(i);
-            if (a != null) {
-                ids[i] = a.getId();
-            } else {
-                ids[i] = 0L;
-            }
-        }
-        return Objects.hash(hashed, Arrays.hashCode(ids));
+        return Objects.hash(id, sku, name, size, frame, saddle, seatPost,
+                bell, fork, shock, handlebar, handlebarStem, pedal, crankset,
+                bottomBracket, chain, chainGuard, cassette, frontDerailleur,
+                rearDerailleur, rims, hubs, spokes, tires, valve, brakes,
+                brakeLevers, brand, category);
     }
 
     //*************** IMPLEMENTS METHODS ******************//

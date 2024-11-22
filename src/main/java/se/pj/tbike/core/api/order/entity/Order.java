@@ -1,6 +1,17 @@
 package se.pj.tbike.core.api.order.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
@@ -80,65 +91,22 @@ public class Order
 
     @Override
     public boolean equals(Object o) {
-        if (!super.equals(o)) {
-            return false;
+        if (this == o) {
+            return true;
         }
         if (!(o instanceof Order that)) {
             return false;
         }
-        if (!status.equals(that.status)) {
-            return false;
-        }
-        if (user != null) {
-            if (that.user == null) {
-                return false;
-            }
-            if (!Objects.equals(user.getId(), that.user.getId())) {
-                return false;
-            }
-        }
-        if (details != null) {
-            if (that.details == null) {
-                return false;
-            }
-            int s = details.size();
-            if (s != that.details.size()) {
-                return false;
-            }
-            for (int i = 0; i < s; i++) {
-                OrderDetail o1 = details.get(i);
-                OrderDetail o2 = that.details.get(i);
-                if (o1 == o2) {
-                    continue;
-                }
-                if (o1 != null && o2 != null && Objects
-                        .equals(o1.getId(), o2.getId())) {
-                    continue;
-                }
-                return false;
-            }
-            return true;
-        }
-        return that.details == null;
+        return totalAmount == that.totalAmount
+                && Objects.equals(id, that.id)
+                && Objects.equals(createdAt, that.createdAt)
+                && status == that.status
+                && Objects.equals(user, that.user);
     }
 
     @Override
     public int hashCode() {
-        int hashed = Objects.hash(super.hashCode(), user.getId(), status);
-        if (details == null) {
-            return hashed;
-        }
-        int s = details.size();
-        OrderDetail.Id[] ids = new OrderDetail.Id[s];
-        for (int i = 0; i < s; i++) {
-            OrderDetail d = details.get(i);
-            if (d != null) {
-                ids[i] = d.getId();
-            } else {
-                ids[i] = new OrderDetail.Id();
-            }
-        }
-        return Objects.hash(hashed, Arrays.hashCode(ids));
+        return Objects.hash(id, totalAmount, createdAt, status, user);
     }
 
 }
