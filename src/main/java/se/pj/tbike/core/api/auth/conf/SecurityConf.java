@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import se.pj.tbike.core.api.brand.controller.QueryBrandController;
+import se.pj.tbike.core.api.order.controller.CreateOrderController;
 import se.pj.tbike.core.api.user.entity.Role;
 import se.pj.tbike.core.api.auth.service.jwt.JwtFilter;
 
@@ -64,7 +65,8 @@ public class SecurityConf {
                                 "/api/brands/**",
                                 "/api/categories/**",
                                 "/api/products/**",
-                                "/api/images/**"
+                                "/api/images/**",
+                                CreateOrderController.API_URL
                         )
                         .hasRole(Role.ADMIN.name())
                         .requestMatchers(

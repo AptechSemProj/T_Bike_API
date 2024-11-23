@@ -155,7 +155,7 @@ public class ProductServiceImpl
                     products.size()
             );
         } else {
-            paged = getRepository().findAll(Specification.allOf(
+            paged = repository.findAll(Specification.allOf(
                     hasBrand(brand),
                     hasCategory(category),
                     containsName(name),
@@ -173,7 +173,7 @@ public class ProductServiceImpl
 
     @Override
     public Optional<Product> findBySku(String sku) {
-        return getRepository().findBySku(sku);
+        return repository.findBySku(sku);
     }
 
     @Override
@@ -184,7 +184,7 @@ public class ProductServiceImpl
 
     @Override
     public boolean removeByKey(Long id) {
-        Optional<Product> o = getRepository().findById(id);
+        Optional<Product> o = repository.findById(id);
         return o.filter(this::remove).isPresent();
     }
 }

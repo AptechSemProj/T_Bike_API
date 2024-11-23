@@ -1,13 +1,12 @@
 package se.pj.tbike.service;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.ank.japi.annotation.Old;
 
 /**
  * @param <T> type of entity
  */
+@Old
 public interface ModificationService<T> {
-
-	JpaRepository<T, ?> getRepository();
 
 	boolean update(T t);
 

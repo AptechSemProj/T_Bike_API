@@ -134,7 +134,7 @@ public abstract class SimpleCacheableService<
         if ( manager.isCaching( id ) ) {
             return true;
         }
-        if ( getRepository().existsById( id ) ) {
+        if ( repository.existsById( id ) ) {
             manager.cache( id, null );
             return true;
         }

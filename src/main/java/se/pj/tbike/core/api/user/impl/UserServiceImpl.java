@@ -39,7 +39,7 @@ public class UserServiceImpl
         if ( cache.isPresent() ) {
             return Optional.of( new User().fromCacheObject( cache.get() ) );
         }
-        var user = getRepository().findByUsername( username );
+        var user = repository.findByUsername( username );
         user.ifPresent( value -> cacheManager.cache(
                 username,
                 value.toCacheObject()

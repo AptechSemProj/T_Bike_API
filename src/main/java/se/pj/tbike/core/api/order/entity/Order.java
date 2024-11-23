@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
@@ -20,7 +21,6 @@ import se.pj.tbike.core.api.orderdetail.entity.OrderDetail;
 import se.pj.tbike.core.api.user.entity.User;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -64,6 +64,7 @@ public class Order
             updatable = false,
             insertable = false
     )
+    @Setter(AccessLevel.PRIVATE)
     private Timestamp createdAt;
 
     @Convert(converter = StatusConverter.class)

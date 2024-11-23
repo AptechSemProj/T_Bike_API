@@ -46,7 +46,9 @@ public abstract class StdResponseConfigurer<T>
     public Response<T> getBoundResponse(Throwable t) {
         var constructor = errorHandlers.get(t.getClass());
         if (constructor == null) {
-            String msg = "No response is bound to " + t.getClass().getName();
+            String msg = "No response is bound to ["
+                    + t.getClass().getSimpleName()
+                    + "]. Message: " + t.getMessage();
             throw UnknownError.builder().reason(msg).build();
         }
         return constructor.apply(t);

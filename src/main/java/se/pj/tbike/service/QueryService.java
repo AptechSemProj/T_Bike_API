@@ -12,8 +12,6 @@ import se.pj.tbike.util.Output.Value;
  */
 public interface QueryService<T, K> {
 
-	JpaRepository<T, K> getRepository();
-
 	Array<T> findAll();
 
 	Array<T> findAll(Sort sort);

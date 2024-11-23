@@ -16,6 +16,6 @@ public class AttributeServiceImpl
 
     @Override
     public void deleteAllByProduct(Product product) {
-        getRepository().deleteAllByProductId(product.getId());
+        repository.deleteAllByProductId(product.getId());
     }
 }
