@@ -31,11 +31,6 @@ public final class CacheControl {
 		this( scheduler, createTrigger( maxLifeTime ) );
 	}
 
-	public CacheControl() {
-		this.scheduler = null;
-		this.trigger = null;
-	}
-
 	public static CacheControl copy(CacheControl other) {
 		return new CacheControl( other.scheduler, other.trigger );
 	}

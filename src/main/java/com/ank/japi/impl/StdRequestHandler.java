@@ -2,7 +2,6 @@ package com.ank.japi.impl;
 
 import com.ank.japi.QueryParams;
 import com.ank.japi.QueryParamsWriter;
-import com.ank.japi.Request;
 import com.ank.japi.RequestHandler;
 import com.ank.japi.Response;
 import com.ank.japi.ResponseBuilder;
@@ -13,7 +12,7 @@ import com.ank.japi.validation.error.UnknownError;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class StdRequestHandler<RQ extends Request<RP>, RP>
+public class StdRequestHandler<RQ, RP>
         implements RequestHandler<RQ, RP> {
 
     private final ResponseConfigurer<RP> responseConfigurer;
@@ -71,7 +70,7 @@ public class StdRequestHandler<RQ extends Request<RP>, RP>
 
     @Override
     public Response<RP> handle(
-            RQ req, Exec1<RP, RQ> exec, Exec3<RP, RQ> requestValidate
+            RQ req, Exec1<RP, RQ> exec, Exec3<RQ> requestValidate
     ) {
         return handle(
                 req,
@@ -84,7 +83,7 @@ public class StdRequestHandler<RQ extends Request<RP>, RP>
     public Response<RP> handle(
             RQ req,
             Exec2<RP, RQ> exec,
-            Exec3<RP, RQ> requestValidate
+            Exec3<RQ> requestValidate
     ) {
         try {
             if ( requestValidate == null || exec == null ) {

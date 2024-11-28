@@ -1,27 +1,28 @@
 package se.pj.tbike.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
-import se.pj.tbike.util.Output.Array;
-import se.pj.tbike.util.Output.Pagination;
-import se.pj.tbike.util.Output.Value;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
- * @param <K> type of key
- * @param <T> type of entity
+ * @param <T>  type of entity
+ * @param <ID> type of id
  */
-public interface QueryService<T, K> {
+public interface QueryService<T, ID> {
 
-	Array<T> findAll();
+    List<T> findAll();
 
-	Array<T> findAll(Sort sort);
+    List<T> findAll(Sort sort);
 
-	Pagination<T> findPage(int num, int size);
+    Page<T> findPage(Pageable pageable);
 
-	Value<T> findByKey(K id);
+    Optional<T> findByKey(ID id);
 
-	boolean exists(T t);
+    boolean exists(T t);
 
-	boolean existsByKey(K id);
+    boolean existsById(ID id);
 
 }
