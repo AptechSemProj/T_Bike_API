@@ -8,6 +8,7 @@ import com.ank.japi.impl.StdRequestHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,18 +46,15 @@ public class CreateOrderController {
     private final OrderMapper mapper;
 
     @PostMapping({"", "/"})
-    public Response<Long> create(
-            @RequestBody OrderRequest request,
-            Authentication auth
-    ) {
+    public Response<Long> create(@RequestBody OrderRequest request) {
         return HANDLER.handle(request, (res, req) -> {
-            User user = findUser(auth, request.getUser());
+            User user = findUser(req.getUser());
             Optional<Order> opt = service.findByUser(user);
             Order order;
             if (opt.isPresent()) {
                 order = opt.get();
             } else {
-                order = mapper.map(request);
+                order = mapper.map(req);
                 if (!order.isCart()) {
                     throw new HttpException(
                             HttpStatus.BAD_REQUEST,
@@ -70,8 +68,11 @@ public class CreateOrderController {
         });
     }
 
-    private User findUser(Authentication auth, Long id) {
+    private User findUser(Long id) {
         if (id == null) {
+            Authentication auth = SecurityContextHolder
+                    .getContext()
+                    .getAuthentication();
             return (User) auth.getPrincipal();
         } else {
             Supplier<HttpException> ex = () -> new HttpException(

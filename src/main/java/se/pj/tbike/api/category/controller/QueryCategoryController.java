@@ -35,7 +35,7 @@ public class QueryCategoryController
     ) {
         return paginated(parameters, (page, size) -> {
             Page<Category> paged;
-            if (size == 0) {
+            if (size == defaultPageSize()) {
                 paged = new PageImpl<>(service.findAll());
             } else {
                 paged = service.findPage(PageRequest.of(page, size));
@@ -45,7 +45,7 @@ public class QueryCategoryController
     }
 
     @Override
-    public Pageable defaultPageable() {
-        return PageRequest.of(0, 0);
+    public int defaultPageSize() {
+        return 0;
     }
 }

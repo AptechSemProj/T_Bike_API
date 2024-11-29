@@ -60,8 +60,8 @@ public class ProductController
     private final AttributeMapper attributeMapper;
 
     @Override
-    public Pageable defaultPageable() {
-        return PageRequest.of(0, 10);
+    public int defaultPageSize() {
+        return 10;
     }
 
     @PostMapping({"/list", "/search"})

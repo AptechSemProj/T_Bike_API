@@ -4,27 +4,12 @@ import com.ank.japi.RequestHandler;
 import com.ank.japi.impl.StdRequestHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import se.pj.tbike.api.category.data.CategoryRepository;
-import se.pj.tbike.api.category.data.CategoryService;
-import se.pj.tbike.api.category.dto.CategoryMapper;
 import se.pj.tbike.api.category.dto.CategoryRequest;
 import se.pj.tbike.api.category.dto.CategoryResponse;
-import se.pj.tbike.api.category.impl.CategoryMapperImpl;
-import se.pj.tbike.api.category.impl.CategoryServiceImpl;
 import se.pj.tbike.impl.ResponseConfigurerImpl;
 
 @Configuration
 public class CategoryBeansRegistry {
-
-    @Bean
-    public CategoryService categoryService(CategoryRepository repository) {
-        return new CategoryServiceImpl(repository);
-    }
-
-    @Bean
-    public CategoryMapper categoryMapper() {
-        return new CategoryMapperImpl();
-    }
 
     @Bean
     public RequestHandler<CategoryRequest, Long> modifyCategoryHandler() {

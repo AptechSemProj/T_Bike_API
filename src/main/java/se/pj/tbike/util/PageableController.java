@@ -14,7 +14,11 @@ import java.util.function.BiFunction;
  */
 public interface PageableController<T> {
 
-    Pageable defaultPageable();
+    default int defaultPageNumber() {
+        return 0;
+    }
+
+    int defaultPageSize();
 
     default Response<List<T>> paginated(
             PageableParameters params,
@@ -23,10 +27,9 @@ public interface PageableController<T> {
         if (handler == null) {
             throw new NullPointerException("handler is null");
         }
-        Pageable dp = defaultPageable();
         Page<T> page = handler.apply(
-                params.getPageNumber(dp.getPageNumber()),
-                params.getPageSize(dp.getPageSize())
+                params.getPageNumber(defaultPageNumber()),
+                params.getPageSize(defaultPageSize())
         );
         ResponseImpl<List<T>> resp = ResponseImpl
                 .status(HttpStatus.OK)
