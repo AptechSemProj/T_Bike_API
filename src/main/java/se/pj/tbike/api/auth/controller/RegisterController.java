@@ -24,7 +24,9 @@ public class RegisterController {
     RequestHandler<RegisterRequest, AuthResponse> HANDLER;
 
     static {
-        HANDLER = new StdRequestHandler<>(ResponseConfigurerImpl::new);
+        HANDLER = new StdRequestHandler<>(
+                ResponseConfigurerImpl::new
+        );
     }
 
     private final AuthService service;
@@ -35,7 +37,7 @@ public class RegisterController {
     ) {
         return HANDLER.handle(
                 request,
-                (res, req) -> res.created(service.register(req))
+                (res, req) -> res.ok(service.register(req))
         );
     }
 }
