@@ -10,7 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import se.pj.tbike.common.entity.IdentifiedEntity;
-import se.pj.tbike.service.CrudService;
+import se.pj.tbike.common.service.CrudService;
 
 public class SimpleCrudService<
         E extends IdentifiedEntity<E, K>, K extends Comparable<K>,

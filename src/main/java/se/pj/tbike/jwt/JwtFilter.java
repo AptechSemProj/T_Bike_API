@@ -13,8 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import se.pj.tbike.api.auth.controller.LoginController;
-import se.pj.tbike.api.auth.controller.RegisterController;
+import se.pj.tbike.http.controller.auth.LoginController;
+import se.pj.tbike.http.controller.auth.RegisterController;
 
 import java.io.IOException;
 

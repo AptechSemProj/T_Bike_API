@@ -1,6 +1,5 @@
 package se.pj.tbike.impl;
 
-import com.ank.japi.Response;
 import com.ank.japi.ResponseBuilder;
 import com.ank.japi.exception.HttpException;
 import com.ank.japi.impl.StdResponseBuilder;
@@ -20,8 +19,9 @@ import org.springframework.http.HttpStatus;
 
 import java.util.function.Function;
 
-public class ResponseConfigurerImpl<T>
-        extends StdResponseConfigurer<T> {
+@Deprecated
+public class ResponseConfigurerImpl
+        extends StdResponseConfigurer {
 
     public ResponseConfigurerImpl() {
         setResponseBinding(
@@ -77,20 +77,20 @@ public class ResponseConfigurerImpl<T>
     }
 
     private <E extends Throwable>
-    Function<E, Response<T>> response(HttpStatus status) {
-        return throwable -> ResponseImpl.status(status)
+    Function<E, Response<?>> response(HttpStatus status) {
+        return throwable -> Response.status(status)
                 .message(throwable.getLocalizedMessage())
                 .build(null);
     }
 
     @Override
-    public ResponseBuilder<T> getResponseBuilder() {
-        return new StdResponseBuilder<>() {
+    public ResponseBuilder getResponseBuilder() {
+        return new StdResponseBuilder() {
             @Override
-            protected Response<T> createResponse(
-                    int statusCode, String message, T data
+            protected Response<?> createResponse(
+                    int statusCode, String message, Object data
             ) {
-                return ResponseImpl.status(statusCode)
+                return Response.status(statusCode)
                         .message(message)
                         .build(data);
             }

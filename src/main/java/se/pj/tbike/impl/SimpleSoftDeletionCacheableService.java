@@ -2,7 +2,7 @@ package se.pj.tbike.impl;
 
 import se.pj.tbike.common.entity.SoftDeletionEntity;
 import se.pj.tbike.common.respository.SoftDeletionRepository;
-import se.pj.tbike.service.CrudService;
+import se.pj.tbike.common.service.CrudService;
 import se.pj.tbike.util.Cacheable;
 
 import java.util.function.Supplier;

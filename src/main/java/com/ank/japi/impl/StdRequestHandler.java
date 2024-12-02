@@ -12,15 +12,16 @@ import com.ank.japi.validation.error.UnknownError;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+@Deprecated
 public class StdRequestHandler<RQ, RP>
         implements RequestHandler<RQ, RP> {
 
-    private final ResponseConfigurer<RP> responseConfigurer;
-    private final ResponseBuilder<RP>    responseBuilder;
+    private final ResponseConfigurer responseConfigurer;
+    private final ResponseBuilder    responseBuilder;
     private final QueryParams            queryParams;
 
     public StdRequestHandler(
-            ResponseConfigurer<RP> responseConfigurer,
+            ResponseConfigurer responseConfigurer,
             QueryParams queryParams
     ) {
         if ( responseConfigurer == null ) {
@@ -34,11 +35,11 @@ public class StdRequestHandler<RQ, RP>
         this.queryParams = queryParams;
     }
 
-    public StdRequestHandler(ResponseConfigurer<RP> responseConfigurer) {
+    public StdRequestHandler(ResponseConfigurer responseConfigurer) {
         this( responseConfigurer, new SimpleQueryParams() );
     }
 
-    public StdRequestHandler(Supplier<ResponseConfigurer<RP>> supplier) {
+    public StdRequestHandler(Supplier<ResponseConfigurer> supplier) {
         this( supplier.get() );
     }
 
@@ -51,12 +52,12 @@ public class StdRequestHandler<RQ, RP>
     }
 
     @Override
-    public Response<RP> handle(RQ req, Exec1<RP, RQ> exec) {
+    public Response handle(RQ req, Exec1<RQ> exec) {
         return handle( req, (res, body, params) -> exec.apply( res, body ) );
     }
 
     @Override
-    public Response<RP> handle(RQ req, Exec2<RP, RQ> exec) {
+    public Response handle(RQ req, Exec2<RQ> exec) {
         try {
             if ( exec == null ) {
                 throw UnknownError.builder().build();
@@ -69,8 +70,8 @@ public class StdRequestHandler<RQ, RP>
     }
 
     @Override
-    public Response<RP> handle(
-            RQ req, Exec1<RP, RQ> exec, Exec3<RQ> requestValidate
+    public Response handle(
+            RQ req, Exec1<RQ> exec, Exec3<RQ> requestValidate
     ) {
         return handle(
                 req,
@@ -80,9 +81,9 @@ public class StdRequestHandler<RQ, RP>
     }
 
     @Override
-    public Response<RP> handle(
+    public Response handle(
             RQ req,
-            Exec2<RP, RQ> exec,
+            Exec2<RQ> exec,
             Exec3<RQ> requestValidate
     ) {
         try {

@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,10 +20,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import se.pj.tbike.api.brand.controller.QueryBrandController;
-import se.pj.tbike.api.order.controller.CreateOrderController;
-import se.pj.tbike.api.orderdetail.controller.CreateDetailController;
-import se.pj.tbike.api.user.entity.Role;
+import se.pj.tbike.http.controller.admin.category.DeleteCategoryController;
+import se.pj.tbike.http.controller.admin.category.UpdateCategoryController;
+import se.pj.tbike.http.controller.auth.LoginController;
+import se.pj.tbike.http.controller.auth.RegisterController;
+import se.pj.tbike.http.controller.category.FindCategoryController;
+import se.pj.tbike.http.controller.category.QueryCategoryController;
+import se.pj.tbike.http.controller.admin.order.FindOrderViaAdminController;
+import se.pj.tbike.http.controller.admin.orderdetail.CreateDetailController;
+import se.pj.tbike.domain.entity.User;
+import se.pj.tbike.http.Routes;
 import se.pj.tbike.jwt.JwtFilter;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -32,6 +39,73 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConf {
+
+    private void allAccess(
+            AuthorizeHttpRequestsConfigurer<HttpSecurity>
+                    .AuthorizationManagerRequestMatcherRegistry registry
+    ) {
+        registry.requestMatchers(
+                        HttpMethod.GET,
+                        Routes.QUERY_BRAND_PATH,
+                        Routes.FIND_BRAND_PATH,
+                        QueryCategoryController.API_URL,
+                        FindCategoryController.API_URL,
+                        "/api/products/**",
+                        "/api/images/**"
+                ).permitAll()
+                .requestMatchers(
+                        HttpMethod.POST,
+                        LoginController.API_URL,
+                        RegisterController.API_URL,
+                        "/api/products/list/**",
+                        "/api/products/search/**"
+                ).permitAll();
+    }
+
+    private void adminAccess(
+            AuthorizeHttpRequestsConfigurer<HttpSecurity>
+                    .AuthorizationManagerRequestMatcherRegistry registry
+    ) {
+        String adminRole = User.Role.ADMIN.name();
+        registry.requestMatchers(
+                        HttpMethod.GET,
+                        FindOrderViaAdminController.API_URL
+                ).hasRole(adminRole)
+                .requestMatchers(
+                        HttpMethod.POST,
+                        Routes.CREATE_BRAND_PATH,
+                        Routes.CREATE_CATEGORY_PATH,
+                        "/api/products/**",
+                        "/api/images/**"
+                ).hasRole(adminRole)
+                .requestMatchers(
+                        HttpMethod.PUT,
+                        Routes.UPDATE_BRAND_PATH,
+                        UpdateCategoryController.API_URL,
+                        "/api/products/**"
+                ).hasRole(adminRole)
+                .requestMatchers(
+                        HttpMethod.DELETE,
+                        Routes.DELETE_BRAND_PATH,
+                        DeleteCategoryController.API_URL,
+                        "/api/products/**",
+                        "/api/images/**"
+                ).hasRole(adminRole);
+    }
+
+    private void userAccess(
+            AuthorizeHttpRequestsConfigurer<HttpSecurity>
+                    .AuthorizationManagerRequestMatcherRegistry registry
+    ) {
+        registry.requestMatchers(
+                        HttpMethod.GET,
+                        Routes.GET_CART_PATH
+                ).hasRole(User.Role.USER.name())
+                .requestMatchers(
+                        HttpMethod.POST,
+                        CreateDetailController.API_URL
+                ).hasAnyRole(User.Role.ADMIN.name(), User.Role.USER.name());
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -46,55 +120,14 @@ public class SecurityConf {
                         filter, UsernamePasswordAuthenticationFilter.class
                 )
                 .sessionManagement(sc -> sc.sessionCreationPolicy(STATELESS))
-                .authorizeHttpRequests(r -> r
-                        .requestMatchers(
-                                HttpMethod.GET,
-                                QueryBrandController.API_URL,
-                                "/api/brands/{id}",
-                                "/api/categories/**",
-                                "/api/products/**",
-                                "/api/images/**"
-                        )
-                        .permitAll()
-                        .requestMatchers(
-                                HttpMethod.POST,
-                                "/api/auth/**",
-                                "/api/products/list/**",
-                                "/api/products/search/**"
-                        )
-                        .permitAll()
-                        .requestMatchers(
-                                HttpMethod.POST,
-                                CreateOrderController.API_URL,
-                                CreateDetailController.API_URL
-                        )
-                        .hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                        .requestMatchers(
-                                HttpMethod.POST,
-                                "/api/brands/**",
-                                "/api/categories/**",
-                                "/api/products/**",
-                                "/api/images/**"
-                        )
-                        .hasRole(Role.ADMIN.name())
-                        .requestMatchers(
-                                HttpMethod.PUT,
-                                "/api/brands/**",
-                                "/api/categories/**",
-                                "/api/products/**"
-                        )
-                        .hasRole(Role.ADMIN.name())
-                        .requestMatchers(
-                                HttpMethod.DELETE,
-                                "/api/brands/**",
-                                "/api/categories/**",
-                                "/api/products/**",
-                                "/api/images/**"
-                        )
-                        .hasRole(Role.ADMIN.name())
-                        .anyRequest()
-                        .permitAll()
-                );
+                // all access
+                .authorizeHttpRequests(this::allAccess)
+                // admin access
+                .authorizeHttpRequests(this::adminAccess)
+                // user access
+                .authorizeHttpRequests(this::userAccess)
+                // close config
+                .authorizeHttpRequests(r -> r.anyRequest().permitAll());
 //                        .authenticated()
         return http.build();
     }

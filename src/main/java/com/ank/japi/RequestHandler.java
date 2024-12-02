@@ -4,39 +4,39 @@ import com.ank.japi.validation.Validators;
 
 import java.util.function.Consumer;
 
+@Deprecated
 public interface RequestHandler<RQ, RP> {
 
     RequestHandler<RQ, RP> setQueryParams(Consumer<QueryParamsWriter> func);
 
-    Response<RP> handle(RQ req, Exec1<RP, RQ> exec);
+    Response handle(RQ req, Exec1<RQ> exec);
 
-    Response<RP> handle(RQ req, Exec2<RP, RQ> exec);
+    Response handle(RQ req, Exec2<RQ> exec);
 
-    Response<RP> handle(
+    Response handle(
             RQ req,
-            Exec1<RP, RQ> exec,
+            Exec1<RQ> exec,
             Exec3<RQ> requestValidate
     );
 
-    Response<RP> handle(
+    Response handle(
             RQ req,
-            Exec2<RP, RQ> exec,
+            Exec2<RQ> exec,
             Exec3<RQ> requestValidate
     );
 
     @FunctionalInterface
-    interface Exec1<RP, RQ> {
+    interface Exec1<RQ> {
 
-        Response<RP> apply(ResponseBuilder<RP> res, RQ req) throws Throwable;
+        Response apply(ResponseBuilder res, RQ req) throws Throwable;
 
     }
 
     @FunctionalInterface
-    interface Exec2<RP, RQ> {
+    interface Exec2<RQ> {
 
-        Response<RP> apply(
-                ResponseBuilder<RP> res, RQ req, QueryParamsReader query
-        ) throws Throwable;
+        Response apply(ResponseBuilder res, RQ req, QueryParamsReader query)
+                throws Throwable;
 
     }
 

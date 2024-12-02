@@ -3,6 +3,7 @@ package com.ank.japi;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+@Deprecated
 public interface QueryParamsReader {
 
     default Object get(String name) {

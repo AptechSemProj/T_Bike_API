@@ -2,15 +2,16 @@ package com.ank.japi;
 
 import java.util.function.Function;
 
-public interface ResponseConfigurer<T> {
+@Deprecated
+public interface ResponseConfigurer {
 
-    ResponseBuilder<T> getResponseBuilder();
+    ResponseBuilder getResponseBuilder();
 
     <E extends Throwable>
-    ResponseConfigurer<T> setResponseBinding(
-            Class<E> throwable, Function<E, Response<T>> constructor
+    ResponseConfigurer setResponseBinding(
+            Class<E> throwable, Function<E, ? extends Response> constructor
     );
 
-    Response<T> getBoundResponse(Throwable throwable);
+    Response getBoundResponse(Throwable throwable);
 
 }

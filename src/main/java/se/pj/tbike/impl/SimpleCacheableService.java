@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import se.pj.tbike.caching.Cache;
 import se.pj.tbike.common.entity.IdentifiedEntity;
-import se.pj.tbike.service.CrudService;
+import se.pj.tbike.common.service.CrudService;
 import se.pj.tbike.caching.CacheManager;
 import se.pj.tbike.util.Cacheable;
 

@@ -3,6 +3,7 @@ package com.ank.japi;
 import com.ank.japi.validation.Requirement;
 import com.ank.japi.validation.Requirements;
 
+@Deprecated
 public interface QueryParamsWriter {
 
     void set(String name, Object value, Requirement... requirements);
