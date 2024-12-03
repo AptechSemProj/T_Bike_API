@@ -1,4 +1,4 @@
-package se.pj.tbike.http.controller.admin.order;
+package se.pj.tbike.http.model.order;
 
 import lombok.Getter;
 import lombok.Setter;

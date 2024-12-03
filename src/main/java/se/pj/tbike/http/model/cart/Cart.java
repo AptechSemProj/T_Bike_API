@@ -13,7 +13,7 @@ public final class Cart {
 
     private final long totalAmount;
 
-    private final List<Item> items;
+    private final List<ItemResponse> items;
 
     public Cart(final Order order) {
         if (!order.isCart()) {
@@ -25,7 +25,7 @@ public final class Cart {
         this.totalAmount = order.getTotalAmount();
         this.items = order.getDetails().values()
                 .parallelStream()
-                .map(Item::new)
+                .map(ItemResponse::new)
                 .toList();
     }
 }

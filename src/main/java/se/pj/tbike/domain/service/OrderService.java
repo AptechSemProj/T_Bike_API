@@ -1,6 +1,5 @@
 package se.pj.tbike.domain.service;
 
-import com.ank.japi.HttpStatus;
 import com.ank.japi.exception.HttpException;
 import org.springframework.stereotype.Service;
 import se.pj.tbike.domain.repository.OrderRepository;
@@ -21,7 +20,7 @@ public class OrderService
         super(repository);
     }
 
-    public Optional<Order> findByUser(User user) {
+    public Optional<Order> findCartByUser(User user) {
         List<Order> orders = repository
                 .findAllByUser(user)
                 .parallelStream()
@@ -30,8 +29,7 @@ public class OrderService
         return switch (orders.size()) {
             case 0 -> Optional.empty();
             case 1 -> Optional.of(orders.get(0));
-            default -> throw new HttpException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
+            default -> throw HttpException.internalServerError(
                     "User has more than one shopping cart."
             );
         };

@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS order_details
 (
+    price        BIGINT NOT NULL,
     quantity     INT    NOT NULL,
     total_amount BIGINT NOT NULL,
     order_id     BIGINT NOT NULL,

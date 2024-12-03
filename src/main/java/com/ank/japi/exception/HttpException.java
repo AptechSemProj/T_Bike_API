@@ -35,6 +35,10 @@ public class HttpException
         return new HttpException(HttpStatus.UNAUTHORIZED, message);
     }
 
+    public static HttpException unauthorized() {
+        return unauthorized(HttpStatus.UNAUTHORIZED.getReasonPhrase());
+    }
+
     public static HttpException forbidden(String message) {
         return new HttpException(HttpStatus.FORBIDDEN, message);
     }

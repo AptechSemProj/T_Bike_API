@@ -49,6 +49,9 @@ public class OrderDetail
     private Id id;
 
     @Column(nullable = false)
+    private long price;
+
+    @Column(nullable = false)
     private int quantity;
 
     @Column(
@@ -113,16 +116,14 @@ public class OrderDetail
             implements Serializable, Comparable<Id> {
 
         @Column(
-//                name = "order_id",
-nullable = false,
-updatable = false
+                nullable = false,
+                updatable = false
         )
         private long orderId;
 
         @Column(
-//                name = "product_id",
-nullable = false,
-updatable = false
+                nullable = false,
+                updatable = false
         )
         private long productId;
 

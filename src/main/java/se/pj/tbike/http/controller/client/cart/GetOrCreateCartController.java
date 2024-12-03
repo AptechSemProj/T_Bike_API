@@ -17,11 +17,11 @@ import se.pj.tbike.impl.BaseController;
 @RequestMapping(Routes.GET_CART_PATH)
 @PreAuthorize("hasRole('USER')")
 @RestController
-public class GetCartController extends BaseController {
+public class GetOrCreateCartController extends BaseController {
 
     private final OrderService service;
 
-    public GetCartController(
+    public GetOrCreateCartController(
             ResponseConfigurer configurer,
             OrderService service
     ) {
@@ -29,18 +29,15 @@ public class GetCartController extends BaseController {
         this.service = service;
     }
 
-    @SuppressWarnings("DuplicatedCode")
     @GetMapping({"", "/"})
     public Response get(Authentication auth) {
         return tryCatch(() -> {
             if (auth == null) {
-                throw HttpException.unauthorized(
-                        "Unauthorized"
-                );
+                throw HttpException.unauthorized();
             }
             User user = (User) auth.getPrincipal();
             Order order = service
-                    .findByUser(user)
+                    .findCartByUser(user)
                     .orElseGet(() -> {
                         Order o = new Order();
                         o.setStatus(Order.Status.CART);

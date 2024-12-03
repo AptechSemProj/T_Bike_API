@@ -1,4 +1,4 @@
-package se.pj.tbike.http.controller.admin.order;
+package se.pj.tbike.http.model.order;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,9 +11,8 @@ public class OrderMapper {
 
     private final OrderDetailMapper detailMapper;
 
-    public Order map(OrderRequest request) {
+    public Order map(CreateOrderRequest request) {
         Order order = new Order();
-        order.setId(request.getId());
         order.setTotalAmount(0L);
         order.setStatus(request.getStatus());
         return order;

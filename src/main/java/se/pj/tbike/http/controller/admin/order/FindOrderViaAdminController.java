@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.pj.tbike.domain.service.UserService;
 import se.pj.tbike.domain.entity.User;
+import se.pj.tbike.http.helper.FindOrderProcessor;
+import se.pj.tbike.http.model.order.OrderMapper;
+import se.pj.tbike.http.model.order.CreateOrderRequest;
+import se.pj.tbike.http.model.order.OrderResponse;
 import se.pj.tbike.impl.ResponseConfigurerImpl;
 
 import java.util.function.Supplier;
@@ -27,7 +31,7 @@ public class FindOrderViaAdminController {
     public static final String API_URL = "/api/orders/{userId}";
 
     private static final
-    RequestHandler<OrderRequest, OrderResponse> HANDLER;
+    RequestHandler<CreateOrderRequest, OrderResponse> HANDLER;
 
     static {
         HANDLER = new StdRequestHandler<>(
