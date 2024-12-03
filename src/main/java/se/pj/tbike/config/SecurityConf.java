@@ -96,6 +96,10 @@ public class SecurityConf {
                         Routes.GET_CART_PATH
                 ).hasRole(User.Role.USER.name())
                 .requestMatchers(
+                        HttpMethod.PUT,
+                        Routes.UPDATE_USER_INFO_PATH
+                ).hasRole(User.Role.USER.name())
+                .requestMatchers(
                         HttpMethod.POST,
                         CreateDetailController.API_URL
                 ).hasAnyRole(User.Role.ADMIN.name(), User.Role.USER.name());

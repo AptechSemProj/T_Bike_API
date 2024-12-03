@@ -16,4 +16,5 @@ public interface Routes {
     String FIND_ORDER_PATH = "/api/orders/{id}";
     String AUTH_LOGIN_PATH = "/api/auth/authenticate";
     String AUTH_REGISTER_PATH = "/api/auth/register";
+    String UPDATE_USER_INFO_PATH = "/api/user";
 }
