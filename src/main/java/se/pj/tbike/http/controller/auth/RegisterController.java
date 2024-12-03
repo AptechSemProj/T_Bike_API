@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import se.pj.tbike.http.model.auth.AuthResponse;
+import se.pj.tbike.http.model.auth.RegisterRequest;
 import se.pj.tbike.impl.ResponseConfigurerImpl;
 
 @RequestMapping(RegisterController.API_URL)

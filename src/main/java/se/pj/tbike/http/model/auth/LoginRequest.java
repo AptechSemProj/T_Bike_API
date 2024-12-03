@@ -1,4 +1,4 @@
-package se.pj.tbike.http.controller.auth;
+package se.pj.tbike.http.model.auth;
 
 import com.ank.japi.HttpStatus;
 import com.ank.japi.Request;

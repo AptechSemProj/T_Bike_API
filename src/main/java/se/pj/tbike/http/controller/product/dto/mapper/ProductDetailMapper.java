@@ -1,14 +1,14 @@
 package se.pj.tbike.http.controller.product.dto.mapper;
 
 import org.modelmapper.ModelMapper;
-import se.pj.tbike.http.controller.attribute.AttributeMapper;
+import se.pj.tbike.http.model.attribute.AttributeMapper;
 import se.pj.tbike.http.model.brand.BrandMapper;
 import se.pj.tbike.http.model.brand.BrandResponse;
 import se.pj.tbike.http.model.category.CategoryMapper;
 import se.pj.tbike.domain.entity.Product;
 import se.pj.tbike.http.controller.product.dto.ProductDetail;
 import se.pj.tbike.http.controller.product.dto.ProductSpecifications;
-import se.pj.tbike.http.controller.attribute.AttributeResponse;
+import se.pj.tbike.http.model.attribute.AttributeResponse;
 import se.pj.tbike.http.model.category.CategoryResponse;
 
 import java.util.ArrayList;

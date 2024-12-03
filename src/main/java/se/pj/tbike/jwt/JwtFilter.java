@@ -13,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import se.pj.tbike.http.controller.auth.LoginController;
+import se.pj.tbike.http.Routes;
 import se.pj.tbike.http.controller.auth.RegisterController;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         String path = request.getServletPath();
-        if (path.contains(LoginController.API_URL)
+        if (path.contains(Routes.LOGIN_PATH)
                 || path.contains(RegisterController.API_URL)) {
             filterChain.doFilter(request, response);
             return;

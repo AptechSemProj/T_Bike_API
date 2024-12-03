@@ -1,4 +1,4 @@
-package se.pj.tbike.http.controller.attribute;
+package se.pj.tbike.http.model.attribute;
 
 import org.springframework.stereotype.Service;
 import se.pj.tbike.domain.entity.Attribute;

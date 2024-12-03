@@ -20,13 +20,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import se.pj.tbike.http.controller.admin.category.DeleteCategoryController;
-import se.pj.tbike.http.controller.admin.category.UpdateCategoryController;
-import se.pj.tbike.http.controller.auth.LoginController;
 import se.pj.tbike.http.controller.auth.RegisterController;
-import se.pj.tbike.http.controller.category.FindCategoryController;
 import se.pj.tbike.http.controller.category.QueryCategoryController;
-import se.pj.tbike.http.controller.admin.order.FindOrderViaAdminController;
 import se.pj.tbike.http.controller.admin.orderdetail.CreateDetailController;
 import se.pj.tbike.domain.entity.User;
 import se.pj.tbike.http.Routes;
@@ -49,13 +44,13 @@ public class SecurityConf {
                         Routes.QUERY_BRAND_PATH,
                         Routes.FIND_BRAND_PATH,
                         QueryCategoryController.API_URL,
-                        FindCategoryController.API_URL,
+                        Routes.FIND_CATEGORY_PATH,
                         "/api/products/**",
                         "/api/images/**"
                 ).permitAll()
                 .requestMatchers(
                         HttpMethod.POST,
-                        LoginController.API_URL,
+                        Routes.LOGIN_PATH,
                         RegisterController.API_URL,
                         "/api/products/list/**",
                         "/api/products/search/**"
@@ -69,7 +64,7 @@ public class SecurityConf {
         String adminRole = User.Role.ADMIN.name();
         registry.requestMatchers(
                         HttpMethod.GET,
-                        FindOrderViaAdminController.API_URL
+                        Routes.FIND_ORDER_PATH
                 ).hasRole(adminRole)
                 .requestMatchers(
                         HttpMethod.POST,
@@ -81,13 +76,13 @@ public class SecurityConf {
                 .requestMatchers(
                         HttpMethod.PUT,
                         Routes.UPDATE_BRAND_PATH,
-                        UpdateCategoryController.API_URL,
+                        Routes.UPDATE_CATEGORY_PATH,
                         "/api/products/**"
                 ).hasRole(adminRole)
                 .requestMatchers(
                         HttpMethod.DELETE,
                         Routes.DELETE_BRAND_PATH,
-                        DeleteCategoryController.API_URL,
+                        Routes.DELETE_CATEGORY_PATH,
                         "/api/products/**",
                         "/api/images/**"
                 ).hasRole(adminRole);

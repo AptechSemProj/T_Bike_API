@@ -44,9 +44,7 @@ public class UpdateBrandController extends BaseController {
                 return noContent();
             }
             throw HttpException.internalServerError(
-                    "Cannot update brand with id ["
-                            + brand.getId()
-                            + ']'
+                    "Cannot update brand with id [" + id + ']'
             );
         });
     }

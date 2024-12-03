@@ -3,7 +3,7 @@ package se.pj.tbike.http.controller.product.dto;
 import com.ank.japi.Request;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import se.pj.tbike.http.controller.attribute.AttributeRequest;
+import se.pj.tbike.http.model.attribute.AttributeRequest;
 
 import java.util.List;
 

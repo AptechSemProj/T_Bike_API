@@ -10,4 +10,9 @@ public interface Routes {
     String GET_CART_PATH = "/api/cart";
     String ADD_CART_ITEM_PATH = "/api/cart";
     String CREATE_ORDER_PATH = "/api/orders";
+    String FIND_CATEGORY_PATH = "/api/categories/{id}";
+    String DELETE_CATEGORY_PATH = "/api/categories/{id}";
+    String UPDATE_CATEGORY_PATH = "/api/categories/{id}";
+    String FIND_ORDER_PATH = "/api/orders/{id}";
+    String LOGIN_PATH = "/api/auth/authenticate";
 }

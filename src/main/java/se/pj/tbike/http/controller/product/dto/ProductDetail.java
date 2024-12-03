@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import se.pj.tbike.http.model.brand.BrandResponse;
-import se.pj.tbike.http.controller.attribute.AttributeResponse;
+import se.pj.tbike.http.model.attribute.AttributeResponse;
 import se.pj.tbike.http.model.category.CategoryResponse;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package se.pj.tbike.http.controller.attribute;
+package se.pj.tbike.http.model.attribute;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

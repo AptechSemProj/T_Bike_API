@@ -6,6 +6,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import se.pj.tbike.http.model.auth.AuthResponse;
+import se.pj.tbike.http.model.auth.LoginRequest;
+import se.pj.tbike.http.model.auth.RegisterRequest;
 import se.pj.tbike.jwt.JwtService;
 import se.pj.tbike.domain.service.UserService;
 import se.pj.tbike.domain.entity.User;

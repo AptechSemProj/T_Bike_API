@@ -2,7 +2,7 @@ package se.pj.tbike.http.controller.product.conf;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import se.pj.tbike.http.controller.attribute.AttributeMapper;
+import se.pj.tbike.http.model.attribute.AttributeMapper;
 import se.pj.tbike.http.model.brand.BrandMapper;
 import se.pj.tbike.http.model.category.CategoryMapper;
 import se.pj.tbike.http.controller.product.dto.ProductRequest;
