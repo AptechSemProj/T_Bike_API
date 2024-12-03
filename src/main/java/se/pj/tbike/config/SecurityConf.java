@@ -20,7 +20,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import se.pj.tbike.http.controller.auth.RegisterController;
 import se.pj.tbike.http.controller.category.QueryCategoryController;
 import se.pj.tbike.http.controller.admin.orderdetail.CreateDetailController;
 import se.pj.tbike.domain.entity.User;
@@ -50,8 +49,8 @@ public class SecurityConf {
                 ).permitAll()
                 .requestMatchers(
                         HttpMethod.POST,
-                        Routes.LOGIN_PATH,
-                        RegisterController.API_URL,
+                        Routes.AUTH_LOGIN_PATH,
+                        Routes.AUTH_REGISTER_PATH,
                         "/api/products/list/**",
                         "/api/products/search/**"
                 ).permitAll();

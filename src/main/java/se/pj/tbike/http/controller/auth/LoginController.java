@@ -9,7 +9,7 @@ import se.pj.tbike.http.Routes;
 import se.pj.tbike.http.model.auth.LoginRequest;
 import se.pj.tbike.impl.BaseController;
 
-@RequestMapping(Routes.LOGIN_PATH)
+@RequestMapping(Routes.AUTH_LOGIN_PATH)
 @RestController
 public class LoginController extends BaseController {
 

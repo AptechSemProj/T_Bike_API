@@ -1,13 +1,10 @@
 package se.pj.tbike.http.model.auth;
 
-import com.ank.japi.HttpStatus;
-import com.ank.japi.Request;
 import com.ank.japi.exception.HttpException;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class LoginRequest
-        implements Request<AuthResponse> {
+public class LoginRequest {
 
     private final String username;
 
@@ -15,20 +12,17 @@ public class LoginRequest
 
     public String getUsername() {
         if (username == null) {
-            throw new HttpException(
-                    HttpStatus.BAD_REQUEST,
+            throw HttpException.badRequest(
                     "Username is required."
             );
         }
         if (username.isBlank()) {
-            throw new HttpException(
-                    HttpStatus.BAD_REQUEST,
+            throw HttpException.badRequest(
                     "Username cannot be empty."
             );
         }
         if (username.length() > 100) {
-            throw new HttpException(
-                    HttpStatus.BAD_REQUEST,
+            throw HttpException.badRequest(
                     "Username is too long (100 characters)."
             );
         }
@@ -37,20 +31,17 @@ public class LoginRequest
 
     public String getPassword() {
         if (password == null) {
-            throw new HttpException(
-                    HttpStatus.BAD_REQUEST,
+            throw HttpException.badRequest(
                     "Password is required."
             );
         }
         if (password.isBlank()) {
-            throw new HttpException(
-                    HttpStatus.BAD_REQUEST,
+            throw HttpException.badRequest(
                     "Password cannot be empty."
             );
         }
         if (password.length() > 60) {
-            throw new HttpException(
-                    HttpStatus.BAD_REQUEST,
+            throw HttpException.badRequest(
                     "Password is too long (60 characters)."
             );
         }

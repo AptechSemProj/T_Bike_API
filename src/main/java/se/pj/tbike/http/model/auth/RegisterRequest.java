@@ -1,6 +1,5 @@
 package se.pj.tbike.http.model.auth;
 
-import com.ank.japi.HttpStatus;
 import com.ank.japi.exception.HttpException;
 import se.pj.tbike.domain.entity.User;
 
@@ -24,20 +23,17 @@ public class RegisterRequest
 
     public String getName() {
         if (name == null) {
-            throw new HttpException(
-                    HttpStatus.BAD_REQUEST,
+            throw HttpException.badRequest(
                     "Name is required."
             );
         }
         if (name.isBlank()) {
-            throw new HttpException(
-                    HttpStatus.BAD_REQUEST,
+            throw HttpException.badRequest(
                     "Name cannot be empty."
             );
         }
         if (name.length() > 100) {
-            throw new HttpException(
-                    HttpStatus.BAD_REQUEST,
+            throw HttpException.badRequest(
                     "Name is too long (100 characters)."
             );
         }
@@ -46,20 +42,17 @@ public class RegisterRequest
 
     public String getPhoneNumber() {
         if (phoneNumber == null) {
-            throw new HttpException(
-                    HttpStatus.BAD_REQUEST,
+            throw HttpException.badRequest(
                     "Phone number is required."
             );
         }
         if (phoneNumber.isBlank()) {
-            throw new HttpException(
-                    HttpStatus.BAD_REQUEST,
+            throw HttpException.badRequest(
                     "Phone number cannot be empty."
             );
         }
         if (phoneNumber.length() > 100) {
-            throw new HttpException(
-                    HttpStatus.BAD_REQUEST,
+            throw HttpException.badRequest(
                     "Phone number is too long (100 characters)."
             );
         }

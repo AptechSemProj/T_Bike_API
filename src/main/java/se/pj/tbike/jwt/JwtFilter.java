@@ -14,7 +14,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import se.pj.tbike.http.Routes;
-import se.pj.tbike.http.controller.auth.RegisterController;
 
 import java.io.IOException;
 
@@ -32,8 +31,8 @@ public class JwtFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         String path = request.getServletPath();
-        if (path.contains(Routes.LOGIN_PATH)
-                || path.contains(RegisterController.API_URL)) {
+        if (path.contains(Routes.AUTH_LOGIN_PATH)
+                || path.contains(Routes.AUTH_REGISTER_PATH)) {
             filterChain.doFilter(request, response);
             return;
         }

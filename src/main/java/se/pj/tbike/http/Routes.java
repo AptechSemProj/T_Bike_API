@@ -14,5 +14,6 @@ public interface Routes {
     String DELETE_CATEGORY_PATH = "/api/categories/{id}";
     String UPDATE_CATEGORY_PATH = "/api/categories/{id}";
     String FIND_ORDER_PATH = "/api/orders/{id}";
-    String LOGIN_PATH = "/api/auth/authenticate";
+    String AUTH_LOGIN_PATH = "/api/auth/authenticate";
+    String AUTH_REGISTER_PATH = "/api/auth/register";
 }
