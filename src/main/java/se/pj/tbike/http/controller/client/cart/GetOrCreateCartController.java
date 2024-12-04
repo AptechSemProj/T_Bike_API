@@ -14,7 +14,7 @@ import se.pj.tbike.http.Routes;
 import se.pj.tbike.http.model.cart.Cart;
 import se.pj.tbike.impl.BaseController;
 
-@RequestMapping(Routes.GET_CART_PATH)
+@RequestMapping(Routes.GET_OR_CREATE_CART_PATH)
 @PreAuthorize("hasRole('USER')")
 @RestController
 public class GetOrCreateCartController extends BaseController {

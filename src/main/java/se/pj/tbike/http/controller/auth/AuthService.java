@@ -6,9 +6,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import se.pj.tbike.http.model.auth.AuthResponse;
-import se.pj.tbike.http.model.auth.LoginRequest;
-import se.pj.tbike.http.model.auth.RegisterRequest;
 import se.pj.tbike.jwt.JwtService;
 import se.pj.tbike.domain.service.UserService;
 import se.pj.tbike.domain.entity.User;
@@ -22,28 +19,36 @@ public class AuthService {
     private final JwtService jwtService;
     private final UserService userService;
 
-    public AuthResponse register(RegisterRequest req) {
-        User user = new User();
-        user.setRole(req.getRole());
-        user.setUsername(req.getUsername());
-        user.setPassword(encoder.encode(req.getPassword()));
-        user.setName(req.getName());
-        user.setAvatarImage(null);
-        user.setPhoneNumber(req.getPhoneNumber());
+    public String register(User user, String password) {
+        user.setPassword(encoder.encode(password));
         User created = userService.create(user);
-        String token = jwtService.generateToken(created);
-        return new AuthResponse(token);
+        return jwtService.generateToken(created);
     }
 
-    public AuthResponse login(LoginRequest req) {
-        String username = req.getUsername();
-        var auth = new UsernamePasswordAuthenticationToken(
-                username, req.getPassword()
+    public String login(String username, String password) {
+        Authentication auth = tryLogin(username, password);
+        User user = (User) auth.getPrincipal();
+        return jwtService.generateToken(user);
+    }
+
+    private Authentication tryLogin(String username, String password) {
+        return manager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        username, password
+                )
         );
-        Authentication authentication = manager.authenticate(auth);
-        User user = (User) authentication.getPrincipal();
-        String token = jwtService.generateToken(user);
-        return new AuthResponse(token);
+    }
+
+    public String changePassword(
+            String username,
+            String oldPassword,
+            String newPassword
+    ) {
+        Authentication auth = tryLogin(username, oldPassword);
+        User user = (User) auth.getPrincipal();
+        user.setPassword(encoder.encode(newPassword));
+        userService.update(user);
+        return jwtService.generateToken(user);
     }
 
 }

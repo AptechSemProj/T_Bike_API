@@ -13,6 +13,7 @@ import com.ank.japi.validation.error.NotExistError;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import se.pj.tbike.impl.Response;
 
 @Configuration
@@ -35,6 +36,12 @@ public class AppConf {
                 e -> Response.status(e.getStatusCode())
                         .message(e.getLocalizedMessage())
                         .build()
+        )).setErrorBinding(Binding.bind(
+                AuthenticationException.class,
+                e -> Response.status(HttpStatus.BAD_REQUEST).message(
+                        "Cannot authenticate user because " +
+                                "username or password is incorrect."
+                ).build()
         )).setErrorBinding(Binding.bind(
                 Throwable.class,
                 Response.status(INTERNAL_SERVER_ERROR)::ofThrowable

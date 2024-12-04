@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import se.pj.tbike.domain.entity.Category;
 import se.pj.tbike.domain.service.CategoryService;
+import se.pj.tbike.http.Routes;
 import se.pj.tbike.http.model.category.CategoryMapper;
 import se.pj.tbike.http.model.category.CategoryResponse;
 import se.pj.tbike.impl.Response;
@@ -17,13 +18,11 @@ import se.pj.tbike.util.PageableController;
 
 import java.util.List;
 
-@RequestMapping(QueryCategoryController.API_URL)
+@RequestMapping(Routes.QUERY_CATEGORY_PATH)
 @RestController
 @RequiredArgsConstructor
 public class QueryCategoryController
         implements PageableController<CategoryResponse> {
-
-    public static final String API_URL = "/api/categories";
 
     private final CategoryService service;
     private final CategoryMapper mapper;

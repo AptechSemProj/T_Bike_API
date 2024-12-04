@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.pj.tbike.http.Routes;
+import se.pj.tbike.http.model.auth.AuthResponse;
 import se.pj.tbike.http.model.auth.LoginRequest;
 import se.pj.tbike.impl.BaseController;
 
@@ -25,6 +26,12 @@ public class LoginController extends BaseController {
 
     @PostMapping({"", "/"})
     public Response login(@RequestBody LoginRequest req) {
-        return tryCatch(() -> ok(service.login(req)));
+        return tryCatch(() -> {
+            String token = service.login(
+                    req.getUsername(),
+                    req.getPassword()
+            );
+            return ok(new AuthResponse(token));
+        });
     }
 }

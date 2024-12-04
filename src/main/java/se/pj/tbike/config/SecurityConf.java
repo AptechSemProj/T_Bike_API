@@ -20,7 +20,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import se.pj.tbike.http.controller.category.QueryCategoryController;
 import se.pj.tbike.http.controller.admin.orderdetail.CreateDetailController;
 import se.pj.tbike.domain.entity.User;
 import se.pj.tbike.http.Routes;
@@ -42,7 +41,7 @@ public class SecurityConf {
                         HttpMethod.GET,
                         Routes.QUERY_BRAND_PATH,
                         Routes.FIND_BRAND_PATH,
-                        QueryCategoryController.API_URL,
+                        Routes.QUERY_CATEGORY_PATH,
                         Routes.FIND_CATEGORY_PATH,
                         "/api/products/**",
                         "/api/images/**"
@@ -93,7 +92,7 @@ public class SecurityConf {
     ) {
         registry.requestMatchers(
                         HttpMethod.GET,
-                        Routes.GET_CART_PATH
+                        Routes.GET_OR_CREATE_CART_PATH
                 ).hasRole(User.Role.USER.name())
                 .requestMatchers(
                         HttpMethod.PUT,
