@@ -25,4 +25,13 @@ public class CreateOrderRequest {
         }
         return user;
     }
+
+    public List<OrderDetailRequest> getDetails() {
+        if (details == null) {
+            throw HttpException.badRequest(
+                    "Details is required."
+            );
+        }
+        return details;
+    }
 }

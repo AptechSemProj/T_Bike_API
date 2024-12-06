@@ -2,9 +2,7 @@ package org.photoservice.www.api.conf;
 
 public class ImageApiUrls {
 
-	public static final String API_PREFIX = "/api";
-
-	public static final String IMAGE_API = API_PREFIX + "/images";
+	public static final String IMAGE_API = "/api/images";
 
 	public static final String URL_QUERY = "/{filename:.+}";
 

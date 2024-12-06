@@ -9,6 +9,7 @@ public class OrderDetailMapper {
     public OrderDetail map(OrderDetailRequest request) {
         int quantity = request.getQuantity();
         OrderDetail od = new OrderDetail();
+        od.setProductId(request.getProduct());
         od.setQuantity(quantity);
         od.setTotalAmount(request.getPrice() * quantity);
         return od;

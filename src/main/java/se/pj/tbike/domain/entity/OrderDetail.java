@@ -81,6 +81,20 @@ public class OrderDetail
     )
     private Attribute product;
 
+    public void setProductId(long productId) {
+        if (id == null) {
+            id = new Id();
+        }
+        id.setProductId(productId);
+    }
+
+    public long getProductId() {
+        if (id == null) {
+            return 0;
+        }
+        return id.getProductId();
+    }
+
     //*************** EQUALS & HASHCODE ******************//
 
     @Override

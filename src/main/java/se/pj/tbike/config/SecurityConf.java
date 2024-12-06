@@ -49,7 +49,11 @@ public class SecurityConf {
                         Routes.AUTH_REGISTER_PATH,
                         "/api/products/list/**",
                         "/api/products/search/**"
-                ).permitAll();
+                ).permitAll()
+                .requestMatchers(
+                        HttpMethod.PUT,
+                        Routes.AUTH_CHANGE_PASSWORD_PATH
+                ).hasAnyRole(User.Role.ADMIN.name(), User.Role.USER.name());
     }
 
     private void adminAccess(
@@ -80,10 +84,6 @@ public class SecurityConf {
                         Routes.DELETE_CATEGORY_PATH,
                         "/api/products/**",
                         "/api/images/**"
-                ).hasRole(adminRole)
-                .requestMatchers(
-                        HttpMethod.PUT,
-                        Routes.AUTH_CHANGE_PASSWORD_PATH
                 ).hasRole(adminRole);
     }
 
@@ -99,10 +99,6 @@ public class SecurityConf {
                 .requestMatchers(
                         HttpMethod.PUT,
                         Routes.UPDATE_USER_INFO_PATH
-                ).hasRole(userRole)
-                .requestMatchers(
-                        HttpMethod.PUT,
-                        Routes.AUTH_CHANGE_PASSWORD_PATH
                 ).hasRole(userRole);
     }
 
