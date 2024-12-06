@@ -13,14 +13,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import se.pj.tbike.http.controller.admin.orderdetail.CreateDetailController;
 import se.pj.tbike.domain.entity.User;
 import se.pj.tbike.http.Routes;
 import se.pj.tbike.jwt.JwtFilter;
@@ -83,6 +80,10 @@ public class SecurityConf {
                         Routes.DELETE_CATEGORY_PATH,
                         "/api/products/**",
                         "/api/images/**"
+                ).hasRole(adminRole)
+                .requestMatchers(
+                        HttpMethod.PUT,
+                        Routes.AUTH_CHANGE_PASSWORD_PATH
                 ).hasRole(adminRole);
     }
 
@@ -90,18 +91,19 @@ public class SecurityConf {
             AuthorizeHttpRequestsConfigurer<HttpSecurity>
                     .AuthorizationManagerRequestMatcherRegistry registry
     ) {
+        String userRole = User.Role.USER.name();
         registry.requestMatchers(
                         HttpMethod.GET,
                         Routes.GET_OR_CREATE_CART_PATH
-                ).hasRole(User.Role.USER.name())
+                ).hasRole(userRole)
                 .requestMatchers(
                         HttpMethod.PUT,
                         Routes.UPDATE_USER_INFO_PATH
-                ).hasRole(User.Role.USER.name())
+                ).hasRole(userRole)
                 .requestMatchers(
-                        HttpMethod.POST,
-                        CreateDetailController.API_URL
-                ).hasAnyRole(User.Role.ADMIN.name(), User.Role.USER.name());
+                        HttpMethod.PUT,
+                        Routes.AUTH_CHANGE_PASSWORD_PATH
+                ).hasRole(userRole);
     }
 
     @Bean
@@ -127,11 +129,6 @@ public class SecurityConf {
                 .authorizeHttpRequests(r -> r.anyRequest().permitAll());
 //                        .authenticated()
         return http.build();
-    }
-
-    @Bean
-    public Authentication authentication() {
-        return SecurityContextHolder.getContext().getAuthentication();
     }
 
     @Bean

@@ -9,6 +9,14 @@ public final class ItemResponse {
 
     private final Long product;
 
+    private final String name;
+
+    private final String imageUrl;
+
+    private final String color;
+
+    private final int totalQuantity;
+
     private final int quantity;
 
     private final long price;
@@ -20,6 +28,10 @@ public final class ItemResponse {
     ItemResponse(OrderDetail od) {
         Attribute attr = od.getProduct();
         this.product = attr.getId();
+        this.name = attr.getProduct().getName();
+        this.imageUrl = attr.getImageUrl();
+        this.color = attr.getColor();
+        this.totalQuantity = attr.getQuantity();
         this.quantity = od.getQuantity();
         this.totalAmount = od.getTotalAmount();
         this.price = od.getPrice();

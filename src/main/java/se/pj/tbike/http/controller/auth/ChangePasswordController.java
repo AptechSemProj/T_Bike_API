@@ -12,7 +12,7 @@ import se.pj.tbike.http.model.auth.ChangePasswordRequest;
 import se.pj.tbike.impl.BaseController;
 
 @RequestMapping(Routes.AUTH_CHANGE_PASSWORD_PATH)
-@PreAuthorize("hasRole('USER')")
+@PreAuthorize("hasAnyRole('ADMIN','USER')")
 @RestController
 public class ChangePasswordController extends BaseController {
 

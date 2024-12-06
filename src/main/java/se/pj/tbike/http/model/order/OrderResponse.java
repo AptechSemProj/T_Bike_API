@@ -2,7 +2,6 @@ package se.pj.tbike.http.model.order;
 
 import lombok.Getter;
 import lombok.Setter;
-import se.pj.tbike.http.controller.admin.orderdetail.OrderDetailResponse;
 
 import java.util.ArrayList;
 import java.util.List;

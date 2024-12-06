@@ -31,5 +31,6 @@ public interface Routes {
 
     //    User Api Paths
     String UPDATE_USER_INFO_PATH = "/api/user";
+    String GET_USER_INFO_PATH = "/api/user";
 
 }
