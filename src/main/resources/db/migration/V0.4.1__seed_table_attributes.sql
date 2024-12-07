@@ -50,8 +50,8 @@ INSERT INTO t_bike.attributes (id, represent, color, image_url, price, quantity,
 INSERT INTO t_bike.attributes (id, represent, color, image_url, price, quantity, product_id) VALUES (50, false, 'Ghi đen', 'http://localhost:8080/api/images/Bora1-XanhduongVang.jpg', 9990000, 100, 13);
 INSERT INTO t_bike.attributes (id, represent, color, image_url, price, quantity, product_id) VALUES (51, false, 'Ghi đỏ', 'http://localhost:8080/api/images/Bora1-XanhduongVang.jpg', 9990000, 100, 13);
 INSERT INTO t_bike.attributes (id, represent, color, image_url, price, quantity, product_id) VALUES (52, false, 'Xanh cà phê', 'http://localhost:8080/api/images/Bora1-XanhduongVang.jpg', 8590000, 100, 13);
-INSERT INTO t_bike.attributes (id, represent, color, image_url, price, quantity, product_id) VALUES (53, true, 'Đen đỏ', 'http://localhost:8080/api/images/Vm0wd2QyUXlWa1pOVldScFVtMVNjRlZ0TVZOV1ZteHpWV3hK.jpg', 2530000, 100, 14);
-INSERT INTO t_bike.attributes (id, represent, color, image_url, price, quantity, product_id) VALUES (54, false, 'Đen xanh', 'http://localhost:8080/api/images/Vm0weE1GbFhSWGxTYlRR.jpg', 3000000, 100, 14);
+INSERT INTO t_bike.attributes (id, represent, color, image_url, price, quantity, product_id) VALUES (53, true, 'Đen đỏ', 'http://localhost:8080/api/images/download.jpg', 2530000, 100, 14);
+INSERT INTO t_bike.attributes (id, represent, color, image_url, price, quantity, product_id) VALUES (54, false, 'Đen xanh', 'http://localhost:8080/api/images/download.jpg', 3000000, 100, 14);
 INSERT INTO t_bike.attributes (id, represent, color, image_url, price, quantity, product_id) VALUES (55, false, 'Ghi cam', 'http://localhost:8080/api/images/download.jpg', 2530000, 100, 14);
 INSERT INTO t_bike.attributes (id, represent, color, image_url, price, quantity, product_id) VALUES (56, false, 'Trắng đỏ', 'http://localhost:8080/api/images/download.jpg', 3000000, 100, 14);
 INSERT INTO t_bike.attributes (id, represent, color, image_url, price, quantity, product_id) VALUES (57, false, 'Trắng xanh', 'http://localhost:8080/api/images/download.jpg', 3000000, 100, 14);
