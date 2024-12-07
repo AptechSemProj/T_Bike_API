@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.pj.tbike.domain.entity.User;
 import se.pj.tbike.http.Routes;
+import se.pj.tbike.http.model.user.UserInfo;
 import se.pj.tbike.impl.BaseController;
 
 @RequestMapping(Routes.GET_USER_INFO_PATH)
@@ -26,7 +27,12 @@ public class GetUserInfoController extends BaseController {
     public Response get(Authentication auth) {
         return tryCatch(() -> {
             User user = (User) auth.getPrincipal();
-            return ok();
+            return ok(new UserInfo(
+                    user.getId(),
+                    user.getName(),
+                    user.getPhoneNumber(),
+                    user.getAvatarImage()
+            ));
         });
     }
 
