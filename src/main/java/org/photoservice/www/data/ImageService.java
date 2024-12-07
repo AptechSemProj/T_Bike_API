@@ -53,7 +53,7 @@ public class ImageService extends StdFileManager {
 
 	@Override
 	protected Set<String> configureExtensions() {
-		return Set.of( "jpg", "jpeg", "png", "gif" );
+		return Set.of( "jpg", "jpeg", "png", "gif", "webp" );
 	}
 
 	private BufferedImage resize(BufferedImage originalImage,
