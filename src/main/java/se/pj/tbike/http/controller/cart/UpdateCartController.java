@@ -93,13 +93,14 @@ public class UpdateCartController extends BaseController {
                                             + "] does not exists in the cart."
                             );
                         }
-                        int q = old.getQuantity() - od.getQuantity();
+                        int quantity = old.getQuantity() - od.getQuantity();
+                        long price = od.getTotalAmount() - old.getTotalAmount();
                         old.setPrice(od.getPrice());
                         old.setQuantity(od.getQuantity());
                         old.setTotalAmount(od.getTotalAmount());
                         detailService.update(old);
-                        totalAmount.addAndGet(od.getTotalAmount());
-                        attr.setQuantity(attr.getQuantity() + q);
+                        totalAmount.addAndGet(price);
+                        attr.setQuantity(attr.getQuantity() + quantity);
                         attributeService.update(attr);
                     }
                     case DELETE -> {
@@ -109,10 +110,11 @@ public class UpdateCartController extends BaseController {
                                             + "] does not exists in the cart."
                             );
                         }
-                        detailService.deleteById(id);
                         totalAmount.addAndGet(-od.getTotalAmount());
                         attr.setQuantity(attr.getQuantity() + od.getQuantity());
                         attributeService.update(attr);
+                        detailService.delete(od);
+                        details.remove(id);
                     }
                     default -> {
                     }
